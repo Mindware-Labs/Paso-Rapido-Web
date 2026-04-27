@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import { CarFront, FileText, Tag } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Vehículos — Paso Rápido",
-  description:
-    "Gestión de vehículos y TAG: resumen al estilo de la app, con detalle adicional en web.",
-};
+import { CarFront, FileText, Tag } from "lucide-react";
 
 const ROWS = [
   {

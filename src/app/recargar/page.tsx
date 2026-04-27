@@ -1,12 +1,7 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import { Banknote, ChevronRight, ShieldCheck, Wallet } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Recargar — Paso Rápido",
-  description:
-    "Recarga de saldo y confianza: CTA y copy alineados con el slider móvil.",
-};
 
 const AMOUNTS = ["RD$ 200", "RD$ 500", "RD$ 1,000", "Otro monto"] as const;
 

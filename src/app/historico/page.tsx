@@ -1,10 +1,6 @@
-import type { Metadata } from "next";
-import { History, TrendingDown, TrendingUp } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Historial — Paso Rápido",
-  description: "Movimientos y pases, ampliado para web.",
-};
+import { History, TrendingDown, TrendingUp } from "lucide-react";
 
 const ROWS = [
   { t: "Peaje Las Américas", d: "12 abr 2026 · 08:42", a: "RD$ -100.00", out: true },

@@ -1,10 +1,6 @@
-import type { Metadata } from "next";
-import { ChevronDown, Headphones, HelpCircle, MessageCircle } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Ayuda — Paso Rápido",
-  description: "Preguntas, canales y guías. Reflejo ampliado del módulo de ayuda móvil.",
-};
+import { ChevronDown, Headphones, HelpCircle, MessageCircle } from "lucide-react";
 
 const FAQ = [
   {

@@ -1,5 +1,27 @@
 import Link from "next/link";
 
+const producto = [
+  { href: "/peajes", label: "Red de peajes" },
+  { href: "/vehiculos", label: "Vehículos" },
+  { href: "/recargar", label: "Recargar" },
+  { href: "/historico", label: "Historial" },
+] as const;
+
+const cuenta = [
+  { href: "/cuenta", label: "Perfil" },
+  { href: "/metodos-pago", label: "Métodos de pago" },
+  { href: "/vinculados", label: "Vinculados" },
+  { href: "/contrasena", label: "Contraseña" },
+  { href: "/notificaciones", label: "Notificaciones" },
+] as const;
+
+const soporte = [
+  { href: "/ayuda", label: "Centro de ayuda" },
+  { href: "/asistente-vial", label: "Asistencia vial" },
+  { href: "/noticias", label: "Noticias" },
+  { href: "/reclamaciones", label: "Reclamaciones" },
+] as const;
+
 export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-pr-border/60 bg-pr-card">
@@ -10,8 +32,8 @@ export function SiteFooter() {
               Paso Rápido
             </p>
             <p className="text-sm leading-relaxed text-pr-muted-fg">
-              Tu peaje y TAG en un solo lugar. Recarga, consulta y planifica
-              con la misma experiencia que en la app móvil, ampliada para web.
+              Tu peaje y TAG en un solo lugar. Misma jerarquía de la app: menú
+              lateral, secciones y peajes con mapa en web.
             </p>
           </div>
           <div>
@@ -19,47 +41,16 @@ export function SiteFooter() {
               Producto
             </p>
             <ul className="space-y-1.5 text-sm">
-              <li>
-                <Link
-                  className="text-pr-hero hover:underline"
-                  href="/peajes"
-                >
-                  Red de peajes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-pr-hero hover:underline"
-                  href="/vehiculos"
-                >
-                  Vehículos
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-pr-hero hover:underline"
-                  href="/recargar"
-                >
-                  Recargar
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-pr-foreground/70">
-              Ayuda
-            </p>
-            <ul className="space-y-1.5 text-sm">
-              <li>
-                <Link className="text-pr-hero hover:underline" href="/ayuda">
-                  Centro de ayuda
-                </Link>
-              </li>
-              <li>
-                <span className="text-pr-muted-fg">
-                  Asistente vial: disponible en la app
-                </span>
-              </li>
+              {producto.map((i) => (
+                <li key={i.href}>
+                  <Link
+                    className="text-pr-hero hover:underline"
+                    href={i.href}
+                  >
+                    {i.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
@@ -67,23 +58,38 @@ export function SiteFooter() {
               Cuenta
             </p>
             <ul className="space-y-1.5 text-sm">
-              <li>
-                <Link
-                  className="text-pr-hero hover:underline"
-                  href="/cuenta"
-                >
-                  Perfil
-                </Link>
-              </li>
-              <li>
-                <span className="text-pr-muted-fg">Histórico y noticias: app</span>
-              </li>
+              {cuenta.map((i) => (
+                <li key={i.href}>
+                  <Link
+                    className="text-pr-hero hover:underline"
+                    href={i.href}
+                  >
+                    {i.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-pr-foreground/70">
+              Soporte
+            </p>
+            <ul className="space-y-1.5 text-sm">
+              {soporte.map((i) => (
+                <li key={i.href}>
+                  <Link
+                    className="text-pr-hero hover:underline"
+                    href={i.href}
+                  >
+                    {i.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
         <p className="mt-8 border-t border-pr-border/50 pt-6 text-center text-xs text-pr-muted-fg">
-          © {new Date().getFullYear()} Paso Rápido. Sitio de demostración — sin
-          backend. Descarga la app móvil para operaciones reales.
+          © {new Date().getFullYear()} Paso Rápido. Demostración — sin backend.
         </p>
       </div>
     </footer>

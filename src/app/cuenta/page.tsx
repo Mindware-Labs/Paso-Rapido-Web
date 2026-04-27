@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import { Bell, KeyRound, Link2, User } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Mi perfil — Paso Rápido",
-  description:
-    "Datos de cuenta, seguridad y preferencias, alineado con el perfil móvil.",
-};
+import { Bell, KeyRound, Link2, User } from "lucide-react";
 
 const GROUPS = [
   {
