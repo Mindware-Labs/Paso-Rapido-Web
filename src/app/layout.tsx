@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SidebarProvider } from "@/components/sidebar/SidebarContext";
+import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-
-const display = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-  weight: ["500", "600", "700", "800"],
-});
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-pr",
@@ -39,19 +34,17 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={cn(
-        "h-full",
-        "antialiased",
-        sans.variable,
-        display.variable,
-        "font-sans",
-        geist.variable,
-      )}
+      className={cn("h-full", "antialiased", sans.variable, "font-sans", geist.variable)}
     >
-      <body className="min-h-full flex flex-col">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+      <body className="flex min-h-full flex-col">
+        <SidebarProvider>
+          <SiteHeader />
+          <div className="flex min-h-0 flex-1 items-stretch">
+            <AppSidebar />
+            <main className="min-w-0 flex-1 bg-background">{children}</main>
+          </div>
+          <SiteFooter />
+        </SidebarProvider>
       </body>
     </html>
   );

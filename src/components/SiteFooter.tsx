@@ -23,33 +23,33 @@ const atencion = [
 ] as const;
 
 const linkClass =
-  "text-sm text-primary-foreground/80 transition hover:text-primary-foreground";
+  "text-sm text-muted-foreground transition hover:text-foreground";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-primary/20 bg-pr-ink text-primary-foreground/85">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        <div className="grid gap-10 border-b border-primary-foreground/10 pb-10 sm:grid-cols-2 lg:grid-cols-5">
+    <footer className="mt-auto border-t border-border bg-card text-foreground">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="grid gap-10 border-b border-border/80 pb-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="flex flex-col gap-3 lg:col-span-2">
-            <div className="flex items-center gap-2 text-primary-foreground">
+            <div className="flex items-center gap-2">
               <span
-                className="flex size-8 items-center justify-center rounded-md bg-primary"
+                className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground"
                 aria-hidden
               >
-                <Zap className="size-4 fill-primary-foreground text-primary-foreground" />
+                <Zap className="size-4 fill-current" />
               </span>
-              <span className="font-heading text-base font-bold tracking-tight">
+              <span className="text-base font-semibold tracking-tight">
                 Paso Rápido
               </span>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-primary-foreground/70">
-              Misma gama cromática que la app: verde bosque y apoyos neutros. El
-              portal prioriza mapa, lectura e institucional; la app, operación
-              inmediata en vía.
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Identidad cromática de la app móvil, con una presentación web
+              pensada para oficina y consulta, no para el tablero compacto del
+              teléfono.
             </p>
           </div>
           <div>
-            <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-primary-foreground/50">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               Producto
             </p>
             <ul className="flex flex-col gap-2">
@@ -63,8 +63,8 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-primary-foreground/50">
-              Clientes
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              Cuenta
             </p>
             <ul className="flex flex-col gap-2">
               {clientes.map((i) => (
@@ -77,7 +77,7 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <p className="mb-3 text-[10px] font-extrabold uppercase tracking-widest text-primary-foreground/50">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               Atención
             </p>
             <ul className="flex flex-col gap-2">
@@ -91,9 +91,9 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
-        <p className="pt-8 text-center text-xs text-primary-foreground/50">
-          © {new Date().getFullYear()} Paso Rápido. Contenido de demostración —
-          sin conexión a producción.
+        <p className="pt-8 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} Paso Rápido. Demostración — sin
+          conexión a producción.
         </p>
       </div>
     </footer>
