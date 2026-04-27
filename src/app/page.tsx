@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Navbar from "@/components/Landing/Navbar";
 import HeroSection from "@/components/Landing/HeroSection";
 import KitPasoRapido from "@/components/Landing/Kitpasorapido";
@@ -23,10 +22,3 @@ export default function LandingPage() {
     </main>
   );
 }
-=======
-import { HomeView } from "@/components/home/HomeView";
-
-export default function Home() {
-  return <HomeView />;
-}
->>>>>>> 7950ce0c746ffa2b9833b0bc52c69f0d7eab961a
