@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SidebarProvider } from "@/components/sidebar/SidebarContext";
-import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+
+const display = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["500", "600", "700", "800"],
+});
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-pr",
@@ -19,10 +24,10 @@ const sans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Paso Rápido — recarga, peajes y TAG",
   description:
-    "Experiencia web ampliada de la app Paso Rápido: saldo, peajes, vehículos y ayuda. Demostración de diseño (sin backend).",
+    "Portal web corporativo: red de peajes, TAG, recargas y ayuda. Misma identidad de marca, experiencia distinta a la app móvil.",
   openGraph: {
     title: "Paso Rápido",
-    description: "Peajes y TAG en un solo lugar — versión web.",
+    description: "Red de peajes y TAG — portal web.",
   },
 };
 
@@ -32,14 +37,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={cn("h-full", "antialiased", sans.variable, "font-sans", geist.variable)}>
+    <html
+      lang="es"
+      className={cn(
+        "h-full",
+        "antialiased",
+        sans.variable,
+        display.variable,
+        "font-sans",
+        geist.variable,
+      )}
+    >
       <body className="min-h-full flex flex-col">
-        <SidebarProvider>
-          <SiteHeader />
-          <AppSidebar />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </SidebarProvider>
+        <SiteHeader />
+        <main className="flex-1">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

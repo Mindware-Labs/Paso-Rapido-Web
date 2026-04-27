@@ -2,64 +2,102 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Bell, Zap } from "lucide-react";
-import { useSidebar } from "@/components/sidebar/SidebarContext";
+import { useState } from "react";
+import { Menu, Zap } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
-const NAV = [
+const PRIMARY = [
   { href: "/", label: "Inicio" },
-  { href: "/peajes", label: "Peajes" },
+  { href: "/peajes", label: "Red de peajes" },
   { href: "/vehiculos", label: "Vehículos" },
-  { href: "/recargar", label: "Recargar" },
+  { href: "/recargar", label: "Recargas" },
   { href: "/ayuda", label: "Ayuda" },
-  { href: "/cuenta", label: "Mi perfil" },
 ] as const;
+
+const SECONDARY = [
+  { href: "/cuenta", label: "Mi cuenta" },
+  { href: "/historico", label: "Historial de movimientos" },
+  { href: "/noticias", label: "Noticias" },
+  { href: "/reclamaciones", label: "Reclamaciones" },
+] as const;
+
+function navLinkClass(active: boolean) {
+  return cn(
+    "relative rounded-md px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors",
+    "hover:bg-muted hover:text-foreground",
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring/50",
+    active &&
+      "text-primary after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:rounded-full after:bg-primary",
+  );
+}
 
 export function SiteHeader() {
   const pathname = usePathname() || "/";
-  const { openMenu } = useSidebar();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-pr-hero text-pr-on-hero shadow-md shadow-pr-hero/20">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
-        <button
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-border/80 bg-card/95 text-foreground",
+        "supports-[backdrop-filter]:backdrop-blur-md",
+      )}
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
+        <Button
           type="button"
-          onClick={openMenu}
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-pr-on-hero transition hover:bg-white/10"
-          aria-label="Abrir menú lateral"
+          variant="ghost"
+          size="icon"
+          className="shrink-0 md:hidden"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Abrir menú"
         >
-          <Menu className="h-5 w-5" />
-        </button>
+          <Menu className="size-5 text-foreground" />
+        </Button>
 
         <Link
           href="/"
-          className="flex min-w-0 flex-1 items-center gap-2 rounded-md sm:flex-none sm:justify-start outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/80"
+          className="flex min-w-0 items-center gap-2.5 outline-offset-4 focus-visible:rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/40"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
-            <Zap
-              className="h-4 w-4 fill-pr-on-hero text-pr-on-hero"
-              aria-hidden
-            />
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+            aria-hidden
+          >
+            <Zap className="size-4 fill-current" />
           </span>
-          <span className="truncate text-sm font-extrabold tracking-tight sm:text-base">
-            Paso Rápido
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-extrabold tracking-tight sm:text-base">
+              Paso Rápido
+            </span>
+            <span className="hidden text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground sm:block">
+              Portal web
+            </span>
           </span>
         </Link>
 
         <nav
-          className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex"
-          aria-label="Principal"
+          className="ml-4 hidden flex-1 items-center justify-center gap-0.5 lg:flex"
+          aria-label="Navegación principal"
         >
-          {NAV.map((item) => {
-            const active = pathname === item.href;
+          {PRIMARY.map((item) => {
+            const active =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`shrink-0 rounded-full px-2.5 py-1.5 text-sm font-semibold transition-colors ${
-                  active
-                    ? "bg-white/15 text-white"
-                    : "text-white/85 hover:bg-white/10 hover:text-white"
-                }`}
+                className={navLinkClass(active)}
               >
                 {item.label}
               </Link>
@@ -67,45 +105,99 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-          <span
-            className="hidden rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/90 md:inline"
-            title="Vista web — demostración sin backend"
+        <div className="ml-auto flex items-center gap-2">
+          <Link
+            href="/cuenta"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "hidden sm:inline-flex",
+            )}
           >
-            Web
-          </span>
-          <button
-            type="button"
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-pr-on-hero transition hover:bg-white/10"
-            aria-label="Notificaciones (próximamente)"
+            Mi cuenta
+          </Link>
+          <Link
+            href="/recargar"
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "font-bold shadow-sm",
+            )}
           >
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-emerald-300 ring-2 ring-pr-hero" />
-          </button>
+            Recargar
+          </Link>
         </div>
       </div>
 
-      <nav
-        className="flex flex-wrap items-center justify-center gap-1 border-t border-white/10 px-2 py-2 lg:hidden"
-        aria-label="Accesos rápidos móvil"
-      >
-        {NAV.map((item) => {
-          const active = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                active
-                  ? "bg-white/15"
-                  : "text-white/85 hover:bg-white/10"
-              }`}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent
+          side="right"
+          className="w-[min(100%,20rem)] gap-0 p-0 sm:max-w-md"
+        >
+          <SheetHeader className="border-b border-border px-4 py-4 text-left">
+            <SheetTitle className="font-heading text-base font-extrabold text-foreground">
+              Menú
+            </SheetTitle>
+            <SheetDescription className="text-left text-xs">
+              Accesos al portal. Colores oficiales de la app, formato web.
+            </SheetDescription>
+          </SheetHeader>
+          <ScrollArea className="h-[calc(100vh-7rem)]">
+            <div className="flex flex-col gap-1 p-2">
+              <p className="px-2 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Secciones
+              </p>
+              {[...PRIMARY, ...SECONDARY].map((item) => {
+                const isRoot = item.href === "/";
+                const active = isRoot
+                  ? pathname === "/"
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-foreground/90 hover:bg-muted",
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+            <Separator className="my-2" />
+            <div className="flex flex-col gap-2 px-4 pb-6">
+              <p className="text-xs text-muted-foreground">
+                En la app móvil: pago al volante y notificaciones al instante.
+              </p>
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/recargar"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    buttonVariants(),
+                    "w-full justify-center font-bold",
+                  )}
+                >
+                  Recargar saldo
+                </Link>
+                <Link
+                  href="/ayuda"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "w-full justify-center",
+                  )}
+                >
+                  Centro de ayuda
+                </Link>
+              </div>
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </header>
   );
 }
