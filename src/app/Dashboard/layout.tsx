@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist } from "next/font/google";
 import "./globals.css";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SidebarProvider } from "@/components/sidebar/SidebarContext";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
@@ -34,6 +35,7 @@ export default function RootLayout({
     <html lang="es" className={cn("h-full", "antialiased", sans.variable, "font-sans", geist.variable)}>
       <body className="min-h-full flex flex-col">
         <SidebarProvider>
+          <SiteHeader />
           <AppSidebar />
           <main className="flex-1">{children}</main>
           <SiteFooter />
