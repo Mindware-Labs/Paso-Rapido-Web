@@ -48,7 +48,7 @@ export default function KitPasoRapido() {
           </p>
           <div>
             <Link
-              href="/comprar"
+              href="#tipos-cuenta"
               className="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow transition hover:bg-emerald-700"
             >
               Comprar Ahora

@@ -19,7 +19,7 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="bg-gray-50 py-16">
+    <section id="faq" className="bg-gray-50 py-16">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
         <h2 className="mb-8 text-center text-3xl font-extrabold text-gray-900">
           Preguntas Frecuentes
