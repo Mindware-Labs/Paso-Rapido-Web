@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import {
   ChevronRight,
@@ -15,16 +14,7 @@ import {
   TOLL_SITES,
   type TollSite,
 } from "@/data/tolls";
-
-const PeajesMap = dynamic(() => import("./PeajesMap"), {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-[min(55vh,520px)] min-h-[300px] w-full items-center justify-center rounded-2xl border border-pr-border bg-pr-muted text-sm font-semibold text-pr-muted-fg">
-        Cargando mapa…
-      </div>
-    ),
-  },
-);
+import PeajesMap from "./PeajesMap";
 
 const TIPS = [
   {

@@ -107,12 +107,6 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Leaflet por debajo del header; controles visibles en la tarjeta del mapa */
-.leaflet-container {
-  z-index: 0;
-  font-family: inherit;
-}
-
 html {
   scroll-behavior: smooth;
 }

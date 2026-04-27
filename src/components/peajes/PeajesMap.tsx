@@ -2,28 +2,32 @@
 
 import { useEffect } from "react";
 import {
-  MapContainer,
-  TileLayer,
-  CircleMarker,
-  Popup,
+  Map,
+  MapControls,
+  MapMarker,
+  MarkerContent,
+  MarkerPopup,
   useMap,
-} from "react-leaflet";
+} from "@/components/ui/map";
 import type { TollSite } from "@/data/tolls";
 import { DR_BOUNDS, DR_MAP_INITIAL_REGION } from "@/data/tolls";
-import "leaflet/dist/leaflet.css";
+import { PeajeMapPinIcon } from "./PeajeMapPinIcon";
 
-const SW: [number, number] = [DR_BOUNDS.south, DR_BOUNDS.west];
-const NE: [number, number] = [DR_BOUNDS.north, DR_BOUNDS.east];
+const MAX_B: [[number, number], [number, number]] = [
+  [DR_BOUNDS.west, DR_BOUNDS.south],
+  [DR_BOUNDS.east, DR_BOUNDS.north],
+];
 
-type FlyToProps = {
-  target: TollSite;
-};
-
-function FlyTo({ target }: FlyToProps) {
-  const map = useMap();
+function EaseToSelection({ site }: { site: TollSite }) {
+  const { map, isLoaded } = useMap();
   useEffect(() => {
-    map.flyTo([target.latitude, target.longitude], 9, { duration: 0.6 });
-  }, [map, target.id, target.latitude, target.longitude]);
+    if (!map || !isLoaded) return;
+    map.easeTo({
+      center: [site.longitude, site.latitude],
+      zoom: 9,
+      duration: 700,
+    });
+  }, [map, isLoaded, site.id, site.longitude, site.latitude]);
   return null;
 }
 
@@ -45,47 +49,47 @@ export default function PeajesMap({ sites, selectedId, onSelect }: Props) {
 
   return (
     <div className="relative isolate z-0 h-[min(55vh,520px)] w-full min-h-[320px] overflow-hidden rounded-2xl border border-pr-border bg-pr-secondary/20 shadow-inner">
-      <MapContainer
+      <Map
+        className="h-full w-full"
         center={[
-          DR_MAP_INITIAL_REGION.latitude,
           DR_MAP_INITIAL_REGION.longitude,
+          DR_MAP_INITIAL_REGION.latitude,
         ]}
         zoom={7.2}
-        className="h-full w-full"
-        style={{ minHeight: 300 }}
-        scrollWheelZoom
-        maxBounds={[SW, NE]}
-        maxBoundsViscosity={0.65}
+        maxBounds={MAX_B}
+        minZoom={6}
+        maxZoom={16}
+        theme="light"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        <MapControls
+          position="bottom-right"
+          showZoom
+          showCompass={false}
         />
-        <FlyTo key={selected.id} target={selected} />
+        <EaseToSelection site={selected} />
         {sites.map((s) => {
           const isOn = s.id === selectedId;
           return (
-            <CircleMarker
+            <MapMarker
               key={s.id}
-              center={[s.latitude, s.longitude]}
-              radius={isOn ? 12 : 7}
-              pathOptions={{
-                color: isOn ? "#145a38" : "#1d8c57",
-                fillColor: isOn ? "#1d8c57" : "#2ead6c",
-                fillOpacity: 0.88,
-                weight: 2,
-              }}
-              eventHandlers={{ click: () => onSelect(s.id) }}
+              longitude={s.longitude}
+              latitude={s.latitude}
+              anchor="bottom"
+              onClick={() => onSelect(s.id)}
             >
-              <Popup>
-                <span className="font-bold">{s.name}</span>
-                <br />
-                <span className="text-xs text-neutral-600">{s.subtitle}</span>
-              </Popup>
-            </CircleMarker>
+              <MarkerContent className="!cursor-pointer">
+                <PeajeMapPinIcon selected={isOn} />
+              </MarkerContent>
+              <MarkerPopup closeButton className="min-w-[200px]">
+                <p className="text-sm font-extrabold text-foreground">
+                  {s.name}
+                </p>
+                <p className="text-xs text-muted-foreground">{s.subtitle}</p>
+              </MarkerPopup>
+            </MapMarker>
           );
         })}
-      </MapContainer>
+      </Map>
     </div>
   );
 }
