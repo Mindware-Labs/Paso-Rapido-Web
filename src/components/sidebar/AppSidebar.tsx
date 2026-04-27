@@ -2,328 +2,184 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
-import {
-  User,
-  KeyRound,
-  CreditCard,
-  Users,
-  MessageSquareWarning,
-  Newspaper,
-  Bell,
-  ChevronRight,
-  X,
-  Zap,
-  Wallet,
-  Tag,
-  Home,
-  BotMessageSquare,
-  CircleHelp,
-} from "lucide-react";
+import { X, Zap } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
-import type { LucideIcon } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import {
+  APP_NAV,
+  GROUP_ORDER,
+  groupLabel,
+  type NavGroupId,
+} from "@/config/navigation";
 
-type Item = {
-  key: string;
-  label: string;
-  hint: string;
-  Icon: LucideIcon;
-  href: string;
-  section: "Navegación" | "Cuenta" | "Operaciones" | "Soporte";
-};
+const HEADER_OFFSET = "top-16";
+const ASIDE_H = "h-[calc(100dvh-4rem)]";
 
-const MENU: Item[] = [
-  {
-    key: "inicio",
-    label: "Inicio",
-    hint: "Ir al inicio",
-    Icon: Home,
-    href: "/",
-    section: "Navegación",
-  },
-  {
-    key: "perfil",
-    label: "Perfil",
-    hint: "Datos y cuenta",
-    Icon: User,
-    href: "/cuenta",
-    section: "Cuenta",
-  },
-  {
-    key: "clave",
-    label: "Contraseña",
-    hint: "Seguridad de acceso",
-    Icon: KeyRound,
-    href: "/contrasena",
-    section: "Cuenta",
-  },
-  {
-    key: "pagos",
-    label: "Métodos de pago",
-    hint: "Tarjetas y cuentas",
-    Icon: CreditCard,
-    href: "/metodos-pago",
-    section: "Operaciones",
-  },
-  {
-    key: "vinc",
-    label: "Vinculados",
-    hint: "Personas autorizadas",
-    Icon: Users,
-    href: "/vinculados",
-    section: "Operaciones",
-  },
-  {
-    key: "notif",
-    label: "Notificaciones",
-    hint: "Centro de alertas",
-    Icon: Bell,
-    href: "/notificaciones",
-    section: "Operaciones",
-  },
-  {
-    key: "recl",
-    label: "Reclamaciones",
-    hint: "Consultas y soporte",
-    Icon: MessageSquareWarning,
-    href: "/reclamaciones",
-    section: "Soporte",
-  },
-  {
-    key: "news",
-    label: "Noticias",
-    hint: "Avisos oficiales",
-    Icon: Newspaper,
-    href: "/noticias",
-    section: "Soporte",
-  },
-  {
-    key: "asistencia-vial",
-    label: "Asistencia vial",
-    hint: "Asesor de viajes",
-    Icon: BotMessageSquare,
-    href: "/asistente-vial",
-    section: "Soporte",
-  },
-  {
-    key: "ayuda",
-    label: "Ayuda",
-    hint: "Centro de ayuda",
-    Icon: CircleHelp,
-    href: "/ayuda",
-    section: "Soporte",
-  },
-];
+function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
-const SECTIONS: Item["section"][] = [
-  "Navegación",
-  "Cuenta",
-  "Operaciones",
-  "Soporte",
-];
+function SidebarNav({
+  onNavigate,
+  className,
+}: {
+  onNavigate?: () => void;
+  className?: string;
+}) {
+  const pathname = usePathname() || "/";
 
-const C = {
-  hero: "#1D8C57",
-  onHero: "#ffffff",
-  gold: "#B8963E",
-} as const;
-
-const QUICK = [
-  { key: "saldo", label: "Saldo disponible", value: "RD$ 1,250", Icon: Wallet },
-  { key: "tag", label: "Estado TAG", value: "Activo", Icon: Tag },
-] as const;
-
-function initials(name: string) {
   return (
-    name
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((w) => w[0]?.toUpperCase() ?? "")
-      .join("") || "?"
+    <nav
+      className={cn("flex flex-col gap-1 px-3 py-3", className)}
+      aria-label="Secciones del sitio"
+    >
+      {GROUP_ORDER.map((group) => {
+        const items = APP_NAV.filter((i) => i.group === group);
+        if (items.length === 0) return null;
+        return (
+          <div key={group} className="flex flex-col gap-0.5">
+            <p className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              {groupLabel(group)}
+            </p>
+            <ul className="flex flex-col gap-0.5">
+              {items.map((item) => {
+                const active = isActive(pathname, item.href);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      className={cn(
+                        "group flex min-h-9 items-center gap-2.5 rounded-md border-l-2 border-transparent py-1.5 pl-2 pr-2 text-sm transition-colors",
+                        "hover:border-border hover:bg-muted/50",
+                        active
+                          ? "border-primary bg-primary/[0.07] font-medium text-foreground"
+                          : "text-foreground/80",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "flex size-7 shrink-0 items-center justify-center rounded-md border border-border/60 bg-card text-muted-foreground transition-colors",
+                          "group-hover:border-border group-hover:text-foreground",
+                          active && "border-primary/25 bg-primary/5 text-primary",
+                        )}
+                        aria-hidden
+                      >
+                        <item.Icon className="size-3.5" strokeWidth={1.75} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block leading-snug">{item.label}</span>
+                        {item.description && (
+                          <span className="line-clamp-1 text-[11px] font-normal text-muted-foreground">
+                            {item.description}
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            {group !== (GROUP_ORDER[GROUP_ORDER.length - 1] as NavGroupId) && (
+              <Separator className="my-2 bg-border/60" />
+            )}
+          </div>
+        );
+      })}
+    </nav>
   );
 }
 
+/**
+ * Navegación lateral estilo producto web (blanco, secciones, iconos en contenedor),
+ * no el panel tipo app con saldo / avatar.
+ */
 export function AppSidebar() {
   const { open, closeMenu } = useSidebar();
-  const pathname = usePathname() || "/";
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeMenu();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, closeMenu]);
-
-  if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100]">
-      <button
-        type="button"
-        className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-[2px] transition-opacity"
-        aria-label="Cerrar menú"
-        onClick={closeMenu}
-      />
+    <>
       <aside
-        className="absolute left-0 top-0 flex h-full w-[min(100%,22rem)] max-w-full flex-col border-r border-white/10 shadow-2xl sm:w-96"
-        style={{ background: "#F4F4F4" }}
-        role="dialog"
-        aria-modal
-        aria-labelledby="sidebar-title"
+        className={cn(
+          "hidden w-[272px] shrink-0 flex-col border-r border-border/80 bg-card text-foreground",
+          "lg:sticky lg:flex lg:flex-col lg:self-start",
+          HEADER_OFFSET,
+          ASIDE_H,
+        )}
+        aria-label="Navegación lateral"
       >
-        <div
-          className="shrink-0 space-y-4 px-4 pb-4 pt-3"
-          style={{ backgroundColor: C.hero }}
-        >
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-1.5">
-              <Zap
-                className="h-3.5 w-3.5 shrink-0 fill-pr-on-hero text-pr-on-hero"
-                aria-hidden
-              />
-              <p
-                id="sidebar-title"
-                className="text-[13px] font-bold tracking-tight text-white"
-              >
-                Paso Rápido
+        <div className="shrink-0 border-b border-border/60 px-3 py-3">
+          <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-2.5 py-2">
+            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Zap className="size-4 fill-current" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Navegación
+              </p>
+              <p className="truncate text-xs font-semibold text-foreground">
+                Portal Paso Rápido
               </p>
             </div>
-            <button
-              type="button"
-              onClick={closeMenu}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-white/20"
-              aria-label="Cerrar"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <div
-            className="h-px w-full"
-            style={{ backgroundColor: "rgba(255,255,255,0.18)" }}
-          />
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg"
-              style={{ backgroundColor: C.gold }}
-            >
-              <span
-                className="text-lg font-extrabold text-white"
-                style={{ letterSpacing: "-0.3px" }}
-              >
-                {initials("Usuario invitado")}
-              </span>
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-base font-bold text-white">Usuario</p>
-              <p className="text-xs text-white/75">Cuenta personal (demo web)</p>
-            </div>
           </div>
         </div>
-
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="space-y-3 p-3">
-            <div
-              className="flex flex-row overflow-hidden rounded-lg border"
-              style={{ borderColor: "#E0E0E0", background: "#fff" }}
-            >
-              {QUICK.map((s, idx) => (
-                <div
-                  key={s.key}
-                  className="flex min-w-0 flex-1 flex-col gap-0.5 border-r py-2.5 pl-3 pr-2 last:border-r-0"
-                  style={
-                    idx < QUICK.length - 1
-                      ? { borderRight: "1px solid #E0E0E0" }
-                      : undefined
-                  }
-                >
-                  <div
-                    className="mb-0.5 flex h-[26px] w-[26px] items-center justify-center rounded-md"
-                    style={{ background: "#EAF5EE" }}
-                  >
-                    <s.Icon
-                      className="h-3.5 w-3.5"
-                      style={{ color: C.hero }}
-                    />
-                  </div>
-                  <span className="text-[10px] text-[#999]">{s.label}</span>
-                  <span
-                    className="text-sm font-bold"
-                    style={{ color: C.hero }}
-                  >
-                    {s.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {SECTIONS.map((section) => {
-              const items = MENU.filter((i) => i.section === section);
-              return (
-                <div key={section} className="space-y-1.5">
-                  <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-[#999]">
-                    {section}
-                  </p>
-                  <ul
-                    className="overflow-hidden rounded-lg border border-[#E0E0E0] bg-white"
-                    style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
-                  >
-                    {items.map((item) => {
-                      const active = pathname === item.href;
-                      return (
-                        <li
-                          key={item.key}
-                          className="border-b border-[#EBEBEB] last:border-b-0"
-                        >
-                          <Link
-                            href={item.href}
-                            onClick={closeMenu}
-                            className="flex min-h-14 items-center gap-2.5 px-2.5 py-2.5 transition"
-                            style={{
-                              backgroundColor: active
-                                ? "rgba(29,140,87,0.08)"
-                                : "transparent",
-                            }}
-                          >
-                            <span
-                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
-                              style={{ background: "#EAF5EE" }}
-                            >
-                              <item.Icon
-                                className="h-[18px] w-[18px]"
-                                style={{ color: C.hero }}
-                                strokeWidth={1.75}
-                              />
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-semibold text-[#1A1A1A]">
-                                {item.label}
-                              </p>
-                              <p className="text-[11px] text-[#555]">
-                                {item.hint}
-                              </p>
-                            </div>
-                            <ChevronRight
-                              className="h-3.5 w-3.5 shrink-0 text-[#ccc]"
-                            />
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
+        <ScrollArea className="min-h-0 flex-1">
+          <SidebarNav />
+        </ScrollArea>
+        <div className="shrink-0 border-t border-border/60 px-3 py-2">
+          <p className="px-1 text-[10px] leading-relaxed text-muted-foreground">
+            Entorno de demostración. La app móvil mantiene el acceso en carril;
+            el web prioriza documentación y autogestión.
+          </p>
         </div>
       </aside>
-    </div>
+
+      <Sheet
+        open={open}
+        onOpenChange={(next) => {
+          if (!next) closeMenu();
+        }}
+      >
+        <SheetContent
+          side="left"
+          className="flex w-[min(100%-1rem,20rem)] max-w-[min(100%-1rem,20rem)] flex-col gap-0 p-0 sm:max-w-sm"
+          showCloseButton={false}
+        >
+          <div className="flex items-center justify-between border-b border-border/80 px-3 py-2.5">
+            <div className="min-w-0">
+              <SheetTitle className="text-left text-base font-semibold text-foreground">
+                Menú
+              </SheetTitle>
+              <SheetDescription className="text-left text-xs text-muted-foreground">
+                Contenido alineado con la app; diseño de panel web.
+              </SheetDescription>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={closeMenu}
+              className="shrink-0"
+              aria-label="Cerrar menú"
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+          <ScrollArea className="min-h-0 flex-1">
+            <SidebarNav onNavigate={closeMenu} className="py-2" />
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
