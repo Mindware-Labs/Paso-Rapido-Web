@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
+/* Paleta alineada con la app móvil Paso Rápido (palettes.ts) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pr-hero: #1d8c57;
+  --pr-on-hero: #ffffff;
+  --pr-bg: #eeeeee;
+  --pr-foreground: #333333;
+  --pr-card: #ffffff;
+  --pr-border: #aaaaaa;
+  --pr-muted: #f5f5f5;
+  --pr-muted-fg: #aaaaaa;
+  --pr-secondary: #e8f5ee;
+  --pr-secondary-fg: #1d5c3a;
+  --pr-destructive: #c0392b;
+  --pr-shadow: rgba(0, 0, 0, 0.1);
+  --pr-hero-glow: rgba(29, 140, 87, 0.15);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-pr-hero: var(--pr-hero);
+  --color-pr-on-hero: var(--pr-on-hero);
+  --color-pr-bg: var(--pr-bg);
+  --color-pr-foreground: var(--pr-foreground);
+  --color-pr-card: var(--pr-card);
+  --color-pr-border: var(--pr-border);
+  --color-pr-muted: var(--pr-muted);
+  --color-pr-muted-fg: var(--pr-muted-fg);
+  --color-pr-secondary: var(--pr-secondary);
+  --color-pr-secondary-fg: var(--pr-secondary-fg);
+  --color-pr-destructive: var(--pr-destructive);
+  --font-sans: var(--font-pr), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--pr-bg);
+  color: var(--pr-foreground);
+  font-family: var(--font-pr), system-ui, sans-serif;
+}
+
+/* Textura sutil (no ruido genérico: patrón de puntos) */
+.pr-grain {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(0, 0, 0, 0.04) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+}
+
+@keyframes pr-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pr-reveal {
+  animation: pr-fade-up 0.65s ease-out both;
+}
+
+.pr-reveal-delay-1 {
+  animation-delay: 0.08s;
+}
+.pr-reveal-delay-2 {
+  animation-delay: 0.16s;
+}
+.pr-reveal-delay-3 {
+  animation-delay: 0.24s;
 }
