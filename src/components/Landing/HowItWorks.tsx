@@ -12,7 +12,7 @@ const STEPS: { Icon: LucideIcon; title: string; desc: string }[] = [
 
 export default function HowItWorks() {
   return (
-    <section className="relative py-28">
+    <section className="relative py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 14 }}

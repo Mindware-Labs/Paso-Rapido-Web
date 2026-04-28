@@ -13,7 +13,7 @@ const BENEFITS = [
 
 export default function KitPasoRapido() {
   return (
-    <section className="relative py-32">
+    <section className="relative py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 32 }}

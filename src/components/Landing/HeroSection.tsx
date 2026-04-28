@@ -9,22 +9,22 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { ArrowRight, Zap, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Zap, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 const TRUST = [
-  { Icon: Zap, label: "Recargas en segundos" },
-  { Icon: ShieldCheck, label: "Transacciones protegidas" },
-  { Icon: Sparkles, label: "Siempre disponible" },
+  { Icon: Zap, title: "Recargas", subtitle: "en segundos" },
+  { Icon: ShieldCheck, title: "Transacciones", subtitle: "protegidas" },
+  { Icon: CheckCircle2, title: "Siempre", subtitle: "disponible" },
 ];
 
 export default function HeroSection() {
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rX = useSpring(useTransform(my, [-50, 50], [5, -5]), { stiffness: 120, damping: 18 });
-  const rY = useSpring(useTransform(mx, [-50, 50], [-7, 7]), { stiffness: 120, damping: 18 });
-  const tX = useSpring(useTransform(mx, [-50, 50], [-12, 12]), { stiffness: 80, damping: 22 });
-  const tY = useSpring(useTransform(my, [-50, 50], [-8, 8]), { stiffness: 80, damping: 22 });
+  const rX = useSpring(useTransform(my, [-50, 50], [4, -4]), { stiffness: 120, damping: 18 });
+  const rY = useSpring(useTransform(mx, [-50, 50], [-6, 6]), { stiffness: 120, damping: 18 });
+  const tX = useSpring(useTransform(mx, [-50, 50], [-10, 10]), { stiffness: 80, damping: 22 });
+  const tY = useSpring(useTransform(my, [-50, 50], [-6, 6]), { stiffness: 80, damping: 22 });
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = ref.current?.getBoundingClientRect();
@@ -39,16 +39,20 @@ export default function HeroSection() {
 
   return (
     <section id="inicio" className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[44rem] bg-[radial-gradient(60%_45%_at_72%_18%,rgba(15,157,88,0.10),transparent_70%)]" />
+      {/* Wide hero radial glow */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[52rem] bg-[radial-gradient(58%_46%_at_72%_22%,rgba(15,157,88,0.12),transparent_70%)]" />
+      {/* Faint right-side decorative arc */}
+      <div className="pointer-events-none absolute right-0 top-32 hidden h-[36rem] w-[36rem] rounded-full border border-[#0f9d58]/8 md:block" />
+      <div className="pointer-events-none absolute -right-16 top-44 hidden h-[24rem] w-[24rem] rounded-full border border-[#0f9d58]/10 md:block" />
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-20 pt-10 sm:px-8 md:grid-cols-12 md:gap-6 md:pb-32 md:pt-24">
-        {/* Left — copy */}
-        <div className="z-10 flex flex-col gap-8 md:col-span-5">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-12 pt-10 sm:px-8 md:grid-cols-12 md:gap-6 md:pb-16 md:pt-16">
+        {/* LEFT — copy (≈45%) */}
+        <div className="z-10 flex flex-col gap-7 md:col-span-5">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex w-fit items-center gap-2 rounded-full border border-black/5 bg-white/70 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-neutral-700 shadow-[0_1px_2px_rgba(10,10,10,0.04)] backdrop-blur"
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-[#0f9d58]/15 bg-[#e7f7ee]/70 px-3.5 py-1.5 text-[12px] font-medium tracking-tight text-[#0f7a45] shadow-[0_1px_2px_rgba(15,157,88,0.06)] backdrop-blur"
           >
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0f9d58] opacity-60" />
@@ -61,7 +65,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05 }}
-            className="text-[44px] font-bold leading-[1.02] tracking-[-0.035em] text-[#0a0a0a] sm:text-[60px] md:text-[68px]"
+            className="text-[44px] font-bold not-italic leading-[1.02] tracking-[-0.035em] text-[#0a0a0a] sm:text-[58px] md:text-[64px]"
           >
             Conoce la nueva
             <br />
@@ -72,7 +76,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="max-w-md text-[17px] font-normal leading-[1.55] text-neutral-600"
+            className="max-w-md text-[16px] font-normal not-italic leading-[1.6] text-neutral-500"
           >
             Haz de tu vida en la carretera más sencilla y eficiente. Recarga,
             paga y cruza los peajes sin detenerte.
@@ -82,12 +86,15 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.25 }}
-            className="flex flex-wrap items-center gap-3"
+            className="mt-1 flex flex-wrap items-center gap-3"
           >
             <Link
               href="/Dashboard"
               className="pr-btn group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold tracking-tight"
             >
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+                <Zap className="h-3 w-3 fill-white text-white" />
+              </span>
               Recargar Balance
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
@@ -103,20 +110,26 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35 }}
-            className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-neutral-500"
+            className="mt-3 grid grid-cols-3 gap-3 sm:gap-4"
           >
-            {TRUST.map(({ Icon, label }) => (
-              <div key={label} className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#e7f7ee] text-[#0f9d58]">
-                  <Icon className="h-3.5 w-3.5" strokeWidth={2.2} />
+            {TRUST.map(({ Icon, title, subtitle }) => (
+              <div
+                key={title}
+                className="flex items-center gap-2.5 rounded-2xl bg-white/70 px-3 py-2.5 ring-1 ring-black/5 backdrop-blur"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e7f7ee] text-[#0f9d58]">
+                  <Icon className="h-4 w-4" strokeWidth={2.4} />
                 </span>
-                {label}
+                <div className="leading-tight">
+                  <p className="text-[12px] font-semibold text-[#0a0a0a]">{title}</p>
+                  <p className="text-[11px] text-neutral-500">{subtitle}</p>
+                </div>
               </div>
             ))}
           </motion.div>
         </div>
 
-        {/* Right — Hand + Phone (dominant visual) */}
+        {/* RIGHT — Hand + Phone (≈55%) — dominant visual */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -124,60 +137,62 @@ export default function HeroSection() {
           ref={ref}
           onMouseMove={onMove}
           onMouseLeave={onLeave}
-          className="relative z-10 flex h-[520px] items-end justify-center md:col-span-7 md:h-[640px]"
+          className="relative z-10 mr-[-4%] flex h-[560px] items-end justify-end md:col-span-7 md:h-[720px] md:mr-[-6%] lg:mr-[-8%]"
           style={{ perspective: 1600 }}
         >
-          {/* Atmospheric depth layers */}
+          {/* Wide soft green aura */}
           <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
-            <div className="pr-aura pr-pulse-soft h-[42rem] w-[42rem] max-w-[110%] rounded-full" />
+            <div className="h-[44rem] w-[44rem] max-w-[120%] rounded-full bg-[radial-gradient(closest-side,rgba(15,157,88,0.18),rgba(15,157,88,0.06)_45%,transparent_72%)] blur-[40px]" />
           </div>
 
-          {/* Far back depth blur */}
+          {/* Ambient white fog */}
           <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
-            <div className="h-[28rem] w-[28rem] max-w-[80%] rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.85),transparent_70%)]" />
+            <div className="h-[30rem] w-[30rem] max-w-[88%] rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.9),transparent_70%)] blur-2xl" />
           </div>
 
-          {/* Phone screen ambient glow */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-[5] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(15,157,88,0.35),transparent_70%)] blur-2xl" />
+          {/* Phone screen ambient green spill */}
+          <div className="pointer-events-none absolute left-[58%] top-[44%] z-[5] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(15,157,88,0.32),transparent_70%)] blur-3xl" />
 
           {/* Realistic floor shadow under the hand */}
-          <div className="pointer-events-none absolute bottom-2 left-1/2 z-0 h-14 w-[26rem] max-w-[70%] -translate-x-1/2">
-            <div className="h-full w-full rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(10,10,10,0.28),transparent_70%)] blur-2xl" />
+          <div className="pointer-events-none absolute bottom-4 left-[55%] z-0 h-16 w-[28rem] max-w-[70%] -translate-x-1/2">
+            <div className="h-full w-full rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(10,10,10,0.22),transparent_70%)] blur-2xl" />
           </div>
 
-          {/* Floating saldo card */}
+          {/* Floating SALDO badge (top-left of phone) */}
           <motion.div
             style={{ x: useTransform(tX, (v) => v * -0.6), y: useTransform(tY, (v) => v * -0.6) }}
-            className="pr-float pointer-events-none absolute left-1 top-12 z-30 sm:left-6"
+            className="pr-float pointer-events-none absolute left-[2%] top-[14%] z-30 sm:left-[6%]"
           >
-            <div className="pr-glass flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-[#15a972] to-[#0c8a55] shadow-[0_4px_10px_-2px_rgba(12,138,85,0.4)]">
-                <Zap className="h-3.5 w-3.5 fill-white text-white" />
+            <div className="flex items-center gap-3 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/[0.04]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0f9d58] shadow-[0_4px_10px_-2px_rgba(12,138,85,0.45)]">
+                <Zap className="h-4 w-4 fill-white text-white" />
               </span>
               <div className="leading-tight">
-                <p className="text-[9px] font-semibold uppercase tracking-wider text-neutral-500">Saldo</p>
-                <p className="text-sm font-bold text-[#0a0a0a]">RD$ 1,500</p>
+                <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
+                  Saldo
+                </p>
+                <p className="text-[14px] font-bold text-[#0a0a0a]">RD$ 1,500</p>
               </div>
             </div>
           </motion.div>
 
-          {/* Floating approval card */}
+          {/* Floating APROBADO badge (right side, slightly below middle) */}
           <motion.div
             style={{ x: useTransform(tX, (v) => v * -0.4), y: useTransform(tY, (v) => v * -0.4) }}
-            className="pr-float pointer-events-none absolute right-1 top-36 z-30 sm:right-4"
+            className="pr-float pointer-events-none absolute right-[2%] top-[42%] z-30 sm:right-[4%]"
           >
-            <div className="pr-glass flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#e7f7ee]">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#0f9d58]" strokeWidth={2.4} />
+            <div className="flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/[0.04]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e7f7ee]">
+                <ShieldCheck className="h-4 w-4 text-[#0f9d58]" strokeWidth={2.4} />
               </span>
               <div className="leading-tight">
-                <p className="text-[10px] font-semibold text-[#0f9d58]">Aprobado</p>
-                <p className="text-[11px] text-neutral-600">+ RD$ 500</p>
+                <p className="text-[12px] font-semibold text-[#0f9d58]">Aprobado</p>
+                <p className="text-[11px] text-neutral-500">+ RD$ 500</p>
               </div>
             </div>
           </motion.div>
 
-          {/* Hand + phone — full right side, dominant */}
+          {/* Hand + phone — full right side, dominant, slightly cropped right */}
           <motion.div
             whileHover={{ scale: 1.015 }}
             transition={{ type: "spring", stiffness: 200, damping: 22 }}
@@ -188,17 +203,42 @@ export default function HeroSection() {
             }}
             className="pr-float relative z-20 h-full w-full"
           >
+            {/* Blurred copy of the image, only visible at bottom-right — this is what physically softens the cut-off */}
             <Image
-              src="/hand.svg"
-              alt="Paso Rápido en la mano"
+              src="/hand-phone.png"
+              alt=""
+              aria-hidden
+              fill
+              sizes="(min-width: 768px) 60vw, 100vw"
+              className="pointer-events-none select-none object-contain object-bottom blur-2xl opacity-70"
+              draggable={false}
+              style={{
+                WebkitMaskImage:
+                  "radial-gradient(circle at 80% 85%, #000 0%, #000 25%, transparent 70%)",
+                maskImage:
+                  "radial-gradient(circle at 80% 85%, #000 0%, #000 25%, transparent 70%)",
+              }}
+            />
+            {/* Crisp main image, masked so the bottom-right fades to transparent */}
+            <Image
+              src="/hand-phone.png"
+              alt="Mano sosteniendo el teléfono con la app Paso Rápido"
               fill
               priority
               sizes="(min-width: 768px) 60vw, 100vw"
-              className="select-none object-contain object-bottom drop-shadow-[0_50px_60px_rgba(10,10,10,0.18)]"
+              className="select-none object-contain object-bottom"
               draggable={false}
+              style={{
+                WebkitMaskImage:
+                  "radial-gradient(circle at 30% 32%, #000 48%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0.35) 82%, transparent 96%)",
+                maskImage:
+                  "radial-gradient(circle at 30% 32%, #000 48%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0.35) 82%, transparent 96%)",
+              }}
             />
+            {/* Extra soft white wash on the bottom-right to fully blend into the page */}
+            <div className="pointer-events-none absolute inset-0 [background:radial-gradient(55%_45%_at_92%_95%,rgba(255,255,255,0.9),transparent_70%)]" />
             {/* Subtle screen-light spill blended onto the hand */}
-            <div className="pointer-events-none absolute inset-0 mix-blend-multiply [background:radial-gradient(36%_24%_at_50%_38%,rgba(15,157,88,0.10),transparent_70%)]" />
+            <div className="pointer-events-none absolute inset-0 mix-blend-multiply [background:radial-gradient(36%_24%_at_52%_40%,rgba(15,157,88,0.10),transparent_70%)]" />
             {/* Top sheen for global illumination feel */}
             <div className="pointer-events-none absolute inset-0 [background:linear-gradient(180deg,rgba(255,255,255,0.16),transparent_35%)]" />
           </motion.div>

@@ -28,7 +28,7 @@ const TIPOS: { Icon: LucideIcon; title: string; desc: string }[] = [
 
 export default function TiposCuenta() {
   return (
-    <section id="tipos-cuenta" className="relative py-32">
+    <section id="tipos-cuenta" className="relative py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 14 }}

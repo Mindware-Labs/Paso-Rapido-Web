@@ -6,7 +6,7 @@ import { BookOpen, ArrowUpRight } from "lucide-react";
 
 export default function ManualSection() {
   return (
-    <section id="estaciones" className="relative py-24">
+    <section id="estaciones" className="relative py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
