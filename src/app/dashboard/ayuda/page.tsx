@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, Headphones, HelpCircle, MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 const FAQ = [
   {
@@ -35,32 +36,53 @@ export default function AyudaPage() {
         <div className="grid gap-3 sm:grid-cols-3">
           {[
             {
-              label: "Chat",
-              sub: "Próx. web",
+              label: "Asistente vial",
+              sub: "Chat con peajes y cuenta",
+              href: "/dashboard/asistente-vial",
               Icon: MessageCircle,
             },
             {
               label: "Llamar",
               sub: "Línea nacional",
+              href: null,
               Icon: Headphones,
             },
             {
               label: "Guías",
               sub: "Paso a paso",
+              href: null,
               Icon: HelpCircle,
             },
-          ].map((c) => (
-            <div
-              key={c.label}
-              className="flex flex-col items-center rounded-2xl border border-pr-border bg-pr-card px-3 py-4 text-center"
-            >
-              <c.Icon className="h-6 w-6 text-pr-hero" strokeWidth={1.5} />
-              <p className="mt-2 text-sm font-extrabold text-pr-foreground">
-                {c.label}
-              </p>
-              <p className="text-xs text-pr-muted-fg">{c.sub}</p>
-            </div>
-          ))}
+          ].map((c) => {
+            const inner = (
+              <>
+                <c.Icon className="h-6 w-6 text-pr-hero" strokeWidth={1.5} />
+                <p className="mt-2 text-sm font-extrabold text-pr-foreground">
+                  {c.label}
+                </p>
+                <p className="text-xs text-pr-muted-fg">{c.sub}</p>
+              </>
+            );
+            if (c.href) {
+              return (
+                <Link
+                  key={c.label}
+                  href={c.href}
+                  className="flex flex-col items-center rounded-2xl border border-pr-border bg-pr-card px-3 py-4 text-center transition hover:border-pr-hero/40 hover:bg-pr-secondary/30"
+                >
+                  {inner}
+                </Link>
+              );
+            }
+            return (
+              <div
+                key={c.label}
+                className="flex flex-col items-center rounded-2xl border border-pr-border bg-pr-card px-3 py-4 text-center"
+              >
+                {inner}
+              </div>
+            );
+          })}
         </div>
 
         <section className="space-y-2">
