@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -30,10 +31,16 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={cn("h-full", "antialiased", sans.variable, "font-sans", geist.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        sans.variable,
+        "font-sans",
+        geist.variable,
+      )}
     >
       <body className="flex min-h-full flex-col">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

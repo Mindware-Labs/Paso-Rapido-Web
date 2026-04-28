@@ -1,0 +1,458 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useRef, useState } from "react";
+import {
+  Camera,
+  CheckCircle2,
+  ChevronRight,
+  Loader2,
+  RotateCcw,
+  Scan,
+  Smile,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import { authApi } from "@/lib/authApi";
+import { cn } from "@/lib/utils";
+
+// ── Sub-steps ─────────────────────────────────────────────────────────────────
+
+type SubStep =
+  | "front" // capture cédula front
+  | "back" // capture cédula back
+  | "id_sending" // uploading id verification
+  | "selfie" // capture selfie
+  | "face_sending" // uploading face match
+  | "done"
+  | "error";
+
+// ── Camera capture component ──────────────────────────────────────────────────
+
+function CameraCapture({
+  label,
+  hint,
+  facingMode,
+  onCapture,
+}: {
+  label: string;
+  hint: string;
+  facingMode: "environment" | "user";
+  onCapture: (file: File) => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [started, setStarted] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [camError, setCamError] = useState<string | null>(null);
+
+  const startCamera = useCallback(async () => {
+    setCamError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setStarted(true);
+    } catch {
+      setCamError(
+        "No se pudo acceder a la cámara. Verifica los permisos del navegador.",
+      );
+    }
+  }, [facingMode]);
+
+  const capture = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")!.drawImage(video, 0, 0);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const url = canvas.toDataURL("image/jpeg");
+        setPreview(url);
+        // Stop stream
+        streamRef.current?.getTracks().forEach((t) => t.stop());
+        setStarted(false);
+        const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+        onCapture(file);
+      },
+      "image/jpeg",
+      0.9,
+    );
+  }, [onCapture]);
+
+  const retry = useCallback(() => {
+    setPreview(null);
+    startCamera();
+  }, [startCamera]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div>
+        <p className="text-base font-bold text-slate-900">{label}</p>
+        <p className="text-sm text-slate-500">{hint}</p>
+      </div>
+
+      {camError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {camError}
+        </div>
+      )}
+
+      {!started && !preview && (
+        <button
+          onClick={startCamera}
+          className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-bold text-white shadow-md shadow-emerald-500/30 active:scale-95"
+        >
+          <Camera className="h-5 w-5" />
+          Abrir cámara
+        </button>
+      )}
+
+      {started && (
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-black">
+          <video ref={videoRef} autoPlay playsInline muted className="w-full" />
+          {/* Overlay frame guide */}
+          <div className="pointer-events-none absolute inset-4 rounded-xl border-2 border-white/60" />
+          <button
+            onClick={capture}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg active:scale-95"
+          >
+            <div className="h-10 w-10 rounded-full bg-emerald-500" />
+          </button>
+        </div>
+      )}
+
+      {preview && (
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={preview} alt="Captura" className="w-full" />
+          <button
+            onClick={retry}
+            className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            Repetir
+          </button>
+        </div>
+      )}
+
+      {/* Hidden canvas for frame grab */}
+      <canvas ref={canvasRef} className="hidden" />
+    </div>
+  );
+}
+
+// ── Inner page (needs useSearchParams) ───────────────────────────────────────
+
+function KycCapturaInner() {
+  const params = useSearchParams();
+  const sessionId = params.get("session") ?? "";
+
+  const [subStep, setSubStep] = useState<SubStep>("front");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [frontFile, setFrontFile] = useState<File | null>(null);
+  const [backFile, setBackFile] = useState<File | null>(null);
+
+  // After front is captured: auto-advance to back
+  const handleFrontCapture = (file: File) => {
+    setFrontFile(file);
+  };
+
+  const handleBackCapture = (file: File) => {
+    setBackFile(file);
+  };
+
+  const submitIdVerification = async () => {
+    if (!frontFile) return;
+    setSubStep("id_sending");
+    try {
+      const res = await authApi.verifyIdForPending(
+        sessionId,
+        frontFile,
+        backFile ?? undefined,
+      );
+      if (res.status === "id_verified") {
+        setSubStep("selfie");
+      } else {
+        setErrorMsg(
+          res.message ??
+            "El documento no pudo ser verificado. Intenta de nuevo.",
+        );
+        setSubStep("error");
+      }
+    } catch (e) {
+      setErrorMsg((e as Error).message);
+      setSubStep("error");
+    }
+  };
+
+  const submitFaceVerification = async (selfie: File) => {
+    setSubStep("face_sending");
+    try {
+      const res = await authApi.verifyFaceForPending(sessionId, selfie);
+      if (res.status === "complete") {
+        setSubStep("done");
+      } else {
+        setErrorMsg(
+          res.message ?? "La verificación facial falló. Intenta de nuevo.",
+        );
+        setSubStep("error");
+      }
+    } catch (e) {
+      setErrorMsg((e as Error).message);
+      setSubStep("error");
+    }
+  };
+
+  if (!sessionId) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+        Enlace inválido. Escanea el código QR nuevamente desde el ordenador.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Progress dots */}
+      <div className="flex items-center justify-center gap-2">
+        {[
+          { key: "front", label: "Frente" },
+          { key: "back", label: "Dorso" },
+          { key: "selfie", label: "Selfie" },
+        ].map((s, i) => {
+          const stepOrder = [
+            "front",
+            "back",
+            "id_sending",
+            "selfie",
+            "face_sending",
+            "done",
+          ];
+          const current = stepOrder.indexOf(subStep);
+          const mine = stepOrder.indexOf(s.key);
+          const done = current > mine + (s.key === "back" ? 1 : 0);
+          const active =
+            s.key === "front"
+              ? subStep === "front"
+              : s.key === "back"
+                ? subStep === "back"
+                : subStep === "selfie" || subStep === "face_sending";
+          return (
+            <div key={s.key} className="flex items-center gap-2">
+              {i > 0 && (
+                <div
+                  className={cn(
+                    "h-px w-8 transition-colors",
+                    done ? "bg-emerald-400" : "bg-slate-200",
+                  )}
+                />
+              )}
+              <div
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors",
+                  done
+                    ? "bg-emerald-500 text-white"
+                    : active
+                      ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-400"
+                      : "bg-slate-100 text-slate-400",
+                )}
+              >
+                {done ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
+              </div>
+              <span
+                className={cn(
+                  "text-xs font-medium",
+                  active ? "text-emerald-700" : "text-slate-400",
+                )}
+              >
+                {s.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Front capture ── */}
+      {subStep === "front" && (
+        <div className="space-y-4">
+          <CameraCapture
+            label="Frente de la cédula"
+            hint="Coloca el frente de tu cédula dentro del recuadro y toma la foto."
+            facingMode="environment"
+            onCapture={handleFrontCapture}
+          />
+          {frontFile && (
+            <button
+              onClick={() => setSubStep("back")}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3.5 text-sm font-bold text-white shadow-md shadow-emerald-500/30 active:scale-95"
+            >
+              Continuar <ChevronRight className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ── Back capture ── */}
+      {subStep === "back" && (
+        <div className="space-y-4">
+          <CameraCapture
+            label="Dorso de la cédula"
+            hint="Ahora voltea tu cédula y captura el dorso."
+            facingMode="environment"
+            onCapture={handleBackCapture}
+          />
+          {backFile && (
+            <button
+              onClick={submitIdVerification}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3.5 text-sm font-bold text-white shadow-md shadow-emerald-500/30 active:scale-95"
+            >
+              Verificar documento <ChevronRight className="h-4 w-4" />
+            </button>
+          )}
+          <button
+            onClick={submitIdVerification}
+            className="w-full rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-500 hover:bg-slate-50"
+          >
+            Omitir dorso y continuar
+          </button>
+        </div>
+      )}
+
+      {/* ── ID verification in progress ── */}
+      {subStep === "id_sending" && (
+        <div className="flex flex-col items-center gap-4 py-8 text-center">
+          <Scan className="h-12 w-12 animate-pulse text-emerald-500" />
+          <p className="text-sm font-medium text-slate-600">
+            Verificando tu documento de identidad…
+          </p>
+          <p className="text-xs text-slate-400">
+            Esto puede tardar unos segundos.
+          </p>
+        </div>
+      )}
+
+      {/* ── Selfie capture ── */}
+      {subStep === "selfie" && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+            <p className="text-sm font-medium text-emerald-800">
+              Documento verificado correctamente
+            </p>
+          </div>
+          <CameraCapture
+            label="Selfie de verificación"
+            hint="Mira directo a la cámara con buena iluminación. Tu rostro debe verse claramente."
+            facingMode="user"
+            onCapture={submitFaceVerification}
+          />
+        </div>
+      )}
+
+      {/* ── Face verification in progress ── */}
+      {subStep === "face_sending" && (
+        <div className="flex flex-col items-center gap-4 py-8 text-center">
+          <Smile className="h-12 w-12 animate-pulse text-emerald-500" />
+          <p className="text-sm font-medium text-slate-600">
+            Verificando tu identidad facial…
+          </p>
+          <p className="text-xs text-slate-400">
+            Esto puede tardar unos segundos.
+          </p>
+        </div>
+      )}
+
+      {/* ── Done ── */}
+      {subStep === "done" && (
+        <div className="flex flex-col items-center gap-4 py-8 text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
+            <CheckCircle2 className="h-11 w-11 text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-xl font-extrabold text-slate-900">
+              ¡Verificación completada!
+            </p>
+            <p className="mt-1 text-sm text-slate-500">
+              Tu identidad fue verificada exitosamente. Puedes cerrar esta
+              pestaña — tu cuenta se está creando en el ordenador.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Error ── */}
+      {subStep === "error" && (
+        <div className="space-y-4">
+          <div className="flex flex-col items-center gap-3 py-4 text-center">
+            <XCircle className="h-12 w-12 text-red-500" />
+            <div>
+              <p className="text-base font-bold text-slate-900">
+                Verificación fallida
+              </p>
+              <p className="mt-1 text-sm text-red-700">{errorMsg}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setSubStep("front");
+              setFrontFile(null);
+              setBackFile(null);
+              setErrorMsg("");
+            }}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Intentar de nuevo
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function KycCapturaPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-slate-50 px-4 py-10">
+      <div className="mx-auto w-full max-w-sm">
+        {/* Header */}
+        <div className="mb-8 flex flex-col items-center gap-2">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 shadow-lg shadow-emerald-500/30">
+            <Zap className="h-8 w-8 text-white" strokeWidth={2.5} />
+          </div>
+          <h1 className="text-xl font-extrabold text-slate-900">
+            Verificación de identidad
+          </h1>
+          <p className="text-center text-sm text-slate-500">
+            Sigue los pasos para verificar tu identidad y completar el registro.
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <Suspense
+            fallback={
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+              </div>
+            }
+          >
+            <KycCapturaInner />
+          </Suspense>
+        </div>
+      </div>
+    </div>
+  );
+}
