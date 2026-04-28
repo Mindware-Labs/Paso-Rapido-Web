@@ -11,11 +11,11 @@ type Partner = {
 };
 
 const PARTNERS: Partner[] = [
-  { name: "BmCargo",  src: "/bmcargo.png",  width: 140, height: 44 },
-  { name: "CardNet",  src: "/cardnetnosune.png",  width: 140, height: 44 },
+  { name: "BmCargo", src: "/bmcargo.png", width: 140, height: 44 },
+  { name: "CardNet", src: "/cardnetnosune.png", width: 140, height: 44 },
   { name: "Farmacia", src: "/farmaciacarol.png", width: 140, height: 44 },
   { name: "Hidalgos", src: "/hidalgos.png", width: 140, height: 44 },
-  { name: "Texaco",   src: "/texaco.png",   width: 140, height: 44 },
+  { name: "Texaco", src: "/texaco.png", width: 140, height: 44 },
 ];
 
 const LOOP = [...PARTNERS, ...PARTNERS, ...PARTNERS];
@@ -60,7 +60,11 @@ export default function Partners() {
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 0.61, 0.36, 1] }}
+          transition={{
+            duration: 0.7,
+            delay: 0.15,
+            ease: [0.22, 0.61, 0.36, 1],
+          }}
           className="group relative overflow-hidden rounded-[28px] border border-black/6 bg-[linear-gradient(180deg,#fafbfa_0%,#f4f6f5_100%)] py-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.03),0_28px_60px_-36px_rgba(15,157,88,0.18)] sm:py-9"
         >
           {/* Soft top highlight */}
@@ -84,7 +88,7 @@ export default function Partners() {
                     width={p.width}
                     height={p.height}
                     draggable={false}
-                    className="max-h-full w-auto select-none object-contain opacity-60 brightness-90 grayscale transition-all duration-300 ease-out group-hover/logo:opacity-100 group-hover/logo:brightness-100 group-hover/logo:grayscale-0"
+                    className="h-auto max-h-full w-auto select-none object-contain opacity-60 brightness-90 grayscale transition-all duration-300 ease-out group-hover/logo:opacity-100 group-hover/logo:brightness-100 group-hover/logo:grayscale-0"
                   />
                 </div>
               ))}
