@@ -1,6 +1,9 @@
 "use client";
 
 import { Bell, KeyRound, Link2, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const GROUPS = [
   {
@@ -20,6 +23,13 @@ const GROUPS = [
 ] as const;
 
 export default function CuentaPage() {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    router.replace("/");
+  }
   return (
     <div className="pr-grain">
       <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6 sm:py-10">
@@ -29,9 +39,10 @@ export default function CuentaPage() {
               Mi perfil
             </h1>
             <p className="max-w-2xl text-sm text-pr-foreground/80">
-              Layout tipo &quot;configuración Apple/Google&quot; pero con colores
-              Paso Rápido. Cada renglón corresponde a una pantalla oculta de la
-              app móvil (métodos de pago, contraseña, vinculados, etc.).
+              Layout tipo &quot;configuración Apple/Google&quot; pero con
+              colores Paso Rápido. Cada renglón corresponde a una pantalla
+              oculta de la app móvil (métodos de pago, contraseña, vinculados,
+              etc.).
             </p>
           </div>
           <div className="flex h-20 w-20 items-center justify-center self-start rounded-3xl bg-pr-hero text-pr-on-hero shadow-lg shadow-pr-hero/20 sm:self-center">
@@ -82,6 +93,11 @@ export default function CuentaPage() {
         <p className="text-center text-xs text-pr-muted-fg">
           Botones deshabilitados en esta versión; solo estructura visual.
         </p>
+        <div className="mx-auto max-w-md text-center">
+          <Button variant="destructive" className="mt-4" onClick={handleLogout}>
+            Cerrar sesión
+          </Button>
+        </div>
       </div>
     </div>
   );

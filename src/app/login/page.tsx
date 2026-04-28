@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Eye, EyeOff, Lock, Mail, Zap } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Zap, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { loginSchema } from "@/lib/validations";
 import { cn } from "@/lib/utils";
@@ -82,189 +82,211 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="mb-8 flex flex-col items-center gap-2">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 shadow-lg shadow-emerald-500/30">
-            <Zap className="h-8 w-8 text-white" strokeWidth={2.5} />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50/50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        {/* Header / Logo Institucional */}
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-600 shadow-sm border border-emerald-500/20">
+            <Zap className="h-7 w-7 text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Paso Rápido
           </h1>
-          <p className="text-sm text-slate-500">Inicia sesión en tu cuenta</p>
+          <p className="mt-2 text-sm text-slate-600">
+            Acceso seguro al portal de gestión
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white px-8 py-8 shadow-sm">
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            {/* Correo */}
-            <div className="space-y-1.5">
-              <label
-                htmlFor="correo"
-                className="block text-sm font-semibold text-slate-700"
-              >
-                Correo electrónico
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input
-                  ref={correoRef}
-                  id="correo"
-                  type="email"
-                  autoComplete="email"
-                  value={correo}
-                  onChange={(e) => {
-                    setCorreo(e.target.value);
-                    setError(null);
-                  }}
-                  onBlur={() => setTouched((t) => ({ ...t, correo: true }))}
-                  placeholder="correo@ejemplo.com"
-                  disabled={isLocked}
-                  className={cn(
-                    "w-full rounded-xl border py-2.5 pl-9 pr-3 text-sm outline-none transition",
-                    "focus:ring-2",
-                    fieldError("correo")
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"
-                      : "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20",
-                    isLocked && "cursor-not-allowed opacity-60",
-                  )}
-                />
-              </div>
-              {fieldError("correo") && (
-                <p className="text-xs text-red-600">{fieldError("correo")}</p>
-              )}
-            </div>
-
-            {/* Contraseña */}
-            <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-slate-700"
-              >
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input
-                  id="password"
-                  type={showPwd ? "text" : "password"}
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setError(null);
-                  }}
-                  onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                  placeholder="••••••••"
-                  disabled={isLocked}
-                  className={cn(
-                    "w-full rounded-xl border py-2.5 pl-9 pr-10 text-sm outline-none transition",
-                    "focus:ring-2",
-                    fieldError("password")
-                      ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"
-                      : "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20",
-                    isLocked && "cursor-not-allowed opacity-60",
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPwd((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  aria-label={
-                    showPwd ? "Ocultar contraseña" : "Mostrar contraseña"
-                  }
+        {/* Card Principal */}
+        <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/40">
+          <div className="px-6 py-8 sm:px-10">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              {/* Correo */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="correo"
+                  className="block text-sm font-medium text-slate-700"
                 >
-                  {showPwd ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {fieldError("password") && (
-                <p className="text-xs text-red-600">{fieldError("password")}</p>
-              )}
-            </div>
-
-            {/* Error / Lock alert */}
-            {error && (
-              <div
-                className={cn(
-                  "rounded-xl border px-4 py-3 text-sm",
-                  isLocked
-                    ? "border-amber-200 bg-amber-50 text-amber-800"
-                    : "border-red-200 bg-red-50 text-red-700",
-                )}
-              >
-                <p>{error}</p>
-                {isLocked && (
-                  <p className="mt-1 font-mono font-bold">
-                    {formatCountdown(lockSeconds)}
+                  Correo electrónico
+                </label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Mail className="h-4.5 w-4.5 text-slate-400" />
+                  </div>
+                  <input
+                    ref={correoRef}
+                    id="correo"
+                    type="email"
+                    autoComplete="email"
+                    value={correo}
+                    onChange={(e) => {
+                      setCorreo(e.target.value);
+                      setError(null);
+                    }}
+                    onBlur={() => setTouched((t) => ({ ...t, correo: true }))}
+                    placeholder="institucional@ejemplo.com"
+                    disabled={isLocked}
+                    className={cn(
+                      "block w-full rounded-lg border py-2.5 pl-10 pr-3 text-sm transition-colors",
+                      "focus:outline-none focus:ring-2 focus:ring-offset-1",
+                      fieldError("correo")
+                        ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500/20"
+                        : "border-slate-300 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-emerald-500/20",
+                      isLocked && "cursor-not-allowed bg-slate-50 opacity-70",
+                    )}
+                  />
+                </div>
+                {fieldError("correo") && (
+                  <p className="text-xs font-medium text-red-600">
+                    {fieldError("correo")}
                   </p>
                 )}
               </div>
-            )}
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className={cn(
-                "w-full rounded-xl py-2.5 text-sm font-bold text-white transition active:scale-[0.98]",
-                canSubmit
-                  ? "bg-emerald-600 hover:bg-emerald-700"
-                  : "cursor-not-allowed bg-slate-300",
-              )}
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="h-4 w-4 animate-spin"
-                    viewBox="0 0 24 24"
-                    fill="none"
+              {/* Contraseña */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-slate-700"
                   >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    />
-                  </svg>
-                  Ingresando…
-                </span>
-              ) : isLocked ? (
-                `Bloqueado ${formatCountdown(lockSeconds)}`
-              ) : (
-                "Iniciar sesión"
-              )}
-            </button>
-          </form>
+                    Contraseña
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs font-medium text-emerald-600 transition-colors hover:text-emerald-700 hover:underline"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Lock className="h-4.5 w-4.5 text-slate-400" />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPwd ? "text" : "password"}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError(null);
+                    }}
+                    onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                    placeholder="••••••••"
+                    disabled={isLocked}
+                    className={cn(
+                      "block w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition-colors",
+                      "focus:outline-none focus:ring-2 focus:ring-offset-1",
+                      fieldError("password")
+                        ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500/20"
+                        : "border-slate-300 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-emerald-500/20",
+                      isLocked && "cursor-not-allowed bg-slate-50 opacity-70",
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd((v) => !v)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    aria-label={
+                      showPwd ? "Ocultar contraseña" : "Mostrar contraseña"
+                    }
+                  >
+                    {showPwd ? (
+                      <EyeOff className="h-4.5 w-4.5" />
+                    ) : (
+                      <Eye className="h-4.5 w-4.5" />
+                    )}
+                  </button>
+                </div>
+                {fieldError("password") && (
+                  <p className="text-xs font-medium text-red-600">
+                    {fieldError("password")}
+                  </p>
+                )}
+              </div>
 
-          <div className="mt-5 flex flex-col items-center gap-2 text-sm text-slate-500">
-            <Link
-              href="/forgot-password"
-              className="font-medium text-emerald-600 hover:underline"
-            >
-              ¿Olvidaste tu contraseña?
-            </Link>
-            <span>
-              ¿No tienes cuenta?{" "}
+              {/* Alerta de Error / Bloqueo */}
+              {error && (
+                <div
+                  className={cn(
+                    "flex flex-col gap-1 rounded-lg border p-3 text-sm",
+                    isLocked
+                      ? "border-amber-200 bg-amber-50 text-amber-800"
+                      : "border-red-200 bg-red-50 text-red-800",
+                  )}
+                  role="alert"
+                >
+                  <p className="font-medium">{error}</p>
+                  {isLocked && (
+                    <p className="font-mono text-xs font-bold">
+                      Intenta de nuevo en {formatCountdown(lockSeconds)}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                className={cn(
+                  "flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2",
+                  canSubmit
+                    ? "bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98]"
+                    : "cursor-not-allowed bg-slate-300 shadow-none",
+                )}
+              >
+                {loading ? (
+                  <>
+                    <svg
+                      className="mr-2 h-4 w-4 animate-spin text-white"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      />
+                    </svg>
+                    Verificando credenciales...
+                  </>
+                ) : isLocked ? (
+                  `Bloqueado (${formatCountdown(lockSeconds)})`
+                ) : (
+                  "Iniciar sesión"
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Footer de la tarjeta */}
+          <div className="border-t border-slate-100 bg-slate-50 px-6 py-4 text-center sm:px-10">
+            <p className="text-sm text-slate-600">
+              ¿No tienes una cuenta registrada?{" "}
               <Link
                 href="/registro"
-                className="font-bold text-emerald-600 hover:underline"
+                className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700 hover:underline"
               >
-                Regístrate
+                Regístrate aquí
               </Link>
-            </span>
+            </p>
           </div>
+        </div>
+
+        {/* Footer Institucional Exterior */}
+        <div className="mt-8 flex items-center justify-center gap-2 text-xs text-slate-500">
+          <ShieldCheck className="h-4 w-4" />
+          <span>© 2026 Sistema Paso Rápido. Acceso Restringido.</span>
         </div>
       </div>
     </div>
