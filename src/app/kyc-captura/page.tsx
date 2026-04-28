@@ -123,16 +123,14 @@ function CameraCapture({
     startCamera();
   }, [startCamera]);
 
+  // Start camera once on mount; cleanup on unmount
   useEffect(() => {
-    if (!preview) {
-      // attempt to start camera automatically when the component mounts
-      startCamera().catch(() => {});
-    }
+    startCamera().catch(() => {});
     return () => {
-      // cleanup tracks on unmount
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  }, [startCamera, preview]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -156,18 +154,16 @@ function CameraCapture({
             {/* white inner guide */}
             <div className="absolute inset-4 rounded-[20px] border-2 border-white/20 pointer-events-none" />
 
-            {/* Video when started */}
-            {started && !preview && (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-[68vw] max-h-[560px] object-cover"
-              />
-            )}
+            {/* Video always in DOM so iOS Safari can attach srcObject before play() */}
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-[68vw] max-h-[560px] object-cover ${started && !preview ? "block" : "hidden"}`}
+            />
 
-            {/* Placeholder before start or when preview */}
+            {/* Placeholder before stream is live */}
             {!started && !preview && (
               <div className="flex h-[68vw] max-h-[560px] items-center justify-center bg-black">
                 <div className="rounded-[18px] border border-white/20 w-[86%] h-[86%]" />
@@ -279,12 +275,10 @@ function KycCapturaInner() {
       <div className="flex items-center justify-center gap-2">
         {[
           { key: "front", label: "Frente" },
-          { key: "back", label: "Dorso" },
           { key: "selfie", label: "Selfie" },
         ].map((s, i) => {
           const stepOrder = [
             "front",
-            "back",
             "id_sending",
             "selfie",
             "face_sending",
@@ -292,13 +286,11 @@ function KycCapturaInner() {
           ];
           const current = stepOrder.indexOf(subStep);
           const mine = stepOrder.indexOf(s.key);
-          const done = current > mine + (s.key === "back" ? 1 : 0);
+          const done = current > mine;
           const active =
             s.key === "front"
               ? subStep === "front"
-              : s.key === "back"
-                ? subStep === "back"
-                : subStep === "selfie" || subStep === "face_sending";
+              : subStep === "selfie" || subStep === "face_sending";
           return (
             <div key={s.key} className="flex items-center gap-2">
               {i > 0 && (
