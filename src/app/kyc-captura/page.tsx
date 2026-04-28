@@ -58,7 +58,14 @@ function CameraCapture({
         videoRef.current.srcObject = stream;
         // playsInline + muted + user gesture allow autoplay
         videoRef.current.muted = true;
-        await videoRef.current.play();
+        try {
+          await videoRef.current.play();
+        } catch (e) {
+          // play may be blocked until a user gesture; mark error and return
+          setCamError(null);
+          needGestureRef.current = true;
+          return;
+        }
         await new Promise((res) => {
           const v = videoRef.current!;
           if (v.readyState >= 2) return res(true);
@@ -106,6 +113,13 @@ function CameraCapture({
 
   const retry = useCallback(() => {
     setPreview(null);
+    startCamera();
+  }, [startCamera]);
+  const needGestureRef = useRef(false);
+
+  const retry = useCallback(() => {
+    setPreview(null);
+    needGestureRef.current = false;
     startCamera();
   }, [startCamera]);
 
@@ -209,16 +223,9 @@ function KycCapturaInner() {
   const [subStep, setSubStep] = useState<SubStep>("front");
   const [errorMsg, setErrorMsg] = useState("");
   const [frontFile, setFrontFile] = useState<File | null>(null);
-  const [backFile, setBackFile] = useState<File | null>(null);
 
-  // After front is captured: auto-advance to back
-  const handleFrontCapture = (file: File) => {
-    setFrontFile(file);
-  };
-
-  const handleBackCapture = (file: File) => {
-    setBackFile(file);
-  };
+  // After front is captured: set front file
+  const handleFrontCapture = (file: File) => setFrontFile(file);
 
   const submitIdVerification = async () => {
     if (!frontFile) return;
@@ -351,31 +358,7 @@ function KycCapturaInner() {
         </div>
       )}
 
-      {/* ── Back capture ── */}
-      {subStep === "back" && (
-        <div className="space-y-4">
-          <CameraCapture
-            label="Dorso de la cédula"
-            hint="Ahora voltea tu cédula y captura el dorso."
-            facingMode="environment"
-            onCapture={handleBackCapture}
-          />
-          {backFile && (
-            <button
-              onClick={submitIdVerification}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3.5 text-sm font-bold text-white shadow-md shadow-emerald-500/30 active:scale-95"
-            >
-              Verificar documento <ChevronRight className="h-4 w-4" />
-            </button>
-          )}
-          <button
-            onClick={submitIdVerification}
-            className="w-full rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-500 hover:bg-slate-50"
-          >
-            Omitir dorso y continuar
-          </button>
-        </div>
-      )}
+      {/* Back capture removed: only front + selfie */}
 
       {/* ── ID verification in progress ── */}
       {subStep === "id_sending" && (
