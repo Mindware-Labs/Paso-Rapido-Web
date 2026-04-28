@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X, Zap } from "lucide-react";
+import { X, Zap, ChevronLeft } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -21,8 +21,8 @@ import {
   type NavGroupId,
 } from "@/config/navigation";
 
-const HEADER_OFFSET = "top-16";
-const ASIDE_H = "h-[calc(100dvh-4rem)]";
+const HEADER_OFFSET = "top-14"; // Match new header height
+const ASIDE_H = "h-[calc(100dvh-3.5rem)]";
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -31,16 +31,53 @@ function isActive(pathname: string, href: string) {
 
 function SidebarNav({
   onNavigate,
+  isCollapsed = false,
   className,
 }: {
   onNavigate?: () => void;
+  isCollapsed?: boolean;
   className?: string;
 }) {
   const pathname = usePathname() || "/";
 
+  if (isCollapsed) {
+    // Collapsed view - just icons
+    return (
+      <nav
+        className={cn("flex flex-col items-center gap-2 px-2 py-4", className)}
+        aria-label="Navegación rápida"
+      >
+        {APP_NAV.map((item) => {
+          const active = isActive(pathname, item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              className={cn(
+                "group relative flex size-10 items-center justify-center rounded-lg transition-all duration-200",
+                "hover:bg-accent",
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              title={item.label}
+            >
+              <item.Icon className="size-5" strokeWidth={1.75} />
+              {active && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-primary rounded-r-full" />
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+    );
+  }
+
+  // Expanded view - full navigation
   return (
     <nav
-      className={cn("flex flex-col gap-1 px-3 py-3", className)}
+      className={cn("flex flex-col gap-1 px-3 py-4", className)}
       aria-label="Secciones del sitio"
     >
       {GROUP_ORDER.map((group) => {
@@ -48,7 +85,7 @@ function SidebarNav({
         if (items.length === 0) return null;
         return (
           <div key={group} className="flex flex-col gap-0.5">
-            <p className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <p className="px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               {groupLabel(group)}
             </p>
             <ul className="flex flex-col gap-0.5">
@@ -60,38 +97,42 @@ function SidebarNav({
                       href={item.href}
                       onClick={onNavigate}
                       className={cn(
-                        "group flex min-h-9 items-center gap-2.5 rounded-md border-l-2 border-transparent py-1.5 pl-2 pr-2 text-sm transition-colors",
-                        "hover:border-border hover:bg-muted/50",
+                        "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200",
+                        "hover:bg-accent/50",
                         active
-                          ? "border-primary bg-primary/[0.07] font-medium text-foreground"
-                          : "text-foreground/80",
+                          ? "bg-accent font-medium text-foreground shadow-sm"
+                          : "text-foreground/70 hover:text-foreground"
                       )}
                     >
                       <span
                         className={cn(
-                          "flex size-7 shrink-0 items-center justify-center rounded-md border border-border/60 bg-card text-muted-foreground transition-colors",
-                          "group-hover:border-border group-hover:text-foreground",
-                          active && "border-primary/25 bg-primary/5 text-primary",
+                          "flex size-8 shrink-0 items-center justify-center rounded-md transition-colors",
+                          active 
+                            ? "bg-primary/10 text-primary" 
+                            : "bg-muted/50 text-muted-foreground group-hover:text-foreground"
                         )}
                         aria-hidden
                       >
-                        <item.Icon className="size-3.5" strokeWidth={1.75} />
+                        <item.Icon className="size-4" strokeWidth={1.75} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block leading-snug">{item.label}</span>
+                        <span className="block leading-tight">{item.label}</span>
                         {item.description && (
-                          <span className="line-clamp-1 text-[11px] font-normal text-muted-foreground">
+                          <span className="line-clamp-1 text-[11px] text-muted-foreground">
                             {item.description}
                           </span>
                         )}
                       </span>
+                      {active && (
+                        <ChevronLeft className="size-3 shrink-0 text-primary rotate-180" />
+                      )}
                     </Link>
                   </li>
                 );
               })}
             </ul>
             {group !== (GROUP_ORDER[GROUP_ORDER.length - 1] as NavGroupId) && (
-              <Separator className="my-2 bg-border/60" />
+              <Separator className="my-2 bg-border/40" />
             )}
           </div>
         );
@@ -100,50 +141,80 @@ function SidebarNav({
   );
 }
 
-/**
- * Navegación lateral estilo producto web (blanco, secciones, iconos en contenedor),
- * no el panel tipo app con saldo / avatar.
- */
 export function AppSidebar() {
-  const { open, closeMenu } = useSidebar();
+  const { open, isOpen, closeMenu, toggle } = useSidebar();
 
   return (
     <>
+      {/* Expanded Sidebar */}
       <aside
         className={cn(
-          "hidden w-[272px] shrink-0 flex-col border-r border-border/80 bg-card text-foreground",
+          "hidden flex-col border-r border-border/40 bg-card/95 text-foreground transition-all duration-300 ease-in-out",
+          "supports-[backdrop-filter]:bg-card/80 supports-[backdrop-filter]:backdrop-blur-md",
           "lg:sticky lg:flex lg:flex-col lg:self-start",
           HEADER_OFFSET,
           ASIDE_H,
+          isOpen ? "w-[272px]" : "w-[72px]"
         )}
         aria-label="Navegación lateral"
       >
-        <div className="shrink-0 border-b border-border/60 px-3 py-3">
-          <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-2.5 py-2">
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Zap className="size-4 fill-current" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                Navegación
-              </p>
-              <p className="truncate text-xs font-semibold text-foreground">
-                Portal Paso Rápido
-              </p>
+        {/* Header */}
+        <div className={cn(
+          "shrink-0 border-b border-border/40 transition-all duration-300",
+          isOpen ? "px-3 py-3" : "px-2 py-3"
+        )}>
+          {isOpen ? (
+            <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-muted/20 px-3 py-2">
+              <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
+                <Zap className="size-3.5 fill-current" aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Portal
+                </p>
+                <p className="truncate text-xs font-semibold text-foreground">
+                  Paso Rápido
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={toggle}
+                className="size-7 shrink-0"
+                aria-label="Colapsar sidebar"
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
             </div>
-          </div>
+          ) : (
+            <div className="flex justify-center">
+              <button
+                onClick={toggle}
+                className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
+                aria-label="Expandir sidebar"
+              >
+                <Zap className="size-4 fill-current" />
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Navigation */}
         <ScrollArea className="min-h-0 flex-1">
-          <SidebarNav />
+          <SidebarNav isCollapsed={!isOpen} />
         </ScrollArea>
-        <div className="shrink-0 border-t border-border/60 px-3 py-2">
-          <p className="px-1 text-[10px] leading-relaxed text-muted-foreground">
-            Entorno de demostración. La app móvil mantiene el acceso en carril;
-            el web prioriza documentación y autogestión.
-          </p>
-        </div>
+
+        {/* Footer */}
+        {isOpen && (
+          <div className="shrink-0 border-t border-border/40 px-4 py-3">
+            <p className="text-[10px] leading-relaxed text-muted-foreground">
+              Entorno de demostración. App móvil mantiene acceso en carril; web prioriza autogestión.
+            </p>
+          </div>
+        )}
       </aside>
 
+      {/* Mobile Sheet */}
       <Sheet
         open={open}
         onOpenChange={(next) => {
@@ -155,13 +226,13 @@ export function AppSidebar() {
           className="flex w-[min(100%-1rem,20rem)] max-w-[min(100%-1rem,20rem)] flex-col gap-0 p-0 sm:max-w-sm"
           showCloseButton={false}
         >
-          <div className="flex items-center justify-between border-b border-border/80 px-3 py-2.5">
+          <div className="flex items-center justify-between border-b border-border/80 px-4 py-3">
             <div className="min-w-0">
-              <SheetTitle className="text-left text-base font-semibold text-foreground">
+              <SheetTitle className="text-left text-base font-semibold">
                 Menú
               </SheetTitle>
               <SheetDescription className="text-left text-xs text-muted-foreground">
-                Contenido alineado con la app; diseño de panel web.
+                Portal Paso Rápido
               </SheetDescription>
             </div>
             <Button

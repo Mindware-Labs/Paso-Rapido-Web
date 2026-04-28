@@ -11,9 +11,13 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <SiteHeader />
-      <AppSidebar />
-      <main className="flex-1">{children}</main>
-      <SiteFooter />
+      <div className="flex flex-1 min-h-0">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col min-w-0 overflow-y-auto">
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+        </div>
+      </div>
     </SidebarProvider>
   );
 }

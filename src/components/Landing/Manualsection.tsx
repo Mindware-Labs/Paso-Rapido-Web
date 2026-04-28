@@ -46,7 +46,7 @@ export default function ManualSection() {
             </p>
             <div>
               <Link
-                href="/manual"
+                href="/dashboard"
                 className="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow transition hover:bg-emerald-700"
               >
                 Ver Manual

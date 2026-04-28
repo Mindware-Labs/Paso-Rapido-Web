@@ -56,17 +56,17 @@ const PRESS = [
   {
     title: "Franja horaria ampliada en corredor norte",
     kicker: "Operación",
-    href: "/noticias",
+    href: "/dashboard/noticias",
   },
   {
     title: "Saldo mínimo recomendado en TAG",
     kicker: "Aviso",
-    href: "/ayuda",
+    href: "/dashboard/ayuda",
   },
   {
     title: "Promoción: bono en recargas con tarjeta",
     kicker: "Promociones",
-    href: "/recargar",
+    href: "/dashboard/recargar",
   },
 ] as const;
 
@@ -100,7 +100,7 @@ export function HomeView() {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Link
-                  href="/peajes"
+                  href="/dashboard/peajes"
                   className={cn(
                     buttonVariants({ size: "lg" }),
                     "h-11 min-h-11 justify-center gap-2 px-6 text-base font-semibold shadow-sm",
@@ -110,7 +110,7 @@ export function HomeView() {
                   Mapa de peajes
                 </Link>
                 <Link
-                  href="/ayuda"
+                  href="/dashboard/ayuda"
                   className={cn(
                     buttonVariants({ variant: "outline", size: "lg" }),
                     "h-11 min-h-11 border-border bg-card text-base font-medium",
@@ -267,7 +267,7 @@ export function HomeView() {
             </p>
           </div>
           <Link
-            href="/noticias"
+            href="/dashboard/noticias"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
           >
             <Newspaper className="size-4" />
@@ -306,13 +306,13 @@ export function HomeView() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/recargar"
+              href="/dashboard/recargar"
               className={cn(buttonVariants(), "min-h-9 font-semibold shadow-sm")}
             >
               Recargar
             </Link>
             <Link
-              href="/historico"
+              href="/dashboard/historico"
               className={buttonVariants({ variant: "outline" })}
             >
               Historial

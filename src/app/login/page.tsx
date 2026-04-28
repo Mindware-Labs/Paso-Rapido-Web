@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isLoggedIn) router.replace("/Dashboard");
+    if (isLoggedIn) router.replace("/dashboard");
   }, [isLoggedIn, router]);
 
   // Countdown timer for rate-limit lock
@@ -77,7 +77,7 @@ export default function LoginPage() {
       if (res.remainingSeconds) setLockSeconds(res.remainingSeconds);
       setError(res.message);
     } else {
-      router.replace("/Dashboard");
+      router.replace("/dashboard");
     }
   };
 

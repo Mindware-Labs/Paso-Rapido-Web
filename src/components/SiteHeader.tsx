@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Zap } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeft, Zap, Bell, User } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { useSidebar } from "@/components/sidebar/SidebarContext";
 import { HEADER_QUICK } from "@/config/navigation";
@@ -10,51 +10,84 @@ import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const pathname = usePathname() || "/";
-  const { openMenu } = useSidebar();
+  const { openMenu, isOpen, toggle } = useSidebar();
+
+  const USER = {
+  name: "Carlos Martínez",
+  plan: "Cuenta Personal",
+  tag: "TAG-4892",
+  tagActive: true,
+  avatar: "CM",
+};
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 h-16 shrink-0 border-b border-border/90 bg-card/95 text-foreground",
-        "supports-[backdrop-filter]:bg-card/80 supports-[backdrop-filter]:backdrop-blur-md",
+        "sticky top-0 z-50 h-14 shrink-0 border-b border-border/40 bg-background/95",
+        "supports-[backdrop-filter]:bg-background/80 supports-[backdrop-filter]:backdrop-blur-md",
+        "transition-all duration-300"
       )}
     >
-      <div className="flex h-full min-w-0 items-center gap-2 px-3 sm:px-4 lg:gap-3 lg:px-5">
+      <div className="flex h-full items-center gap-3 px-4">
+        {/* Mobile menu trigger */}
         <button
           type="button"
           onClick={openMenu}
           className={cn(
-            "inline-flex size-9 shrink-0 items-center justify-center rounded-md",
-            "text-foreground/90 transition hover:bg-muted",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring/50",
-            "lg:hidden",
+            "inline-flex size-9 shrink-0 items-center justify-center rounded-lg",
+            "text-muted-foreground hover:bg-accent hover:text-foreground",
+            "transition-colors duration-200",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
+            "lg:hidden"
           )}
-          aria-label="Abrir menú de navegación"
+          aria-label="Abrir menú"
         >
           <Menu className="size-5" />
         </button>
 
+        {/* Desktop sidebar toggle */}
+        <button
+          type="button"
+          onClick={toggle}
+          className={cn(
+            "hidden size-9 shrink-0 items-center justify-center rounded-lg",
+            "text-muted-foreground hover:bg-accent hover:text-foreground",
+            "transition-all duration-200",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
+            "lg:inline-flex"
+          )}
+          aria-label={isOpen ? "Colapsar sidebar" : "Expandir sidebar"}
+        >
+          {isOpen ? (
+            <PanelLeftClose className="size-4" />
+          ) : (
+            <PanelLeft className="size-4" />
+          )}
+        </button>
+
+        {/* Brand - minimal */}
         <Link
           href="/"
-          className="flex min-w-0 items-center gap-2.5 rounded-md py-1 outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/40"
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-1 py-1",
+            "hover:opacity-80 transition-opacity",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+          )}
         >
-          <span
-            className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm"
-            aria-hidden
-          >
-            <Zap className="size-4 fill-current" />
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary shadow-sm">
+            <Zap className="size-3.5 fill-primary-foreground text-primary-foreground" />
           </span>
-          <span className="min-w-0 text-left">
-            <span className="block text-sm font-semibold tracking-tight sm:text-base">
-              Paso Rápido
-            </span>
-            <span className="hidden text-[10px] font-medium text-muted-foreground sm:block">
-              Portal institucional
-            </span>
+          <span className="hidden text-sm font-semibold tracking-tight sm:block">
+            Paso Rápido
           </span>
         </Link>
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-2.5">
+        {/* Center spacer */}
+        <div className="flex-1" />
+
+        {/* Right actions */}
+        <div className="flex items-center gap-1">
+          {/* Quick action buttons */}
           {HEADER_QUICK.map((q) => {
             const active =
               q.href === "/"
@@ -65,18 +98,52 @@ export function SiteHeader() {
                 key={q.href}
                 href={q.href}
                 className={cn(
-                  q.href === "/recargar"
-                    ? buttonVariants({ size: "sm" })
-                    : buttonVariants({ variant: "outline", size: "sm" }),
-                  "hidden min-h-8 sm:inline-flex",
-                  q.href === "/recargar" && "font-semibold shadow-sm",
-                  active && q.href !== "/recargar" && "border-primary/30 bg-primary/5",
+                  buttonVariants({ 
+                    variant: q.href === "/recargar" ? "default" : "ghost", 
+                    size: "sm" 
+                  }),
+                  "hidden h-8 md:inline-flex text-xs font-medium",
+                  q.href === "/recargar" && "shadow-sm px-4",
+                  active && q.href !== "/recargar" && "bg-accent text-accent-foreground"
                 )}
               >
                 {q.label}
               </Link>
             );
           })}
+
+          {/* Separator */}
+          <div className="hidden h-6 w-px bg-border/60 md:block" />
+
+          {/* Notifications */}
+          <button
+            type="button"
+            className={cn(
+              "relative inline-flex size-8 items-center justify-center rounded-lg",
+              "text-muted-foreground hover:bg-accent hover:text-foreground",
+              "transition-colors duration-200",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+            )}
+            aria-label="Notificaciones"
+          >
+            <Bell className="size-4" />
+            <span className="absolute -right-0.5 -top-0.5 flex size-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
+          </button>
+
+          {/* User menu */}
+             <div className="flex items-center gap-2">
+           
+            <Link
+              href="/dashboard/cuenta"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-700 shadow-sm transition hover:border-gray-300"
+              aria-label="Mi perfil"
+            >
+              {USER.avatar}
+            </Link>
+          </div>
         </div>
       </div>
     </header>

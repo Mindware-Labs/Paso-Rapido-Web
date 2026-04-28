@@ -2,71 +2,172 @@
 
 import Link from "next/link";
 import {
+  ArrowRight,
+  ArrowUpRight,
+  Bell,
   CarFront,
   ChevronRight,
+  CircleDollarSign,
+  CreditCard,
   History,
-  Info,
-  ListOrdered,
+  MapPin,
   MapPinned,
   Megaphone,
+  RefreshCw,
+  ShieldCheck,
   ShieldAlert,
   TrendingDown,
   TrendingUp,
+  Wallet,
   Zap,
+  Info,
+  Clock,
+  Tag,
+  Star,
 } from "lucide-react";
 
-const MOCK_BAL = "RD$ 1,250.00";
-const MOCK_LAST_RECHARGE = "RD$ 500.00";
-const MOCK_LAST_PASS = "RD$ -100.00";
+// ─── Mock data ────────────────────────────────────────────────────────────────
 
-const QUICK = [
+const USER = {
+  name: "Carlos Martínez",
+  plan: "Cuenta Personal",
+  tag: "TAG-4892",
+  tagActive: true,
+  avatar: "CM",
+};
+
+const BALANCE = {
+  available: "RD$ 500.00",
+  reserved: "RD$ 100.00",
+  lastRecharge: { amount: "RD$ 500.00", date: "Ayer, 16:10", method: "CardNet" },
+  lastPass: { amount: "RD$ -100.00", date: "Hoy, 08:42", toll: "Las Américas" },
+};
+
+const STATS = [
   {
-    href: "/vehiculos",
-    label: "Vehículos",
-    blurb: "Placas, TAG y estado; mismo flujo que en app.",
+    id: "s1",
+    label: "Pases este mes",
+    value: "14",
+    sub: "vs 11 mes anterior",
+    trend: "up",
+    Icon: Tag,
+    color: "emerald",
+  },
+  {
+    id: "s2",
+    label: "Gasto en peajes",
+    value: "RD$ 1,400",
+    sub: "promedio RD$ 100/pase",
+    trend: "neutral",
+    Icon: CircleDollarSign,
+    color: "blue",
+  },
+  {
+    id: "s3",
+    label: "Vehículos activos",
+    value: "2",
+    sub: "TAG vinculados",
+    trend: "neutral",
     Icon: CarFront,
+    color: "violet",
   },
   {
-    href: "/historico",
-    label: "Movimientos",
-    blurb: "Cargos y recargas; misma data que en app, lista extendida en web.",
-    Icon: ListOrdered,
+    id: "s4",
+    label: "Próxima recarga",
+    value: "~5 pases",
+    sub: "con saldo actual",
+    trend: "down",
+    Icon: Wallet,
+    color: "amber",
   },
-  {
-    href: "/peajes",
-    label: "Peajes",
-    blurb: "Mapa, tarifas y consejos de conducción por corredor.",
-    Icon: MapPinned,
-  },
-  {
-    href: "/historico",
-    label: "Historial",
-    blurb: "Transacciones y pases; en web, vista de lista con filtros (maqueta).",
-    Icon: History,
-  },
-] as const;
+];
 
 const ACTIVITY = [
   {
-    id: "1",
+    id: "a1",
     title: "Peaje Las Américas",
-    detail: "Hoy · 08:42",
+    sub: "Hoy · 08:42 · Carril 3",
     amount: "RD$ -100.00",
     out: true,
+    tag: "TAG-4892",
   },
   {
-    id: "2",
-    title: "Recarga Superpagos",
-    detail: "Ayer · 16:10",
+    id: "a2",
+    title: "Recarga vía CardNet",
+    sub: "Ayer · 16:10 · Visa ••4892",
     amount: "RD$ +500.00",
     out: false,
+    tag: null,
   },
   {
-    id: "3",
+    id: "a3",
     title: "Peaje La Victoria",
-    detail: "Lun · 07:15",
+    sub: "Lun · 07:15 · Carril 1",
     amount: "RD$ -100.00",
     out: true,
+    tag: "TAG-4892",
+  },
+  {
+    id: "a4",
+    title: "Peaje Duarte Km 9",
+    sub: "Dom · 18:30 · Carril 2",
+    amount: "RD$ -100.00",
+    out: true,
+    tag: "TAG-4892",
+  },
+  {
+    id: "a5",
+    title: "Recarga vía Superpagos",
+    sub: "Vie · 10:00",
+    amount: "RD$ +300.00",
+    out: false,
+    tag: null,
+  },
+];
+
+const QUICK_ACTIONS = [
+  {
+    href: "/dashboard/recargar",
+    label: "Recargar saldo",
+    desc: "Agrega saldo con tarjeta o en puntos de pago.",
+    Icon: Wallet,
+    accent: "emerald",
+    primary: true,
+  },
+
+  {
+    href: "/dashboard/historico",
+    label: "Historial",
+    desc: "Consulta todos tus movimientos.",
+    Icon: History,
+    accent: "violet",
+    primary: false,
+  },
+  {
+    href: "/dashboard/peajes",
+    label: "Red de peajes",
+    desc: "Mapa interactivo, tarifas y corredores.",
+    Icon: MapPinned,
+    accent: "amber",
+    primary: false,
+  },
+];
+
+const TOLLS_NEARBY = [
+  { id: "t1", name: "Peaje Las Américas", corridor: "Autopista Las Américas", fare: "RD$ 100", status: "open" },
+  { id: "t2", name: "Peaje La Victoria", corridor: "Autopista Duarte", fare: "RD$ 100", status: "open" },
+  { id: "t3", name: "Peaje Duarte Km 9", corridor: "Autopista Duarte", fare: "RD$ 100", status: "open" },
+  { id: "t4", name: "Peaje Hatillo", corridor: "Autopista del Noreste", fare: "RD$ 150", status: "maintenance" },
+];
+
+const ALERTS = [
+  {
+    id: "al1",
+    type: "warning",
+    Icon: ShieldAlert,
+    title: "Saldo bajo",
+    body: "Tu saldo cubre aproximadamente 5 pases. Recarga para evitar inconvenientes.",
+    cta: { label: "Recargar ahora", href: "/dashboard/recargar" },
   },
 ];
 
@@ -74,279 +175,628 @@ const NEWS = [
   {
     id: "n1",
     kicker: "Infraestructura",
-    title: "Horario extendido en peajes del corredor norte",
+    title: "Horario extendido en peajes del corredor norte a partir de mayo",
+    date: "27 abr 2026",
     Icon: Info,
-    accent: "#1D8C57",
+    accent: "emerald",
   },
   {
     id: "n2",
     kicker: "Aviso importante",
-    title: "Mantén saldo mínimo de RD$ 100.00 en tu TAG",
-    Icon: ShieldAlert,
-    accent: "#D97706",
+    title: "Mantén saldo mínimo de RD$ 100.00 en tu TAG para pasos automáticos",
+    date: "25 abr 2026",
+    Icon: ShieldCheck,
+    accent: "amber",
   },
   {
     id: "n3",
     kicker: "Promoción",
-    title: "Recarga con tarjeta: 5% de bono hasta el 30 de mayo",
+    title: "Recarga con tarjeta este mes y obtén 5% de bono hasta el 30 de mayo",
+    date: "20 abr 2026",
     Icon: Megaphone,
-    accent: "#2563EB",
+    accent: "blue",
   },
 ];
 
-export default function Home() {
+// ─── Color map helpers ─────────────────────────────────────────────────────────
+
+const STAT_COLORS: Record<string, { bg: string; icon: string; border: string }> = {
+  emerald: {
+    bg: "bg-emerald-50",
+    icon: "text-emerald-600",
+    border: "border-emerald-100",
+  },
+  blue: {
+    bg: "bg-blue-50",
+    icon: "text-blue-600",
+    border: "border-blue-100",
+  },
+  violet: {
+    bg: "bg-violet-50",
+    icon: "text-violet-600",
+    border: "border-violet-100",
+  },
+  amber: {
+    bg: "bg-amber-50",
+    icon: "text-amber-600",
+    border: "border-amber-100",
+  },
+};
+
+const ACTION_COLORS: Record<string, { bg: string; icon: string; hover: string; ring: string }> = {
+  emerald: {
+    bg: "bg-emerald-600",
+    icon: "text-white",
+    hover: "hover:bg-emerald-700",
+    ring: "ring-emerald-600/20",
+  },
+  blue: {
+    bg: "bg-blue-50",
+    icon: "text-blue-600",
+    hover: "hover:bg-blue-100",
+    ring: "ring-blue-600/10",
+  },
+  violet: {
+    bg: "bg-violet-50",
+    icon: "text-violet-600",
+    hover: "hover:bg-violet-100",
+    ring: "ring-violet-600/10",
+  },
+  amber: {
+    bg: "bg-amber-50",
+    icon: "text-amber-600",
+    hover: "hover:bg-amber-100",
+    ring: "ring-amber-600/10",
+  },
+};
+
+const NEWS_ACCENT: Record<string, { text: string; bg: string }> = {
+  emerald: { text: "text-emerald-700", bg: "bg-emerald-50" },
+  amber: { text: "text-amber-700", bg: "bg-amber-50" },
+  blue: { text: "text-blue-700", bg: "bg-blue-50" },
+};
+
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
+function SectionHeader({
+  title,
+  href,
+  hrefLabel = "Ver todo",
+}: {
+  title: string;
+  href?: string;
+  hrefLabel?: string;
+}) {
   return (
-    <>
-    
-    <div className="pr-grain min-h-0">
-      <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6 sm:py-10">
-        <section
-          className="pr-reveal relative overflow-hidden rounded-2xl bg-pr-hero p-4 text-pr-on-hero shadow-xl shadow-pr-hero-glow sm:p-6"
-          aria-labelledby="resumen-cuenta"
+    <div className="flex items-center justify-between gap-2">
+      <h2 className="text-base font-bold text-gray-900">{title}</h2>
+      {href && (
+        <Link
+          href={href}
+          className="flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline"
         >
-          <div
-            className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-white/10"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -bottom-10 -left-10 h-36 w-36 rounded-full bg-white/5"
-            aria-hidden
-          />
-          <div className="relative z-[1] flex flex-col gap-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h1
-                id="resumen-cuenta"
-                className="text-base font-extrabold sm:text-lg"
-              >
-                Hola, <span className="text-white">invitado</span>
-              </h1>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold">
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-emerald-300"
-                  aria-hidden
-                />
-                TAG activo
-              </span>
-            </div>
+          {hrefLabel}
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      )}
+    </div>
+  );
+}
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-4">
-              <div className="min-w-0 flex-1 space-y-1">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">
-                  Saldo disponible
-                </p>
-                <p className="text-3xl font-extrabold leading-none tracking-tight sm:text-4xl">
-                  {MOCK_BAL}
-                </p>
-                <p className="mt-1 max-w-md text-sm leading-snug text-white/80">
-                  En la app, este bloque es el mismo; en web añadimos
-                  explicación: aquí verás un resumen al iniciar sesión
-                  (próximamente).
-                </p>
-              </div>
-              <div
-                className="hidden w-px shrink-0 bg-white/20 sm:block"
-                aria-hidden
-              />
-              <div className="grid flex-1 gap-3 sm:min-w-[200px]">
-                <div className="flex gap-2">
-                  <TrendingUp
-                    className="mt-0.5 h-3.5 w-3.5 shrink-0 text-white/65"
-                    strokeWidth={2.5}
-                  />
-                  <div>
-                    <p className="text-[9px] font-semibold uppercase tracking-wide text-white/60">
-                      Recarga
-                    </p>
-                    <p className="text-sm font-bold">{MOCK_LAST_RECHARGE}</p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <TrendingDown
-                    className="mt-0.5 h-3.5 w-3.5 shrink-0 text-white/65"
-                    strokeWidth={2.5}
-                  />
-                  <div>
-                    <p className="text-[9px] font-semibold uppercase tracking-wide text-white/60">
-                      Último pase
-                    </p>
-                    <p className="text-sm font-bold">{MOCK_LAST_PASS}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-1 rounded-2xl border border-white/20 bg-black/10 px-3 py-3 sm:flex sm:items-center sm:justify-between sm:px-4">
-              <p className="text-xs font-bold text-white/90">
-                En la app: desliza para recargar. En web, el CTA directo:
-              </p>
-              <Link
-                href="/recargar"
-                className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-white px-4 py-2 text-sm font-extrabold text-pr-hero shadow sm:mt-0"
-              >
-                Ir a recargar
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section
-          className="pr-reveal pr-reveal-delay-1 space-y-4"
-          aria-labelledby="accesos"
+function StatCard({
+  label,
+  value,
+  sub,
+  trend,
+  Icon,
+  color,
+}: (typeof STATS)[0]) {
+  const c = STAT_COLORS[color];
+  return (
+    <div
+      className={`flex flex-col gap-3 rounded-2xl border ${c.border} ${c.bg} p-4`}
+    >
+      <div className="flex items-center justify-between">
+        <span
+          className={`flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm`}
         >
-          <div className="flex items-end justify-between gap-2 px-0.5">
-            <h2
-              id="accesos"
-              className="text-lg font-extrabold tracking-tight text-pr-foreground"
-            >
-              Accesos rápidos
-            </h2>
-            <Zap className="hidden h-5 w-5 text-pr-hero/30 sm:block" />
-          </div>
-          <p className="max-w-2xl text-sm text-pr-foreground/80">
-            Misma estructura que en la app (cuatro acciones), con texto de
-            apoyo que solo tiene sentido en pantallas grandes.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {QUICK.map((a) => (
-              <Link
-                key={a.label}
-                href={a.href}
-                className="group flex flex-col gap-2 rounded-2xl border border-pr-border bg-pr-card p-4 shadow-sm transition hover:border-pr-hero/40 hover:shadow-md"
-              >
-                <span
-                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-pr-secondary text-pr-hero"
-                  style={{ color: "var(--pr-hero)" }}
-                >
-                  <a.Icon className="h-6 w-6" strokeWidth={1.5} />
-                </span>
-                <span className="text-sm font-extrabold text-pr-foreground">
-                  {a.label}
-                </span>
-                <span className="text-xs leading-relaxed text-pr-foreground/75">
-                  {a.blurb}
-                </span>
-                <span className="pt-1 text-xs font-bold text-pr-hero group-hover:underline">
-                  Abrir
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="actividad"
-          className="pr-reveal pr-reveal-delay-2 scroll-mt-24 space-y-4"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2 px-0.5">
-            <h2 className="text-lg font-extrabold text-pr-foreground">
-              Actividad reciente
-            </h2>
-            <Link
-              className="text-sm font-bold text-pr-hero hover:underline"
-              href="/#actividad"
-            >
-              Ver todo
-            </Link>
-          </div>
-          <div className="overflow-hidden rounded-2xl border border-pr-border bg-pr-card">
-            {ACTIVITY.map((item, i) => (
-              <div key={item.id}>
-                <div className="flex items-center gap-3 px-4 py-3.5 sm:px-5">
-                  <span
-                    className={`flex h-9 w-9 items-center justify-center rounded-xl ${
-                      item.out ? "bg-red-500/10" : "bg-pr-secondary"
-                    }`}
-                  >
-                    {item.out ? (
-                      <TrendingDown
-                        className="h-4 w-4 text-pr-destructive"
-                        strokeWidth={2.5}
-                      />
-                    ) : (
-                      <TrendingUp
-                        className="h-4 w-4 text-pr-hero"
-                        strokeWidth={2.5}
-                      />
-                    )}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-pr-foreground">
-                      {item.title}
-                    </p>
-                    <p className="text-xs font-semibold text-pr-muted-fg">
-                      {item.detail}
-                    </p>
-                  </div>
-                  <p
-                    className={`text-sm font-extrabold ${
-                      item.out ? "text-pr-destructive" : "text-pr-hero"
-                    }`}
-                  >
-                    {item.amount}
-                  </p>
-                </div>
-                {i < ACTIVITY.length - 1 && (
-                  <div className="h-px bg-pr-border/70 ml-[3.25rem] sm:ml-16" />
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="novedades"
-          className="pr-reveal pr-reveal-delay-3 scroll-mt-24 space-y-4"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2 px-0.5">
-            <h2 className="text-lg font-extrabold text-pr-foreground">
-              Novedades
-            </h2>
-            <span className="text-sm text-pr-muted-fg">
-              Blog / avisos ampliado vs. móvil
-            </span>
-          </div>
-          <ul className="space-y-2">
-            {NEWS.map((n) => (
-              <li
-                key={n.id}
-                className="flex items-start gap-3 rounded-2xl border border-pr-border bg-pr-card p-4"
-              >
-                <span
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: `${n.accent}18` }}
-                >
-                  <n.Icon
-                    className="h-6 w-6"
-                    style={{ color: n.accent }}
-                    strokeWidth={1.75}
-                  />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p
-                    className="text-[10px] font-extrabold uppercase tracking-wide"
-                    style={{ color: n.accent }}
-                  >
-                    {n.kicker}
-                  </p>
-                  <p className="text-sm font-bold leading-snug text-pr-foreground">
-                    {n.title}
-                  </p>
-                  <p className="mt-1 text-xs text-pr-foreground/70">
-                    Toca la app para notificaciones push; aquí, lectura
-                    relajada y enlace a ayuda.
-                  </p>
-                </div>
-                <ChevronRight
-                  className="mt-1 h-4 w-4 shrink-0 text-pr-muted-fg"
-                  aria-hidden
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
+          <Icon className={`h-4 w-4 ${c.icon}`} strokeWidth={1.75} />
+        </span>
+        {trend === "up" && (
+          <TrendingUp className="h-4 w-4 text-emerald-500" strokeWidth={2} />
+        )}
+        {trend === "down" && (
+          <TrendingDown className="h-4 w-4 text-amber-500" strokeWidth={2} />
+        )}
+      </div>
+      <div>
+        <p className="text-xl font-extrabold tracking-tight text-gray-900">
+          {value}
+        </p>
+        <p className="text-xs font-semibold text-gray-500">{label}</p>
+        <p className="mt-0.5 text-[11px] text-gray-400">{sub}</p>
       </div>
     </div>
-    </>
+  );
+}
+
+function ActivityRow({
+  item,
+  last,
+}: {
+  item: (typeof ACTIVITY)[0];
+  last: boolean;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-3 px-4 py-3.5">
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+            item.out ? "bg-red-50" : "bg-emerald-50"
+          }`}
+        >
+          {item.out ? (
+            <TrendingDown className="h-4 w-4 text-red-500" strokeWidth={2.5} />
+          ) : (
+            <TrendingUp className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
+          )}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+          <p className="text-xs text-gray-400">{item.sub}</p>
+        </div>
+        <div className="text-right">
+          <p
+            className={`text-sm font-bold ${
+              item.out ? "text-red-500" : "text-emerald-600"
+            }`}
+          >
+            {item.amount}
+          </p>
+          {item.tag && (
+            <p className="text-[10px] font-mono text-gray-400">{item.tag}</p>
+          )}
+        </div>
+      </div>
+      {!last && <div className="mx-4 h-px bg-gray-100" />}
+    </div>
+  );
+}
+
+function TollRow({
+  toll,
+  last,
+}: {
+  toll: (typeof TOLLS_NEARBY)[0];
+  last: boolean;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-3 px-4 py-3.5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-50">
+          <MapPin className="h-4 w-4 text-gray-500" strokeWidth={1.75} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-gray-900">{toll.name}</p>
+          <p className="text-xs text-gray-400">{toll.corridor}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-bold text-gray-900">{toll.fare}</p>
+          <span
+            className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+              toll.status === "open"
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-amber-50 text-amber-700"
+            }`}
+          >
+            {toll.status === "open" ? "Operativo" : "Mantenimiento"}
+          </span>
+        </div>
+      </div>
+      {!last && <div className="mx-4 h-px bg-gray-100" />}
+    </div>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
+export default function DashboardPage() {
+  return (
+    <div className="min-h-full bg-gray-50/60">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+
+        {/* ── Greeting row ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+              Bienvenido de nuevo
+            </p>
+            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+              {USER.name}
+            </h1>
+          </div>
+
+        </div>
+
+        {/* ── Alert banners ── */}
+        {ALERTS.map((al) => (
+          <div
+            key={al.id}
+            className="flex flex-wrap items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5 sm:items-center"
+          >
+            <al.Icon className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 sm:mt-0" strokeWidth={2} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-amber-900">{al.title}</p>
+              <p className="text-xs text-amber-700">{al.body}</p>
+            </div>
+            <Link
+              href={al.cta.href}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-amber-700"
+            >
+              {al.cta.label}
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        ))}
+
+        {/* ── Balance hero card ── */}
+        <section
+          aria-labelledby="balance-heading"
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-600 to-emerald-700 p-5 text-white shadow-xl shadow-emerald-600/20 sm:p-7"
+        >
+          {/* Decorative circles */}
+          <div
+            className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-white/5"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute right-1/3 top-0 h-32 w-32 rounded-full bg-white/5"
+            aria-hidden
+          />
+
+          <div className="relative z-10">
+            {/* Top row */}
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20">
+                  <Zap className="h-4 w-4 fill-white text-white" />
+                </span>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70">
+                    {USER.plan}
+                  </p>
+                  <p className="text-xs font-bold text-white/90">{USER.tag}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5">
+                <span
+                  className="h-2 w-2 rounded-full bg-emerald-300"
+                  aria-hidden
+                />
+                <span className="text-xs font-bold text-white">TAG activo</span>
+              </div>
+            </div>
+
+            {/* Balance row */}
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
+                  Saldo disponible
+                </p>
+                <p
+                  id="balance-heading"
+                  className="mt-1 text-4xl font-extrabold tracking-tight sm:text-5xl"
+                >
+                  {BALANCE.available}
+                </p>
+                <p className="mt-1 text-xs text-white/60">
+                  Reservado: {BALANCE.reserved}
+                </p>
+              </div>
+
+              {/* Last movements */}
+              <div className="flex flex-wrap gap-4 sm:gap-6">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
+                    <TrendingUp className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+                  </span>
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-white/60">
+                      Última recarga
+                    </p>
+                    <p className="text-sm font-bold">{BALANCE.lastRecharge.amount}</p>
+                    <p className="text-[10px] text-white/50">{BALANCE.lastRecharge.date}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
+                    <TrendingDown className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+                  </span>
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-white/60">
+                      Último pase
+                    </p>
+                    <p className="text-sm font-bold">{BALANCE.lastPass.amount}</p>
+                    <p className="text-[10px] text-white/50">{BALANCE.lastPass.toll}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA strip */}
+            <div className="mt-5 flex flex-wrap gap-2 border-t border-white/20 pt-5">
+              <Link
+                href="/dashboard/recargar"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-extrabold text-emerald-700 shadow-sm transition hover:bg-gray-50 active:scale-95"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Recargar saldo
+              </Link>
+              <Link
+                href="/dashboard/historico"
+                className="inline-flex items-center gap-2 rounded-xl bg-white/15 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-white/25"
+              >
+                <History className="h-4 w-4" />
+                Ver historial
+              </Link>
+            </div>
+          </div>
+        </section>
+        
+        {/* ── Quick actions ── */}
+        <section aria-labelledby="quick-heading">
+          <div className="mb-4">
+            <SectionHeader title="Accesos rápidos" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {QUICK_ACTIONS.map((a) => {
+              const c = ACTION_COLORS[a.accent];
+              return (
+                <Link
+                  key={a.href}
+                  href={a.href}
+                  className={`group relative flex flex-col gap-3 overflow-hidden rounded-2xl p-4 shadow-sm ring-1 transition hover:-translate-y-0.5 hover:shadow-md ${
+                    a.primary
+                      ? `${c.bg} ${c.hover} ${c.ring}`
+                      : `border border-gray-100 bg-white hover:border-gray-200 ${c.ring}`
+                  }`}
+                >
+                  <span
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                      a.primary ? "bg-white/20" : c.bg
+                    }`}
+                  >
+                    <a.Icon
+                      className={`h-5 w-5 ${a.primary ? "text-white" : c.icon}`}
+                      strokeWidth={1.75}
+                    />
+                  </span>
+                  <div>
+                    <p
+                      className={`text-sm font-bold ${
+                        a.primary ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      {a.label}
+                    </p>
+                    <p
+                      className={`mt-0.5 text-[11px] leading-snug ${
+                        a.primary ? "text-white/75" : "text-gray-400"
+                      }`}
+                    >
+                      {a.desc}
+                    </p>
+                  </div>
+                  <ArrowUpRight
+                    className={`absolute right-3 top-3 h-4 w-4 opacity-0 transition group-hover:opacity-100 ${
+                      a.primary ? "text-white/80" : "text-gray-400"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── Stats row ── */}
+        <section aria-labelledby="stats-heading">
+        <div className="mb-4">
+            <SectionHeader title="Resumen del mes" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {STATS.map((s) => (
+              <StatCard key={s.id} {...s} />
+            ))}
+          </div>
+        </section>
+
+
+        {/* ── Two-column row: Activity + Tolls ── */}
+        <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-start">
+
+          {/* Activity */}
+          <section aria-labelledby="activity-heading" className="min-w-0">
+            <div className="mb-4">
+              <SectionHeader
+                title="Actividad reciente"
+                href="/dashboard/historico"
+              />
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              {ACTIVITY.map((item, i) => (
+                <ActivityRow
+                  key={item.id}
+                  item={item}
+                  last={i === ACTIVITY.length - 1}
+                />
+              ))}
+              <div className="border-t border-gray-100 px-4 py-3">
+                <Link
+                  href="/dashboard/historico"
+                  className="flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                >
+                  Ver todos los movimientos
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* Toll network */}
+          <section
+            aria-labelledby="tolls-heading"
+            className="w-full lg:w-[320px] lg:shrink-0"
+          >
+            <div className="mb-4">
+              <SectionHeader title="Red de peajes" href="/dashboard/peajes" />
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+              {/* Mini map placeholder */}
+              <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                <div className="absolute inset-0 opacity-10">
+                  {[...Array(8)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute border border-gray-400"
+                      style={{
+                        left: `${(i % 4) * 25}%`,
+                        top: `${Math.floor(i / 4) * 50}%`,
+                        width: "25%",
+                        height: "50%",
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="z-10 flex flex-col items-center gap-1">
+                  <MapPinned className="h-7 w-7 text-emerald-600" strokeWidth={1.5} />
+                  <span className="text-xs font-semibold text-gray-500">
+                    Mapa de corredores
+                  </span>
+                </div>
+                <Link
+                  href="/dashboard/peajes"
+                  className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-[10px] font-bold text-gray-700 shadow-sm hover:bg-gray-50"
+                >
+                  Abrir mapa
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              </div>
+              {TOLLS_NEARBY.map((t, i) => (
+                <TollRow
+                  key={t.id}
+                  toll={t}
+                  last={i === TOLLS_NEARBY.length - 1}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+
+    
+        {/* ── News ── */}
+        <section aria-labelledby="news-heading">
+          <div className="mb-4">
+            <SectionHeader title="Novedades" href="/dashboard/noticias" />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {NEWS.map((n) => {
+              const c = NEWS_ACCENT[n.accent];
+              return (
+                <Link
+                  key={n.id}
+                  href="/dashboard/noticias"
+                  className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-gray-200 hover:shadow-md"
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${c.bg}`}
+                    >
+                      <n.Icon className={`h-5 w-5 ${c.text}`} strokeWidth={1.75} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-[10px] font-extrabold uppercase tracking-wide ${c.text}`}>
+                        {n.kicker}
+                      </p>
+                      <p className="mt-0.5 text-sm font-semibold leading-snug text-gray-900">
+                        {n.title}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-[10px] text-gray-400">
+                      <Clock className="h-3 w-3" />
+                      {n.date}
+                    </div>
+                    <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100">
+                      Leer
+                      <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── Help & Support strip ── */}
+        <section aria-labelledby="support-heading">
+          <div className="mb-4">
+            <h2 id="support-heading" className="text-base font-bold text-gray-900">
+              ¿Necesitas ayuda?
+            </h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              {
+                href: "/dashboard/ayuda",
+                label: "Centro de ayuda",
+                desc: "Preguntas frecuentes y guías.",
+                Icon: Star,
+                bg: "bg-blue-50",
+                text: "text-blue-600",
+              },
+              {
+                href: "/dashboard/asistente-vial",
+                label: "Asistencia vial",
+                desc: "Incidentes y rutas alternativas.",
+                Icon: MapPin,
+                bg: "bg-violet-50",
+                text: "text-violet-600",
+              },
+              {
+                href: "/dashboard/reclamaciones",
+                label: "Reclamaciones",
+                desc: "Reporta cobros incorrectos.",
+                Icon: ShieldAlert,
+                bg: "bg-red-50",
+                text: "text-red-600",
+              },
+            ].map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-gray-200 hover:shadow-md"
+              >
+                <span
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${s.bg}`}
+                >
+                  <s.Icon className={`h-5 w-5 ${s.text}`} strokeWidth={1.75} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-gray-900">{s.label}</p>
+                  <p className="text-xs text-gray-400">{s.desc}</p>
+                </div>
+                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-gray-300" />
+              </Link>
+            ))}
+          </div>
+        </section>
+
+      </div>
+    </div>
   );
 }

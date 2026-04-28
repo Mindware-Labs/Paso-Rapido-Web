@@ -19,7 +19,7 @@ export default function HeroSection() {
           </p>
           <div>
             <Link
-              href="/Dashboard"
+              href="/dashboard"
               className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-emerald-700 active:scale-95"
             >
               Recargar Balance

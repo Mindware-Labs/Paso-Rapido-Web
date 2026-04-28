@@ -2,24 +2,24 @@ import Link from "next/link";
 import { Zap } from "lucide-react";
 
 const producto = [
-  { href: "/peajes", label: "Mapa y tarifas" },
-  { href: "/vehiculos", label: "Vehículos" },
-  { href: "/recargar", label: "Recargas" },
-  { href: "/historico", label: "Historial" },
+  { href: "/dashboard/peajes", label: "Mapa y tarifas" },
+  { href: "/dashboard/vehiculos", label: "Vehículos" },
+  { href: "/dashboard/recargar", label: "Recargas" },
+  { href: "/dashboard/historico", label: "Historial" },
 ] as const;
 
 const clientes = [
-  { href: "/cuenta", label: "Mi cuenta" },
-  { href: "/metodos-pago", label: "Métodos de pago" },
-  { href: "/vinculados", label: "Vinculados" },
-  { href: "/contrasena", label: "Seguridad" },
+  { href: "/dashboard/cuenta", label: "Mi cuenta" },
+  { href: "/dashboard/metodos-pago", label: "Métodos de pago" },
+  { href: "/dashboard/vinculados", label: "Vinculados" },
+  { href: "/dashboard/contrasena", label: "Seguridad" },
 ] as const;
 
 const atencion = [
-  { href: "/ayuda", label: "Centro de ayuda" },
-  { href: "/asistente-vial", label: "Asistencia vial" },
-  { href: "/noticias", label: "Noticias" },
-  { href: "/reclamaciones", label: "Reclamaciones" },
+  { href: "/dashboard/ayuda", label: "Centro de ayuda" },
+  { href: "/dashboard/asistente-vial", label: "Asistencia vial" },
+  { href: "/dashboard/noticias", label: "Noticias" },
+  { href: "/dashboard/reclamaciones", label: "Reclamaciones" },
 ] as const;
 
 const linkClass =
@@ -92,8 +92,7 @@ export function SiteFooter() {
           </div>
         </div>
         <p className="pt-8 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Paso Rápido. Demostración — sin
-          conexión a producción.
+          © {new Date().getFullYear()} Paso Rápido. Todos los derechos reservados.
         </p>
       </div>
     </footer>

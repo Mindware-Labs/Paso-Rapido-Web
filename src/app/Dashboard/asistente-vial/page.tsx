@@ -9,11 +9,11 @@ export default function Page() {
     >
       <p className="text-sm text-pr-foreground/80">
         Mientras tanto: revisa la sección{" "}
-        <Link className="font-bold text-pr-hero hover:underline" href="/ayuda">
+        <Link className="font-bold text-pr-hero hover:underline" href="/dashboard/ayuda">
           Ayuda
         </Link>{" "}
         y el{" "}
-        <Link className="font-bold text-pr-hero hover:underline" href="/peajes">
+        <Link className="font-bold text-pr-hero hover:underline" href="/dashboard/peajes">
           mapa de peajes
         </Link>
         .

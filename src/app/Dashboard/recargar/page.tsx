@@ -80,7 +80,7 @@ export default function RecargarPage() {
             <p className="pt-1 text-center text-xs">
               <Link
                 className="font-bold text-pr-hero hover:underline"
-                href="/ayuda"
+                href="/dashboard/ayuda"
               >
                 Dudas frecuentes
               </Link>
