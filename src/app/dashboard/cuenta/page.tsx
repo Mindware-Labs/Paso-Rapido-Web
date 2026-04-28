@@ -79,7 +79,7 @@ const GROUPS = [
         label: "Seguridad",
         sub: "Actualiza tu contraseña y gestiona la seguridad de tus accesos.",
         icon: Shield,
-        href: "/dashboard/contrasena",
+        href: "/dashboard/seguridad",
       },
     ],
   },

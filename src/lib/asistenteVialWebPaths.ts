@@ -10,7 +10,7 @@ export const DASHBOARD_PATH_BY_MAIN_ROUTE: Record<MainAppRoute, string> = {
   "/(main)/asistente-vial": "/dashboard/asistente-vial",
   "/(main)/notificaciones": "/dashboard/notificaciones",
   "/(main)/cuenta": "/dashboard/cuenta",
-  "/(main)/contrasena": "/dashboard/contrasena",
+  "/(main)/contrasena": "/dashboard/seguridad",
   "/(main)/metodos-pago": "/dashboard/metodos-pago",
   "/(main)/vinculados": "/dashboard/vinculados",
   "/(main)/reclamaciones": "/dashboard/reclamaciones",

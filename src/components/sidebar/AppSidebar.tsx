@@ -21,6 +21,13 @@ const ASIDE_H = "h-[calc(100dvh-3.5rem)]";
 function isActive(pathname: string, href: string) {
   if (href === "/dashboard") return pathname === "/dashboard";
   if (href === "/") return pathname === "/";
+  if (href === "/dashboard/seguridad") {
+    return (
+      pathname === href ||
+      pathname.startsWith(`${href}/`) ||
+      pathname === "/dashboard/contrasena"
+    );
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

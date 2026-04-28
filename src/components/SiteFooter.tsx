@@ -12,7 +12,7 @@ const clientes = [
   { href: "/dashboard/cuenta", label: "Mi cuenta" },
   { href: "/dashboard/metodos-pago", label: "Métodos de pago" },
   { href: "/dashboard/vinculados", label: "Vinculados" },
-  { href: "/dashboard/contrasena", label: "Seguridad" },
+  { href: "/dashboard/seguridad", label: "Seguridad" },
 ] as const;
 
 const atencion = [
