@@ -94,6 +94,30 @@ const ACTIVITY = [
   },
 ];
 
+const TOLLS_NEARBY = [
+  {
+    id: "t1",
+    name: "Peaje Las Américas",
+    corridor: "Autopista Las Américas",
+    fare: "RD$ 100",
+    status: "open" as const,
+  },
+  {
+    id: "t2",
+    name: "Peaje La Victoria",
+    corridor: "Autopista Duarte",
+    fare: "RD$ 100",
+    status: "open" as const,
+  },
+  {
+    id: "t4",
+    name: "Peaje Hatillo",
+    corridor: "Autopista del Noreste",
+    fare: "RD$ 150",
+    status: "maintenance" as const,
+  },
+] as const;
+
 // ─── Componentes auxiliares ───────────────────────────────────────────────────
 
 function StatCard({ label, value, Icon }: (typeof STATS)[0]) {
@@ -146,6 +170,41 @@ function ActivityRow({ item }: { item: (typeof ACTIVITY)[0] }) {
           {item.status}
         </p>
       </div>
+    </div>
+  );
+}
+
+function TollRow({
+  toll,
+  last,
+}: {
+  toll: (typeof TOLLS_NEARBY)[number];
+  last: boolean;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-3 px-4 py-3.5 sm:px-4">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50">
+          <MapPin className="h-4 w-4 text-slate-500" strokeWidth={1.75} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-slate-900">{toll.name}</p>
+          <p className="text-xs text-slate-500">{toll.corridor}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-bold text-slate-900">{toll.fare}</p>
+          <span
+            className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+              toll.status === "open"
+                ? "bg-emerald-50 text-emerald-800"
+                : "bg-amber-50 text-amber-800"
+            }`}
+          >
+            {toll.status === "open" ? "Operativo" : "Mantenimiento"}
+          </span>
+        </div>
+      </div>
+      {!last && <div className="mx-4 h-px bg-slate-100" />}
     </div>
   );
 }
@@ -314,6 +373,68 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
+
+            <section
+              aria-labelledby="peajes-red-heading"
+              className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+            >
+              <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
+                <h2
+                  id="peajes-red-heading"
+                  className="text-sm font-bold uppercase tracking-wider text-slate-700"
+                >
+                  Red de peajes
+                </h2>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Estaciones de referencia (confirma tarifas en caja o Paso Rápido)
+                </p>
+              </div>
+              {TOLLS_NEARBY.map((t, i) => (
+                <TollRow
+                  key={t.id}
+                  toll={t}
+                  last={i === TOLLS_NEARBY.length - 1}
+                />
+              ))}
+              <div className="relative overflow-hidden border-t border-emerald-200/60 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50 px-3 py-3 sm:px-4">
+                <div
+                  className="pointer-events-none absolute -right-6 bottom-0 h-20 w-20 rounded-full bg-emerald-400/15 blur-2xl"
+                  aria-hidden
+                />
+                <div
+                  className="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-teal-300/20 blur-xl"
+                  aria-hidden
+                />
+                <div className="relative flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200/80 bg-white/90 px-2 py-0.5 text-[10px] font-bold text-emerald-900 shadow-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
+                      16 estaciones
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-emerald-800/80">
+                      RD Vial
+                    </span>
+                  </div>
+                  <Link
+                    href="/dashboard/peajes"
+                    className="group inline-flex items-center justify-center gap-1.5 self-start rounded-lg border border-emerald-600/20 bg-emerald-600 px-3 py-1.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:self-auto"
+                  >
+                    Ver red completa
+                    <ArrowUpRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </Link>
+                </div>
+                <div
+                  className="relative mt-2.5 flex h-1 w-full justify-center gap-0.5 overflow-hidden rounded-full opacity-60"
+                  aria-hidden
+                >
+                  <span className="h-full w-[18%] rounded-full bg-emerald-500" />
+                  <span className="h-full w-[18%] rounded-full bg-teal-500" />
+                  <span className="h-full w-[18%] rounded-full bg-cyan-500" />
+                  <span className="h-full w-[18%] rounded-full bg-amber-400" />
+                  <span className="h-full w-[18%] rounded-full bg-emerald-600" />
+                </div>
+              </div>
+            </section>
 
             {/* Historial de Transacciones (Formato Libro Mayor) */}
             <section className="flex-1 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col overflow-hidden">
