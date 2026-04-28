@@ -246,14 +246,14 @@ export const authApi = {
 
   sendEmailOtp: (correo: string) =>
     request<void>(
-      "/kyc/email/send",
+      "/auth/kyc/email/send",
       { method: "POST", body: JSON.stringify({ email: correo }) },
       10_000,
     ),
 
   checkEmailOtp: (correo: string, code: string) =>
-    request<{ valid: boolean }>(
-      "/kyc/email/check",
+    request<{ verified: boolean }>(
+      "/auth/kyc/email/check",
       { method: "POST", body: JSON.stringify({ email: correo, code }) },
       10_000,
     ),

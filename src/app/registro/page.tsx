@@ -593,7 +593,7 @@ function OtpForm({
     setError(null);
     try {
       const res = await authApi.checkEmailOtp(correo, code.trim());
-      if (res.valid) {
+      if (res.verified) {
         onVerified();
       } else {
         setError("Código incorrecto. Verifica e intenta de nuevo.");
