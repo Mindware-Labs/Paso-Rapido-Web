@@ -90,13 +90,8 @@ export default function ManualSection() {
 
             <div className="pt-2">
               <Link
-<<<<<<< HEAD
-                href="/dashboard"
-                className="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow transition hover:bg-emerald-700"
-=======
                 href="/manual"
                 className="pr-btn group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight"
->>>>>>> feature/landing-page
               >
                 Ver Manual
                 <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
