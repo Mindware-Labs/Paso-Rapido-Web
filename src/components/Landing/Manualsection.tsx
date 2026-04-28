@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { BookOpen, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, BookOpen, MapPin, MessageCircle, Smartphone, Tag } from "lucide-react";
+
+const quickHighlights = [
+  { label: "Kit TAG", icon: Tag, hint: "Dispositivo y recarga" },
+  { label: "App móvil", icon: Smartphone, hint: "Cuenta y saldo" },
+  { label: "Peajes", icon: MapPin, hint: "Dónde pagar" },
+  { label: "Ayuda", icon: MessageCircle, hint: "Soporte y FAQ" },
+] as const;
 
 export default function ManualSection() {
   return (
@@ -77,23 +84,46 @@ export default function ManualSection() {
             </span>
 
             <h2 className="text-[34px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[44px]">
-              ¿Quieres saber más
+              Guía y manual
               <br />
-              <span className="pr-accent">sobre nosotros?</span>
+              <span className="pr-accent">Paso a paso</span>
             </h2>
 
-            <p className="text-[15.5px] leading-[1.55] text-neutral-600">
-              Si buscas información sobre Paso Rápido, tenemos disponible un
-              manual de usuario que te proporcionará todo lo que necesitas saber
-              para comenzar.
+            <p className="max-w-md text-[15.5px] leading-relaxed text-neutral-600">
+              Resumen visual: qué traer, cómo usar la app y dónde recargar — sin
+              papeleos de más.
             </p>
 
-            <div className="pt-2">
+            <ul className="grid max-w-md grid-cols-2 gap-3 sm:grid-cols-4 sm:max-w-none">
+              {quickHighlights.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <motion.li
+                    key={item.label}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.06 * i, duration: 0.45 }}
+                    className="group flex flex-col gap-1.5 rounded-2xl border border-black/[0.06] bg-white/80 px-3 py-3 text-center shadow-sm backdrop-blur-sm sm:text-left"
+                  >
+                    <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0f9d58]/10 to-[#0f9d58]/5 sm:mx-0">
+                      <Icon className="h-4 w-4 text-[#0b7a45]" aria-hidden />
+                    </span>
+                    <span className="text-xs font-semibold text-[#0a0a0a]">{item.label}</span>
+                    <span className="text-[10.5px] leading-tight text-neutral-500 sm:block">
+                      {item.hint}
+                    </span>
+                  </motion.li>
+                );
+              })}
+            </ul>
+
+            <div className="pt-1">
               <Link
                 href="/manual"
                 className="pr-btn group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight"
               >
-                Ver Manual
+                Abrir guía completa
                 <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>

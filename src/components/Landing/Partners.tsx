@@ -84,7 +84,9 @@ export default function Partners() {
                     width={p.width}
                     height={p.height}
                     draggable={false}
-                    className="max-h-full w-auto select-none object-contain opacity-60 brightness-90 grayscale transition-all duration-300 ease-out group-hover/logo:opacity-100 group-hover/logo:brightness-100 group-hover/logo:grayscale-0"
+                    sizes="(max-width: 640px) 120px, 140px"
+                    className="h-auto max-h-full w-auto max-w-full select-none object-contain opacity-60 brightness-90 grayscale transition-all duration-300 ease-out group-hover/logo:opacity-100 group-hover/logo:brightness-100 group-hover/logo:grayscale-0"
+                    style={{ width: "auto", height: "auto" }}
                   />
                 </div>
               ))}
