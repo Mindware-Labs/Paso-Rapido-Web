@@ -231,11 +231,7 @@ function KycCapturaInner() {
     if (!frontFile) return;
     setSubStep("id_sending");
     try {
-      const res = await authApi.verifyIdForPending(
-        sessionId,
-        frontFile,
-        backFile ?? undefined,
-      );
+      const res = await authApi.verifyIdForPending(sessionId, frontFile);
       if (res.status === "id_verified") {
         setSubStep("selfie");
       } else {
@@ -438,7 +434,6 @@ function KycCapturaInner() {
             onClick={() => {
               setSubStep("front");
               setFrontFile(null);
-              setBackFile(null);
               setErrorMsg("");
             }}
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
