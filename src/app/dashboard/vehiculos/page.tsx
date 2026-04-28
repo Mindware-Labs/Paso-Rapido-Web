@@ -11,16 +11,15 @@ import {
   Plus,
   RefreshCw,
   ShieldAlert,
-  Tag,
   CircleDollarSign,
   Wallet,
   Gauge,
   Activity,
   Trash2,
-  Snowflake,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -85,44 +84,91 @@ const INITIAL_VEHICLES: Vehicle[] = [
 ];
 
 const STATS = [
-  { id: "s1", label: "Balance total", value: "RD$ 765.00", Icon: Wallet, color: "emerald" },
-  { id: "s2", label: "Vehículos activos", value: "2 de 3", Icon: Car, color: "blue" },
-  { id: "s3", label: "Pases este mes", value: "42", Icon: Activity, color: "violet" },
-  { id: "s4", label: "Gasto mensual", value: "RD$ 4,200", Icon: CircleDollarSign, color: "amber" },
+  {
+    id: "s1",
+    label: "Balance total",
+    value: "RD$ 765.00",
+    Icon: Wallet,
+    color: "emerald",
+  },
+  {
+    id: "s2",
+    label: "Vehículos activos",
+    value: "2 de 3",
+    Icon: Car,
+    color: "blue",
+  },
+  {
+    id: "s3",
+    label: "Pases este mes",
+    value: "42",
+    Icon: Activity,
+    color: "violet",
+  },
+  {
+    id: "s4",
+    label: "Gasto mensual",
+    value: "RD$ 4,200",
+    Icon: CircleDollarSign,
+    color: "amber",
+  },
 ];
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<TagStatus, { badge: string; dot: string; label: string }> = {
+const STATUS_CONFIG: Record<
+  TagStatus,
+  { badge: string; dot: string; label: string }
+> = {
   activo: {
-    badge: "bg-emerald-50 text-emerald-700",
+    badge: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     dot: "bg-emerald-500",
     label: "Activo",
   },
   bajo_balance: {
-    badge: "bg-red-50 text-red-600",
-    dot: "bg-red-400",
+    badge: "bg-amber-50 text-amber-700 ring-amber-200",
+    dot: "bg-amber-500",
     label: "Bajo balance",
   },
   congelado: {
-    badge: "bg-slate-100 text-slate-600",
+    badge: "bg-slate-100 text-slate-600 ring-slate-200",
     dot: "bg-slate-400",
     label: "Congelado",
   },
 };
 
-const STAT_COLORS: Record<string, { bg: string; icon: string }> = {
-  emerald: { bg: "bg-emerald-50", icon: "text-emerald-600" },
-  blue: { bg: "bg-blue-50", icon: "text-blue-600" },
-  violet: { bg: "bg-violet-50", icon: "text-violet-600" },
-  amber: { bg: "bg-amber-50", icon: "text-amber-600" },
+const STAT_COLORS: Record<
+  string,
+  { bg: string; icon: string; border: string }
+> = {
+  emerald: {
+    bg: "bg-emerald-50",
+    icon: "text-emerald-600",
+    border: "border-emerald-100",
+  },
+  blue: { bg: "bg-blue-50", icon: "text-blue-600", border: "border-blue-100" },
+  violet: {
+    bg: "bg-violet-50",
+    icon: "text-violet-600",
+    border: "border-violet-100",
+  },
+  amber: {
+    bg: "bg-amber-50",
+    icon: "text-amber-600",
+    border: "border-amber-100",
+  },
 };
 
-// ─── Sub-components ────────────────────────────────────────────────────────────
+// ─── Format Helpers ───────────────────────────────────────────────────────────
 
-function SectionHeader({ title }: { title: string }) {
-  return <h2 className="text-sm font-bold text-gray-900">{title}</h2>;
-}
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("es-DO", {
+    style: "currency",
+    currency: "DOP",
+  })
+    .format(amount)
+    .replace("DOP", "RD$");
+};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -130,39 +176,64 @@ export default function VehiculosPage() {
   const [vehicles] = useState<Vehicle[]>(INITIAL_VEHICLES);
   const [frozen, setFrozen] = useState<Record<string, boolean>>({});
 
-  const toggleFreeze = (id: string) => setFrozen((p) => ({ ...p, [id]: !p[id] }));
+  const toggleFreeze = (id: string) =>
+    setFrozen((p) => ({ ...p, [id]: !p[id] }));
 
   return (
-    <div className="min-h-full bg-gray-50/50">
-      <div className="mx-auto max-w-6xl space-y-5 px-4 py-6 sm:px-6 sm:py-8">
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-full bg-slate-50/50 pb-12">
+      {/* ── CONTENEDOR FLUIDO (Sin max-w) ── */}
+      <div className="w-full space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+        {/* ── Encabezado Institucional ── */}
+        <header className="flex flex-col gap-5 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Mi cuenta</p>
-            <h1 className="text-xl font-extrabold text-gray-900">Mis vehículos</h1>
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Gestión de Flotilla
+            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              Mis Vehículos
+            </h1>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+              Administre los vehículos y dispositivos TAG asociados a su cuenta.
+              Revise el balance individual, congele dispositivos por seguridad o
+              asigne nuevas unidades.
+            </p>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition-colors">
-            <Plus className="h-4 w-4" strokeWidth={2.5} />
+
+          <button className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:scale-[0.98] sm:w-auto">
+            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
             Agregar vehículo
           </button>
-        </div>
+        </header>
 
-        {/* ── Stats row ── */}
+        {/* ── Banner de Estadísticas ── */}
         <section>
-          <div className="mb-3">
-            <SectionHeader title="Resumen general" />
-          </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {STATS.map((s) => {
               const c = STAT_COLORS[s.color];
               return (
-                <div key={s.id} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${c.bg}`}>
-                    <s.Icon className={`h-5 w-5 ${c.icon}`} strokeWidth={1.75} />
-                  </span>
+                <div
+                  key={s.id}
+                  className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                >
+                  <div
+                    className={cn(
+                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border",
+                      c.bg,
+                      c.border,
+                    )}
+                  >
+                    <s.Icon
+                      className={cn("h-6 w-6", c.icon)}
+                      strokeWidth={1.75}
+                    />
+                  </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-900">{s.value}</p>
-                    <p className="text-xs text-gray-400">{s.label}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      {s.label}
+                    </p>
+                    <p className="font-mono text-xl font-bold tabular-nums tracking-tight text-slate-900">
+                      {s.value}
+                    </p>
                   </div>
                 </div>
               );
@@ -170,127 +241,197 @@ export default function VehiculosPage() {
           </div>
         </section>
 
-        {/* ── Vehicle list ── */}
+        {/* ── Grid de Vehículos Registrados ── */}
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <SectionHeader title="Vehículos registrados" />
-            <span className="text-xs text-gray-400">{vehicles.length} en total</span>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-900">
+              Vehículos Registrados
+            </h2>
+            <span className="rounded-full bg-slate-200 px-2.5 py-0.5 text-xs font-bold text-slate-600">
+              {vehicles.length}
+            </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {vehicles.map((v) => {
               const isFrozen = frozen[v.id] || false;
               const status: TagStatus = isFrozen ? "congelado" : v.tagStatus;
               const c = STATUS_CONFIG[status];
-              const low = v.balance < 100 && !isFrozen;
+              const lowBalance = v.balance < 100 && !isFrozen;
 
               return (
-                <div key={v.id} className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-                  <div className="flex items-center gap-4 px-4 py-3.5">
-                    {/* Car icon */}
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-50">
-                      <Car className="h-5 w-5 text-gray-400" strokeWidth={1.75} />
-                    </span>
-
-                    {/* Info */}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="text-sm font-bold text-gray-900 truncate">
-                            {v.marca} {v.modelo}
-                          </p>
-                          <p className="text-xs text-gray-400 font-mono">
-                            {v.placa} · {v.year} · {v.color} · TAG {v.tagNumber}
-                          </p>
-                        </div>
-                        <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${c.badge}`}>
-                          <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
-                          {c.label}
-                        </span>
+                <div
+                  key={v.id}
+                  className={cn(
+                    "flex flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition-all",
+                    isFrozen
+                      ? "border-slate-200 opacity-80 grayscale-[20%]"
+                      : "border-slate-200 hover:border-emerald-200 hover:shadow-md",
+                  )}
+                >
+                  {/* Cabecera de la Tarjeta */}
+                  <div className="flex items-start justify-between p-6 pb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50">
+                        <Car
+                          className="h-6 w-6 text-slate-500"
+                          strokeWidth={1.5}
+                        />
                       </div>
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 leading-tight">
+                          {v.marca} {v.modelo}
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          {v.year} · {v.color}
+                        </p>
+                      </div>
+                    </div>
 
-                      {/* Balance + mini stats */}
-                      <div className="mt-2.5 flex items-center gap-4">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-gray-400">Balance</span>
-                          <span className={`text-xs font-bold tabular-nums ${low ? "text-red-500" : "text-gray-800"}`}>
-                            RD$ {v.balance.toLocaleString("es-DO")}
-                          </span>
-                          {low && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-1.5 py-0.5 text-[9px] font-semibold text-red-500">
-                              <ShieldAlert className="h-2 w-2" />
-                              Bajo
-                            </span>
+                    {/* Status Pill */}
+                    <span
+                      className={cn(
+                        "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset",
+                        c.badge,
+                      )}
+                    >
+                      <span className={cn("h-1.5 w-1.5 rounded-full", c.dot)} />
+                      {c.label}
+                    </span>
+                  </div>
+
+                  {/* Detalles Técnicos */}
+                  <div className="px-6 py-2">
+                    <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 border border-slate-100">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 w-12">
+                        Placa
+                      </p>
+                      <p className="font-mono text-sm font-bold text-slate-900">
+                        {v.placa}
+                      </p>
+                      <span className="mx-2 text-slate-300">|</span>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        TAG
+                      </p>
+                      <p className="font-mono text-xs font-semibold text-slate-600">
+                        {v.tagNumber}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Resumen Financiero del Vehículo */}
+                  <div className="flex items-end justify-between px-6 py-4">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        Balance Actual
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <p
+                          className={cn(
+                            "font-mono text-2xl font-extrabold tracking-tight",
+                            lowBalance ? "text-amber-600" : "text-slate-900",
                           )}
-                        </div>
-                        <span className="text-[10px] text-gray-300">|</span>
-                        <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
-                          <Activity className="h-3 w-3" />
-                          <span className="font-semibold text-gray-700">{v.pasesMes}</span> pases
-                        </div>
-                        <span className="text-[10px] text-gray-300">|</span>
-                        <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
-                          <Gauge className="h-3 w-3" />
-                          <span className="font-semibold text-gray-700">RD$ {v.gastoMes.toLocaleString("es-DO")}</span> gasto
-                        </div>
+                        >
+                          {formatCurrency(v.balance)}
+                        </p>
+                        {lowBalance && (
+                          <ShieldAlert className="h-4.5 w-4.5 text-amber-500 animate-pulse" />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        Este Mes
+                      </p>
+                      <div className="flex items-center gap-3 text-xs font-medium text-slate-600">
+                        <span className="flex items-center gap-1">
+                          <Activity className="h-3.5 w-3.5 text-slate-400" />
+                          {v.pasesMes} pases
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Gauge className="h-3.5 w-3.5 text-slate-400" />
+                          {formatCurrency(v.gastoMes)}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Actions row */}
-                  <div className="flex items-center justify-between border-t border-gray-100 bg-gray-50/40 px-4 py-2">
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href="/dashboard/recargar"
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1.5 text-[10px] font-semibold text-white hover:bg-emerald-700 transition-colors"
-                      >
-                        <RefreshCw className="h-3 w-3" strokeWidth={2} />
-                        Recargar
-                      </Link>
-                      <Link
-                        href="/dashboard/historico"
-                        className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-[10px] font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-                      >
-                        <History className="h-3 w-3" strokeWidth={1.75} />
-                        Historial
-                      </Link>
-                      <Link
-                        href="/dashboard/reclamaciones"
-                        className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-[10px] font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-                      >
-                        <CreditCard className="h-3 w-3" strokeWidth={1.75} />
-                        Reclamar
-                      </Link>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => toggleFreeze(v.id)}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          isFrozen ? "bg-slate-400" : "bg-gray-200"
-                        }`}
-                        role="switch"
-                        aria-checked={isFrozen}
-                        title={isFrozen ? "Descongelar" : "Congelar"}
-                      >
-                        <span
-                          className={`inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white shadow-sm transition-transform ${
-                            isFrozen ? "translate-x-4.5" : "translate-x-0.5"
-                          }`}
+                  {/* Pie de Tarjeta / Acciones */}
+                  <div className="mt-auto border-t border-slate-100 bg-slate-50/50 p-4">
+                    <div className="flex items-center justify-between">
+                      {/* Acciones Rápidas */}
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/dashboard/recargar?tag=${v.tagNumber}`}
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                         >
-                          {isFrozen ? (
-                            <Lock className="h-2 w-2 text-slate-500" strokeWidth={2.5} />
-                          ) : (
-                            <LockOpen className="h-2 w-2 text-gray-400" strokeWidth={2.5} />
+                          <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                          Recargar
+                        </Link>
+                        <Link
+                          href={`/dashboard/historico?tag=${v.tagNumber}`}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold text-slate-700 transition-colors hover:bg-slate-50"
+                        >
+                          <History
+                            className="h-3.5 w-3.5 text-slate-400"
+                            strokeWidth={2}
+                          />
+                          Detalle
+                        </Link>
+                      </div>
+
+                      {/* Controles de Gestión */}
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => toggleFreeze(v.id)}
+                          className={cn(
+                            "relative inline-flex h-6 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-500/20",
+                            isFrozen ? "bg-slate-400" : "bg-slate-200",
                           )}
-                        </span>
-                      </button>
-                      <button className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
-                        <Edit2 className="h-3 w-3" strokeWidth={1.75} />
-                      </button>
-                      <button className="rounded-md p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">
-                        <Trash2 className="h-3 w-3" strokeWidth={1.75} />
-                      </button>
+                          role="switch"
+                          aria-checked={isFrozen}
+                          title={
+                            isFrozen
+                              ? "Descongelar dispositivo"
+                              : "Congelar dispositivo"
+                          }
+                        >
+                          <span
+                            className={cn(
+                              "pointer-events-none inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                              isFrozen ? "translate-x-4" : "translate-x-0",
+                            )}
+                          >
+                            {isFrozen ? (
+                              <Lock
+                                className="h-3 w-3 text-slate-400"
+                                strokeWidth={2.5}
+                              />
+                            ) : (
+                              <LockOpen
+                                className="h-3 w-3 text-emerald-500"
+                                strokeWidth={2.5}
+                              />
+                            )}
+                          </span>
+                        </button>
+
+                        <div className="h-4 w-px bg-slate-300 mx-1" />
+
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 hover:bg-white hover:text-slate-700 hover:shadow-sm transition-all"
+                          title="Editar"
+                        >
+                          <Edit2 className="h-4 w-4" strokeWidth={1.75} />
+                        </button>
+                        <button
+                          className="rounded-md p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 hover:shadow-sm transition-all"
+                          title="Eliminar"
+                        >
+                          <Trash2 className="h-4 w-4" strokeWidth={1.75} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

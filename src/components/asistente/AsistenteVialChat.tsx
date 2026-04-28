@@ -17,6 +17,7 @@ import {
   Sparkles,
   Trash2,
   Wallet,
+  Clock,
 } from "lucide-react";
 import {
   createAssistantReply,
@@ -51,7 +52,7 @@ const BASE_MESSAGES: Msg[] = [
   {
     id: "1",
     from: "bot",
-    text: "Hola, soy el asistente vial. Pregunta por peajes, recargas, vehículos, vinculados, métodos de pago y más. Puedes guardar la charla con un nombre y verla luego en el historial, más abajo en la página.",
+    text: "Hola, soy el Asistente Vial de Paso Rápido. Puede consultarme sobre peajes, recargas, vehículos, vinculados, métodos de pago y más. También puede guardar esta conversación en su historial para futuras referencias.",
     time: "Ahora",
   },
 ];
@@ -65,22 +66,8 @@ const SITE_QUICK: { href: string; label: string; Icon: typeof MapPinned }[] = [
 
 function useHasRemoteAssistant(): boolean {
   return Boolean(
-    typeof process !== "undefined" && process.env.NEXT_PUBLIC_ASISTENTE_VIAL_URL,
-  );
-}
-
-function PageBackdrop() {
-  return (
-    <>
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 pr-grain-dots opacity-35 [background-size:22px_22px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 pr-hero-mesh opacity-[0.22] [mask-image:linear-gradient(180deg,black_0%,black_45%,transparent_100%)]"
-        aria-hidden
-      />
-    </>
+    typeof process !== "undefined" &&
+    process.env.NEXT_PUBLIC_ASISTENTE_VIAL_URL,
   );
 }
 
@@ -91,9 +78,9 @@ export function AsistenteVialChat() {
   const [text, setText] = useState("");
   const [typing, setTyping] = useState(false);
   const [statusText, setStatusText] = useState<string | null>(null);
-  const [savedConversations, setSavedConversations] = useState<SavedAsistenteConversation[]>(
-    [],
-  );
+  const [savedConversations, setSavedConversations] = useState<
+    SavedAsistenteConversation[]
+  >([]);
   const [draftReady, setDraftReady] = useState(false);
   const contextRef = useRef<AssistantContext>({});
   const endRef = useRef<HTMLDivElement>(null);
@@ -157,7 +144,10 @@ export function AsistenteVialChat() {
 
   const pushUserMessage = (value: string) => {
     const id = `${Date.now()}-u`;
-    setMessages((prev) => [...prev, { id, from: "user", text: value, time: now() }]);
+    setMessages((prev) => [
+      ...prev,
+      { id, from: "user", text: value, time: now() },
+    ]);
   };
 
   const pushBotMessage = (
@@ -223,12 +213,6 @@ export function AsistenteVialChat() {
       setSaveModalOpen(false);
       setStatusText(`Guardada: “${title}”`);
       window.setTimeout(() => setStatusText(null), 2500);
-      requestAnimationFrame(() => {
-        document.getElementById("conversaciones-guardadas")?.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
-      });
     } catch {
       setStatusText("No se pudo guardar (almacenamiento lleno o bloqueado)");
       window.setTimeout(() => setStatusText(null), 3000);
@@ -243,7 +227,9 @@ export function AsistenteVialChat() {
     );
     contextRef.current = { ...entry.context };
     persistDraft(
-      entry.messages.length > 0 ? entry.messages.map((m) => ({ ...m })) : BASE_MESSAGES,
+      entry.messages.length > 0
+        ? entry.messages.map((m) => ({ ...m }))
+        : BASE_MESSAGES,
       { ...entry.context },
     );
     setStatusText(`Cargada: “${entry.title}”`);
@@ -306,7 +292,11 @@ export function AsistenteVialChat() {
 
   const clearMessageAction = (msgId: string) => {
     setMessages((prev) =>
-      prev.map((m) => (m.id === msgId ? { ...m, action: undefined, confirmRequired: false } : m)),
+      prev.map((m) =>
+        m.id === msgId
+          ? { ...m, action: undefined, confirmRequired: false }
+          : m,
+      ),
     );
   };
 
@@ -350,370 +340,351 @@ export function AsistenteVialChat() {
   };
 
   return (
-    <div className="relative flex min-h-full min-h-0 flex-col overflow-hidden bg-slate-50/50 pb-10">
-      <PageBackdrop />
+    <div className="min-h-full bg-slate-50/50 pb-12">
+      {/* ── CONTENEDOR FLUIDO ── */}
+      <div className="w-full space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+        {/* ── Encabezado Institucional ── */}
+        <header className="flex flex-col gap-5 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-1 text-xs font-bold text-slate-400 transition hover:text-emerald-600"
+              >
+                <ArrowLeft className="h-3 w-3" />
+                Panel
+              </Link>
+              <span className="text-slate-300">/</span>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Soporte Inteligente
+              </p>
+            </div>
 
-      <div className="mx-auto flex w-full max-w-6xl min-h-0 flex-1 flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8">
-        <header className="shrink-0 border-b border-slate-200/90 pb-5">
-          <Link
-            href="/dashboard"
-            className="mb-3 inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 transition hover:text-emerald-700"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-            Volver al panel
-          </Link>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Soporte</p>
-          <h1 className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            Asistencia vial
-          </h1>
-          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-500">
-            Use <strong className="font-semibold text-slate-700">Guardar</strong> para añadir la
-            charla al historial (debajo del chat).
-          </p>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                Asistente Vial
+              </h1>
+              <div
+                className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1"
+                title={hasRemote ? "Conectado al motor remoto" : "Modo local"}
+              >
+                <Sparkles className="h-3 w-3 text-emerald-600" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+                  {hasRemote ? "En Línea" : "Local"}
+                </span>
+              </div>
+            </div>
+
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+              Gestione su cuenta conversando de forma natural. Puede pedir
+              recargas, revisar peajes o administrar sus vehículos rápidamente.
+            </p>
+          </div>
         </header>
 
-        {/* Bloque de chat: ocupa el alto útil (viewport); el hilo rellena el espacio entre cabecera y caja de envío */}
-        <div className="flex min-h-0 w-full flex-1 flex-col">
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-3 shadow-sm sm:p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-center gap-2">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50/80">
-                    <BotMessageSquare className="h-5 w-5 text-emerald-700" strokeWidth={1.5} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-900">Asistente vial</p>
-                    <p className="truncate text-xs text-slate-500">Paso Rápido — peajes, cuenta y vía</p>
-                  </div>
+        {/* ── Grid Principal (Split Layout) ── */}
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
+          {/* ── MAIN: Ventana de Chat ── */}
+          <main className="lg:col-span-8 flex flex-col h-[600px] lg:h-[calc(100vh-16rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            {/* Cabecera del Chat (Controles) */}
+            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 border border-emerald-200">
+                  <BotMessageSquare
+                    className="h-5 w-5 text-emerald-700"
+                    strokeWidth={1.5}
+                  />
                 </div>
-                <div className="flex flex-wrap items-center justify-end gap-1.5">
-                  <div
-                    className="mr-1 flex h-8 items-center gap-1 rounded-md border border-emerald-200/80 bg-emerald-50/60 px-2.5"
-                    title={hasRemote ? "Hay URL de API configurada" : "Lógica local + datos de peajes"}
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
-                    <span className="text-[9px] font-bold uppercase tracking-wide text-emerald-800/90">
-                      {hasRemote ? "Con API" : "En línea"}
-                    </span>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-8 gap-1 border-slate-200 px-2.5 sm:px-3"
-                    onClick={startNewChat}
-                    title="Nueva conversación (borrador)"
-                    aria-label="Nueva conversación"
-                  >
-                    <MessageSquarePlus className="h-4 w-4 text-emerald-600" />
-                    <span className="hidden text-xs font-bold sm:inline">Nueva</span>
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-8 gap-1 border border-emerald-200/80 bg-emerald-50/40 px-2.5 sm:px-3"
-                    onClick={openSaveModal}
-                    title="Asigna un nombre y añade al historial"
-                    aria-label="Guardar conversación en el historial"
-                  >
-                    <Save className="h-4 w-4 text-emerald-700" />
-                    <span className="text-xs font-bold">Guardar</span>
-                  </Button>
-                  <a
-                    href="#conversaciones-guardadas"
-                    className="inline-flex h-8 items-center rounded-md border border-dashed border-slate-300 px-2.5 text-[10px] font-bold uppercase tracking-wide text-slate-600 hover:border-emerald-300 hover:bg-emerald-50/50"
-                  >
-                    Ver historial
-                  </a>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 border-slate-200"
-                    onClick={clearConversation}
-                    title="Borrar borrador de conversación"
-                    aria-label="Borrar conversación"
-                  >
-                    <Trash2 className="h-4 w-4 text-red-600" />
-                  </Button>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    Agente Virtual
+                  </p>
+                  <p className="text-xs text-slate-500">Paso Rápido</p>
                 </div>
               </div>
 
-              {statusText ? (
-                <p
-                  className="mt-2 text-xs font-semibold text-emerald-800/90"
-                  role="status"
-                  aria-live="polite"
+              <div className="flex items-center gap-2">
+                {statusText && (
+                  <span className="mr-2 hidden text-xs font-bold text-emerald-600 sm:inline-block animate-in fade-in">
+                    {statusText}
+                  </span>
+                )}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={startNewChat}
+                  className="h-9 gap-1.5 border-slate-200 text-slate-600"
                 >
-                  {statusText}
-                </p>
-              ) : null}
+                  <MessageSquarePlus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Nueva</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={openSaveModal}
+                  className="h-9 gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                >
+                  <Save className="h-4 w-4" />
+                  <span className="hidden sm:inline">Guardar</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={clearConversation}
+                  className="h-9 w-9 px-0 border-slate-200 text-red-600 hover:bg-red-50"
+                  title="Borrar borrador"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
-            <section aria-labelledby={`${listId}-shortcuts`} className="mt-4">
-              <h2
-                id={`${listId}-shortcuts`}
-                className="text-xs font-semibold uppercase tracking-wider text-slate-500"
-              >
-                Secciones del sitio
-              </h2>
-              <ul className="mt-2 flex flex-wrap gap-2">
+            {/* Hilo de Mensajes */}
+            <div className="flex-1 overflow-y-auto bg-slate-50/50 p-6 space-y-6">
+              {messages.map((m) => {
+                const user = m.from === "user";
+                return (
+                  <div
+                    key={m.id}
+                    className={cn(
+                      "flex w-full",
+                      user ? "justify-end" : "justify-start",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 shadow-sm",
+                        user
+                          ? "bg-emerald-600 text-white rounded-tr-sm"
+                          : "bg-white border border-slate-200 text-slate-800 rounded-tl-sm",
+                      )}
+                    >
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {m.text}
+                      </p>
+
+                      {/* Acciones de Mensaje (Si es bot y requiere confirmación) */}
+                      {!user && m.action && (
+                        <div className="mt-4 pt-3 border-t border-slate-100">
+                          {m.confirmRequired ? (
+                            <div className="flex flex-wrap gap-2">
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="h-8 bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700"
+                                onClick={() => {
+                                  runAction(m.action as AssistantAction);
+                                  clearMessageAction(m.id);
+                                }}
+                              >
+                                Confirmar Acción
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                className="h-8 text-xs border-slate-200"
+                                onClick={() => clearMessageAction(m.id)}
+                              >
+                                Cancelar
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              className="h-8 border border-slate-200 text-xs font-bold"
+                              onClick={() =>
+                                runAction(m.action as AssistantAction)
+                              }
+                            >
+                              {m.action.type === "phone"
+                                ? "Llamar a Soporte"
+                                : "Ir a la sección"}
+                            </Button>
+                          )}
+                        </div>
+                      )}
+
+                      <p
+                        className={cn(
+                          "mt-2 text-right text-[10px] font-bold",
+                          user ? "text-emerald-100" : "text-slate-400",
+                        )}
+                      >
+                        {m.time}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {typing && (
+                <div className="flex justify-start">
+                  <div className="flex items-center gap-3 rounded-2xl rounded-tl-sm bg-white border border-slate-200 px-4 py-3 shadow-sm">
+                    <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
+                    <span className="text-xs font-bold text-slate-500">
+                      Asistente escribiendo...
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div ref={endRef} className="h-px w-full shrink-0" />
+            </div>
+
+            {/* Prompts Rápidos y Caja de Texto */}
+            <div className="border-t border-slate-200 bg-white p-4">
+              <div className="mb-3 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {quickPrompts.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => void send(p)}
+                    className="shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-end gap-3">
+                <textarea
+                  id={`${listId}-composer`}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      void send();
+                    }
+                  }}
+                  rows={2}
+                  maxLength={2000}
+                  placeholder="Describa su solicitud..."
+                  className="min-h-[3rem] flex-1 resize-none rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+                <Button
+                  type="button"
+                  onClick={() => void send()}
+                  className="h-12 shrink-0 gap-2 rounded-xl bg-emerald-600 px-5 font-bold text-white hover:bg-emerald-700"
+                >
+                  <SendHorizonal className="h-5 w-5" />
+                  <span className="hidden sm:inline">Enviar</span>
+                </Button>
+              </div>
+            </div>
+          </main>
+
+          {/* ── SIDEBAR: Contexto y Memoria ── */}
+          <aside className="space-y-6 lg:col-span-4 lg:sticky lg:top-24">
+            {/* Secciones Rápidas */}
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-4">
+                Accesos Directos
+              </p>
+              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
                 {SITE_QUICK.map(({ href, label, Icon }) => (
                   <li key={href}>
                     <Link
                       href={href}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50/60"
+                      className="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
                     >
-                      <Icon className="h-3.5 w-3.5 text-emerald-600" strokeWidth={1.75} />
+                      <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
                       {label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </section>
+            </div>
 
-          <div
-            className={cn(
-              "mt-4 flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white",
-              "min-h-[min(100%,420px)] h-[min(70dvh,calc(100dvh-18rem))] max-h-[min(880px,calc(100dvh-14rem))] shadow-sm ring-1 ring-slate-900/[0.04]",
-            )}
-          >
-            <h2 className="sr-only">Chat</h2>
-            <div className="h-0.5 w-full shrink-0 bg-gradient-to-r from-transparent via-emerald-500/70 to-transparent" aria-hidden />
+            {/* Historial de Conversaciones */}
+            <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm max-h-[400px]">
+              <div className="bg-slate-50 px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+                <History className="h-4 w-4 text-emerald-600" strokeWidth={2} />
+                <h2 className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  Historial Guardado
+                </h2>
+              </div>
 
-            <div
-              className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-3 sm:p-4"
-              role="log"
-              aria-live="polite"
-              aria-relevant="additions"
-            >
-                  <div
-                    className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                  >
-                    {quickPrompts.map((p) => (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => void send(p)}
-                        className="shrink-0 rounded-full border border-emerald-200/90 bg-emerald-50/50 px-3.5 py-2 text-left text-xs font-bold text-emerald-900/90 transition hover:border-emerald-300 hover:bg-emerald-100/50"
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
-
-                  {messages.map((m) => {
-                    const user = m.from === "user";
-                    if (user) {
-                      return (
-                        <div key={m.id} className="flex justify-end">
-                          <div className="max-w-[min(100%,32rem)] rounded-2xl rounded-br-md bg-emerald-600 px-3.5 py-2.5 text-white shadow-sm">
-                            <p className="whitespace-pre-wrap text-sm leading-relaxed">{m.text}</p>
-                            <p className="mt-1.5 text-end text-[10px] font-semibold text-white/85">
-                              {m.time}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div key={m.id} className="flex gap-2.5">
-                        <div
-                          className="mt-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50"
-                          aria-hidden
-                        >
-                          <BotMessageSquare className="h-4 w-4 text-emerald-700" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                            Asistente
-                          </p>
-                          <div
-                            className="mt-1 max-w-[min(100%,40rem)] rounded-2xl border border-slate-200/90 border-l-4 border-l-emerald-500 bg-white px-3.5 py-2.5 shadow-sm"
-                          >
-                            <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-800">
-                              {m.text}
-                            </p>
-                            {m.action ? (
-                              m.confirmRequired ? (
-                                <div className="mt-2 flex flex-wrap gap-2">
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    className="h-8 bg-emerald-600 text-sm font-bold text-white hover:bg-emerald-700"
-                                    onClick={() => {
-                                      runAction(m.action as AssistantAction);
-                                      clearMessageAction(m.id);
-                                    }}
-                                  >
-                                    Confirmar
-                                  </Button>
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-8 border-slate-200"
-                                    onClick={() => clearMessageAction(m.id)}
-                                  >
-                                    Cancelar
-                                  </Button>
-                                </div>
-                              ) : (
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="secondary"
-                                  className="mt-2 h-8 border border-slate-200 font-bold"
-                                  onClick={() => runAction(m.action as AssistantAction)}
-                                >
-                                  {m.action.type === "phone" ? "Llamar" : "Abrir en el sitio"}
-                                </Button>
-                              )
-                            ) : null}
-                            <p className="mt-1.5 text-end text-[10px] font-semibold text-slate-500">
-                              {m.time}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {typing ? (
-                    <div className="flex gap-2.5">
-                      <div
-                        className="mt-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 opacity-90"
-                      >
-                        <BotMessageSquare className="h-4 w-4 text-emerald-600" />
-                      </div>
-                      <div className="flex min-h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2">
-                        <Loader2
-                          className="h-4 w-4 shrink-0 animate-spin text-emerald-600"
-                          aria-hidden
-                        />
-                        <span className="text-xs font-bold text-slate-500">Escribiendo…</span>
-                      </div>
-                    </div>
-                  ) : null}
-                  <div ref={endRef} className="h-px w-full shrink-0" aria-hidden />
-                </div>
-
-                <div className="shrink-0 border-t border-slate-200/90 bg-slate-50/50 p-3 sm:px-4 sm:py-3">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-                    <label className="sr-only" htmlFor={`${listId}-composer`}>
-                      Mensaje
-                    </label>
-                    <textarea
-                      id={`${listId}-composer`}
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          void send();
-                        }
-                      }}
-                      rows={2}
-                      maxLength={2000}
-                      placeholder="Escribe un mensaje… (Enter envía, mayús+Enter = nueva línea)"
-                      className="min-h-[2.75rem] flex-1 resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                    />
-                    <Button
-                      type="button"
-                      className="h-12 shrink-0 gap-1.5 bg-emerald-600 px-4 font-bold text-white shadow-sm hover:bg-emerald-700"
-                      onClick={() => void send()}
-                      aria-label="Enviar mensaje"
-                    >
-                      <SendHorizonal className="h-5 w-5" />
-                      Enviar
-                    </Button>
-                  </div>
-                  <p className="mt-2 text-[10px] leading-relaxed text-slate-500">
-                    {hasRemote
-                      ? "Se intenta el servidor de asistencia; si falla, se usa la misma lógica local que en la app móvil."
-                      : "Respuestas con lógica local y datos de peajes. Puede definirse NEXT_PUBLIC_ASISTENTE_VIAL_URL para el backend vial."}
-                  </p>
-                </div>
-          </div>
-        </div>
-
-        <section
-          id="conversaciones-guardadas"
-          aria-labelledby={`${listId}-saved`}
-          className="scroll-mt-20 shrink-0 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-sm ring-1 ring-slate-900/[0.04] sm:p-5"
-        >
-          <div className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
-            <h2
-              id={`${listId}-saved`}
-              className="flex items-center gap-2 text-sm font-bold text-slate-900 sm:text-base"
-            >
-              <History className="h-5 w-5 text-emerald-600" strokeWidth={1.75} aria-hidden />
-              Conversaciones guardadas
-            </h2>
-          </div>
-          {savedConversations.length === 0 ? (
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              Aún no hay entradas. Pulsa <strong className="text-slate-800">Guardar</strong> en la barra
-              superior; aparecerá aquí.
-            </p>
-          ) : (
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2" role="list">
-              {savedConversations.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex flex-col gap-2 rounded-xl border border-slate-200/90 bg-slate-50/40 p-3 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-slate-900">{s.title}</p>
-                    <p className="text-[10px] text-slate-500">
-                      {new Date(s.updatedAt).toLocaleString("es-DO", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}{" "}
-                      · {s.messages.length} mensajes
+              <div className="flex-1 overflow-y-auto p-2">
+                {savedConversations.length === 0 ? (
+                  <div className="p-6 text-center">
+                    <Clock className="mx-auto h-8 w-8 text-slate-300 mb-3" />
+                    <p className="text-xs leading-relaxed text-slate-500">
+                      No hay conversaciones guardadas. Utilice el botón{" "}
+                      <strong className="text-slate-700">Guardar</strong> en el
+                      chat para almacenar consultas importantes.
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 sm:shrink-0">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      className="h-8 border-slate-200 font-bold"
-                      onClick={() => loadSavedIntoChat(s)}
-                    >
-                      Abrir
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 font-bold text-red-600 hover:bg-red-50"
-                      onClick={() => requestRemoveSaved(s.id, s.title)}
-                    >
-                      Quitar
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+                ) : (
+                  <ul className="space-y-2">
+                    {savedConversations.map((s) => (
+                      <li
+                        key={s.id}
+                        className="group relative flex flex-col gap-2 rounded-lg border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-emerald-200 hover:bg-white"
+                      >
+                        <div className="min-w-0 pr-8">
+                          <p className="font-bold text-sm text-slate-900 truncate">
+                            {s.title}
+                          </p>
+                          <p className="mt-1 text-[10px] font-bold text-slate-400">
+                            {new Date(s.updatedAt).toLocaleString("es-DO", {
+                              dateStyle: "short",
+                              timeStyle: "short",
+                            })}
+                          </p>
+                        </div>
+
+                        <div className="mt-2 flex items-center gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            className="h-7 px-3 text-xs border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                            onClick={() => loadSavedIntoChat(s)}
+                          >
+                            Cargar
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 px-2 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            onClick={() => requestRemoveSaved(s.id, s.title)}
+                          >
+                            Quitar
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
 
-      <Dialog
-        open={saveModalOpen}
-        onOpenChange={(open) => {
-          setSaveModalOpen(open);
-        }}
-      >
-        <DialogContent showClose>
+      {/* ── Dialogos de Confirmación y Guardado ── */}
+      <Dialog open={saveModalOpen} onOpenChange={setSaveModalOpen}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Guardar en el historial</DialogTitle>
+            <DialogTitle>Guardar Conversación</DialogTitle>
             <DialogDescription>
-              Asigna un nombre para localizarla después en la sección de conversaciones guardadas.
+              Asigne un nombre descriptivo para encontrar fácilmente esta
+              consulta en su historial.
             </DialogDescription>
           </DialogHeader>
-          <div className="px-4 pb-2">
-            <label htmlFor="save-conv-name" className="text-xs font-bold text-slate-600">
-              Nombre
+          <div className="py-4">
+            <label
+              htmlFor="save-conv-name"
+              className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500"
+            >
+              Nombre de la consulta
             </label>
             <input
               id="save-conv-name"
@@ -726,13 +697,12 @@ export function AsistenteVialChat() {
                   applySaveFromModal();
                 }
               }}
-              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               autoFocus
             />
           </div>
           <DialogFooter>
             <Button
-              type="button"
               variant="outline"
               className="border-slate-200"
               onClick={() => setSaveModalOpen(false)}
@@ -740,11 +710,10 @@ export function AsistenteVialChat() {
               Cancelar
             </Button>
             <Button
-              type="button"
               className="bg-emerald-600 font-bold text-white hover:bg-emerald-700"
               onClick={applySaveFromModal}
             >
-              Guardar
+              Guardar en Historial
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -756,74 +725,63 @@ export function AsistenteVialChat() {
           if (!open) setConfirmState(null);
         }}
       >
-        <DialogContent showClose>
-          {confirmState?.type === "newChat" ? (
-            <>
-              <DialogHeader>
-                <DialogTitle>Nueva conversación</DialogTitle>
-                <DialogDescription>
-                  ¿Empezar una charla nueva? El borrador actual se reemplaza; las entradas ya
-                  guardadas en el historial no se eliminan.
-                </DialogDescription>
-              </DialogHeader>
-            </>
-          ) : null}
-          {confirmState?.type === "clear" ? (
-            <>
-              <DialogHeader>
-                <DialogTitle>Borrar conversación</DialogTitle>
-                <DialogDescription>¿Borrar toda la conversación de esta charla?</DialogDescription>
-              </DialogHeader>
-            </>
-          ) : null}
-          {confirmState?.type === "remove" ? (
-            <>
-              <DialogHeader>
-                <DialogTitle>Quitar del historial</DialogTitle>
-                <DialogDescription>
-                  ¿Quitar <span className="font-semibold text-slate-800">“{confirmState.title}”</span> del
-                  historial guardado? Esta acción no se puede deshacer.
-                </DialogDescription>
-              </DialogHeader>
-            </>
-          ) : null}
-          <DialogFooter>
+        <DialogContent>
+          {confirmState?.type === "newChat" && (
+            <DialogHeader>
+              <DialogTitle>Nueva conversación</DialogTitle>
+              <DialogDescription>
+                El borrador actual se reemplazará. Las entradas que ya guardó en
+                el historial no se eliminarán. ¿Desea continuar?
+              </DialogDescription>
+            </DialogHeader>
+          )}
+          {confirmState?.type === "clear" && (
+            <DialogHeader>
+              <DialogTitle>Borrar conversación</DialogTitle>
+              <DialogDescription>
+                Se eliminará el progreso actual de esta ventana. ¿Está seguro?
+              </DialogDescription>
+            </DialogHeader>
+          )}
+          {confirmState?.type === "remove" && (
+            <DialogHeader>
+              <DialogTitle>Quitar del historial</DialogTitle>
+              <DialogDescription>
+                ¿Quitar{" "}
+                <strong className="text-slate-900">
+                  "{confirmState.title}"
+                </strong>{" "}
+                de sus registros guardados? Esta acción es permanente.
+              </DialogDescription>
+            </DialogHeader>
+          )}
+          <DialogFooter className="mt-4">
             <Button
-              type="button"
               variant="outline"
               className="border-slate-200"
               onClick={() => setConfirmState(null)}
             >
               Cancelar
             </Button>
-            {confirmState?.type === "remove" ? (
+            {confirmState?.type === "remove" ||
+            confirmState?.type === "clear" ? (
               <Button
-                type="button"
                 variant="destructive"
                 className="font-bold"
                 onClick={onConfirmAction}
               >
-                Quitar
+                {confirmState.type === "remove"
+                  ? "Eliminar Registro"
+                  : "Limpiar Chat"}
               </Button>
-            ) : null}
-            {confirmState?.type === "newChat" ? (
+            ) : (
               <Button
-                type="button"
                 className="bg-emerald-600 font-bold text-white hover:bg-emerald-700"
                 onClick={onConfirmAction}
               >
-                Empezar de nuevo
+                Empezar Nueva
               </Button>
-            ) : null}
-            {confirmState?.type === "clear" ? (
-              <Button
-                type="button"
-                className="bg-red-600 font-bold text-white hover:bg-red-700"
-                onClick={onConfirmAction}
-              >
-                Borrar
-              </Button>
-            ) : null}
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
