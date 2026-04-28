@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ const QRCodeSVG = dynamic(
   { ssr: false },
 );
 
-// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Types
 
 type Step1Data = { nombre: string; apellido: string; cedula: string };
 type Step2Data = {
@@ -44,7 +44,7 @@ type Step2Data = {
   confirmPassword: string;
 };
 
-// â”€â”€ Progress indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Progress indicator
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   return (
@@ -63,7 +63,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
   );
 }
 
-// â”€â”€ Reusable field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Reusable field
 
 type FieldProps = {
   id: string;
@@ -141,7 +141,7 @@ function Field({
   );
 }
 
-// â”€â”€ Password requirements â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Password requirements
 
 function PwdReq({ met, label }: { met: boolean; label: string }) {
   return (
@@ -157,7 +157,7 @@ function PwdReq({ met, label }: { met: boolean; label: string }) {
   );
 }
 
-// â”€â”€ Step 1: Datos personales â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Step 1: Datos personales
 
 function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
   const [nombre, setNombre] = useState("");
@@ -214,7 +214,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
     try {
       const { exists } = await authApi.checkCedula(digits);
       if (exists) {
-        setServerError("Esta cÃ©dula ya estÃ¡ registrada");
+        setServerError("Esta cédula ya está registrada");
         return;
       }
       onNext({
@@ -229,7 +229,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
       } else {
         setServerError(
           (e as Error).message ??
-            "No se pudo verificar la cÃ©dula. Intenta de nuevo.",
+            "No se pudo verificar la cédula. Intenta de nuevo.",
         );
       }
     } finally {
@@ -244,7 +244,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
           Datos personales
         </h2>
         <p className="text-sm text-slate-500">
-          Ingresa tu informaciÃ³n para comenzar
+          Ingresa tu información para comenzar
         </p>
       </div>
 
@@ -272,14 +272,14 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
             setServerError(null);
           }}
           onBlur={() => setTouched((t) => ({ ...t, apellido: true }))}
-          placeholder="PÃ©rez"
+          placeholder="Pérez"
           leftIcon={<User className="h-4 w-4" />}
           error={fieldErr("apellido")}
           autoComplete="family-name"
         />
         <Field
           id="cedula"
-          label="CÃ©dula"
+          label="Cédula"
           value={cedula}
           onChange={(v) => {
             const formatted = formatCedula(v);
@@ -293,7 +293,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
           leftIcon={<CreditCard className="h-4 w-4" />}
           error={
             showCedulaError
-              ? (serverError ?? "CÃ©dula invÃ¡lida (mÃ³dulo 10)")
+              ? (serverError ?? "Cédula inválida (módulo 10)")
               : null
           }
           inputMode="numeric"
@@ -323,7 +323,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
         {loading ? (
           <span className="flex items-center justify-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Verificandoâ€¦
+            Verificando…
           </span>
         ) : (
           "Continuar"
@@ -333,7 +333,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
   );
 }
 
-// â”€â”€ Step 2: Correo y contraseÃ±a â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Step 2: Correo y contraseña
 
 function Step2({
   step1Data,
@@ -360,11 +360,11 @@ function Step2({
   });
 
   const requirements = [
-    { label: "MÃ­nimo 8 caracteres", met: password.length >= 8 },
-    { label: "1 letra mayÃºscula", met: /[A-Z]/.test(password) },
-    { label: "1 letra minÃºscula", met: /[a-z]/.test(password) },
-    { label: "1 nÃºmero", met: /[0-9]/.test(password) },
-    { label: "1 carÃ¡cter especial", met: /[^A-Za-z0-9]/.test(password) },
+    { label: "Mínimo 8 caracteres", met: password.length >= 8 },
+    { label: "1 letra mayúscula", met: /[A-Z]/.test(password) },
+    { label: "1 letra minúscula", met: /[a-z]/.test(password) },
+    { label: "1 número", met: /[0-9]/.test(password) },
+    { label: "1 carácter especial", met: /[^A-Za-z0-9]/.test(password) },
   ];
 
   const parsed = registerStep2Schema.safeParse({
@@ -397,7 +397,7 @@ function Step2({
     try {
       const { exists } = await authApi.checkEmail(correo.trim().toLowerCase());
       if (exists) {
-        setServerError("Este correo ya estÃ¡ registrado");
+        setServerError("Este correo ya está registrado");
         return;
       }
       onNext({
@@ -417,7 +417,7 @@ function Step2({
     <div className="space-y-5">
       <div>
         <h2 className="text-lg font-extrabold text-slate-900">
-          Correo y contraseÃ±a
+          Correo y contraseña
         </h2>
         <p className="text-sm text-slate-500">
           Hola, {step1Data.nombre}. Completa tus datos de acceso.
@@ -427,7 +427,7 @@ function Step2({
       <div className="space-y-4">
         <Field
           id="correo"
-          label="Correo electrÃ³nico"
+          label="Correo electrónico"
           type="email"
           value={correo}
           onChange={(v) => {
@@ -442,7 +442,7 @@ function Step2({
         />
         <Field
           id="telefono"
-          label="NÃºmero de telÃ©fono"
+          label="Número de teléfono"
           type="tel"
           value={telefono}
           onChange={setTelefono}
@@ -455,12 +455,12 @@ function Step2({
         />
         <Field
           id="password"
-          label="ContraseÃ±a"
+          label="Contraseña"
           type={showPwd ? "text" : "password"}
           value={password}
           onChange={setPassword}
           onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+          placeholder="••••••••"
           leftIcon={<Lock className="h-4 w-4" />}
           error={touched.password && !allMet ? fieldErr("password") : null}
           rightElement={
@@ -491,12 +491,12 @@ function Step2({
 
         <Field
           id="confirmPassword"
-          label="Confirmar contraseÃ±a"
+          label="Confirmar contraseña"
           type={showConfirm ? "text" : "password"}
           value={confirmPassword}
           onChange={setConfirmPassword}
           onBlur={() => setTouched((t) => ({ ...t, confirmPassword: true }))}
-          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+          placeholder="••••••••"
           leftIcon={<Lock className="h-4 w-4" />}
           error={fieldErr("confirmPassword")}
           rightElement={
@@ -524,7 +524,7 @@ function Step2({
           className="flex items-center gap-1 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
         >
           <ChevronLeft className="h-4 w-4" />
-          AtrÃ¡s
+          Atrás
         </button>
         <button
           type="button"
@@ -540,7 +540,7 @@ function Step2({
           {loading ? (
             <span className="flex items-center justify-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Verificandoâ€¦
+              Verificando…
             </span>
           ) : (
             "Continuar"
@@ -551,7 +551,7 @@ function Step2({
   );
 }
 
-// â”€â”€ Step 3: KYC via QR (in-app mobile capture) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Step 3: KYC via QR (in-app mobile capture)
 
 type KycState =
   | { phase: "creating" }
@@ -626,8 +626,7 @@ function Step3({
         if (res.status === "failed") {
           setState({
             phase: "error",
-            message:
-              res.message ?? "La verificaciÃ³n fallÃ³. Intenta de nuevo.",
+            message: res.message ?? "La verificación falló. Intenta de nuevo.",
           });
           return;
         }
@@ -678,7 +677,7 @@ function Step3({
       <div className="flex flex-col items-center gap-4 py-8 text-center">
         <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
         <p className="text-sm font-medium text-slate-600">
-          Preparando verificaciÃ³nâ€¦
+          Preparando verificación…
         </p>
       </div>
     );
@@ -688,9 +687,7 @@ function Step3({
     return (
       <div className="flex flex-col items-center gap-4 py-8 text-center">
         <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
-        <p className="text-sm font-medium text-slate-600">
-          Creando tu cuentaâ€¦
-        </p>
+        <p className="text-sm font-medium text-slate-600">Creando tu cuenta…</p>
       </div>
     );
   }
@@ -699,7 +696,7 @@ function Step3({
     return (
       <div className="space-y-4">
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
-          <p className="font-semibold">Error en la verificaciÃ³n</p>
+          <p className="font-semibold">Error en la verificación</p>
           <p className="mt-1">{state.message}</p>
         </div>
         <button
@@ -721,10 +718,10 @@ function Step3({
         </div>
         <div>
           <p className="text-lg font-extrabold text-slate-900">
-            Â¡Cuenta creada!
+            ¡Cuenta creada!
           </p>
           <p className="mt-1 text-sm text-slate-500">
-            Tu identidad fue verificada. Te redirigimos al inicio de sesiÃ³nâ€¦
+            Tu identidad fue verificada. Te redirigimos al inicio de sesión…
           </p>
         </div>
         <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
@@ -743,10 +740,10 @@ function Step3({
     <div className="space-y-5">
       <div>
         <h2 className="text-lg font-extrabold text-slate-900">
-          VerificaciÃ³n de identidad
+          Verificación de identidad
         </h2>
         <p className="text-sm text-slate-500">
-          Escanea el cÃ³digo QR con tu telÃ©fono para capturar tu cÃ©dula y
+          Escanea el código QR con tu teléfono para capturar tu cédula y
           verificar tu rostro directamente en la app.
         </p>
       </div>
@@ -764,7 +761,7 @@ function Step3({
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <Smartphone className="h-4 w-4" />
-          Apunta la cÃ¡mara de tu telÃ©fono al cÃ³digo
+          Apunta la cámara de tu teléfono al código
         </div>
       </div>
 
@@ -780,14 +777,14 @@ function Step3({
         <QrCode className="h-4 w-4 shrink-0" />
         <span>
           {isWaiting
-            ? "Esperando que completes la verificaciÃ³n en tu telÃ©fonoâ€¦"
-            : "Escanea el QR para abrir la app en tu telÃ©fono y completar la verificaciÃ³n."}
+            ? "Esperando que completes la verificación en tu teléfono…"
+            : "Escanea el QR para abrir la app en tu teléfono y completar la verificación."}
         </span>
         {isWaiting && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
       </div>
 
       <p className="text-center text-xs text-slate-400">
-        La sesiÃ³n es segura y expira en 30 minutos.
+        La sesión es segura y expira en 30 minutos.
       </p>
 
       {/* Start waiting */}
@@ -797,14 +794,14 @@ function Step3({
           onClick={() => setState({ phase: "waiting", sessionId, qrUrl })}
           className="w-full rounded-xl border border-emerald-300 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
         >
-          Ya escaneÃ© el cÃ³digo â€” esperar resultado
+          Ya escaneé el código — esperar resultado
         </button>
       )}
     </div>
   );
 }
 
-// â”€â”€ Main wizard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ---- Main wizard
 
 export default function RegistroPage() {
   const [step, setStep] = useState(1);
@@ -862,12 +859,12 @@ export default function RegistroPage() {
         </div>
 
         <p className="mt-5 text-center text-sm text-slate-500">
-          Â¿Ya tienes cuenta?{" "}
+          ¿Ya tienes cuenta?{" "}
           <Link
             href="/login"
             className="font-bold text-emerald-600 hover:underline"
           >
-            Inicia sesiÃ³n
+            Inicia sesión
           </Link>
         </p>
       </div>

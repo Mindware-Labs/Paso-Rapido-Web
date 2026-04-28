@@ -51,13 +51,22 @@ function CameraCapture({
     setCamError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode },
+        video: {
+          facingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
+        await new Promise((res) => {
+          const v = videoRef.current!;
+          if (v.readyState >= 2) return res(true);
+          v.onloadedmetadata = () => res(true);
+        });
       }
       setStarted(true);
     } catch {
@@ -71,9 +80,14 @@ function CameraCapture({
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d")!.drawImage(video, 0, 0);
+    const dpr = window.devicePixelRatio || 1;
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    canvas.width = Math.max(1, Math.floor(vw * dpr));
+    canvas.height = Math.max(1, Math.floor(vh * dpr));
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(dpr, dpr);
+    ctx.drawImage(video, 0, 0, vw, vh);
     canvas.toBlob(
       (blob) => {
         if (!blob) return;
@@ -86,7 +100,7 @@ function CameraCapture({
         onCapture(file);
       },
       "image/jpeg",
-      0.9,
+      0.95,
     );
   }, [onCapture]);
 
@@ -120,7 +134,13 @@ function CameraCapture({
 
       {started && (
         <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-black">
-          <video ref={videoRef} autoPlay playsInline muted className="w-full" />
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-[420px] object-cover"
+          />
           {/* Overlay frame guide */}
           <div className="pointer-events-none absolute inset-4 rounded-xl border-2 border-white/60" />
           <button
@@ -135,7 +155,11 @@ function CameraCapture({
       {preview && (
         <div className="relative overflow-hidden rounded-2xl border border-slate-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="Captura" className="w-full" />
+          <img
+            src={preview}
+            alt="Captura"
+            className="w-full h-[420px] object-cover"
+          />
           <button
             onClick={retry}
             className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow"
