@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ChevronDown,
@@ -12,9 +12,6 @@ import {
   FileText,
   Mail,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-// ─── Datos de Prueba (Institucionales) ────────────────────────────────────────
 
 const FAQ = [
   {
@@ -43,6 +40,15 @@ const FAQ = [
 
 export default function AyudaPage() {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredFAQ = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return FAQ;
+    return FAQ.filter(
+      (item) =>
+        item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q)
+    );
+  }, [searchTerm]);
 
   return (
     <div className="min-h-full bg-slate-50/50 pb-12">
@@ -78,54 +84,52 @@ export default function AyudaPage() {
 
         {/* ── Vías de Contacto Rápidas (Tarjetas Semánticas) ── */}
         <div className="grid gap-4 sm:grid-cols-3">
-          {/* Chat */}
-          <div className="group flex cursor-pointer flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all hover:border-blue-200 hover:shadow-md focus-within:ring-2 focus-within:ring-emerald-500/20">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 transition-colors group-hover:bg-blue-100/60">
+          {/* Asistente vial */}
+          <Link
+            href="/dashboard/asistente-vial"
+            className="group flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all hover:border-blue-200 hover:shadow-md focus-within:ring-2 focus-within:ring-emerald-500/20"
+          >
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 transition-colors group-hover:bg-blue-100/60">
               <MessageCircle
                 className="h-6 w-6 text-blue-600"
                 strokeWidth={1.75}
               />
             </div>
-            <h3 className="text-sm font-bold text-slate-900">Chat en vivo</h3>
-            <p className="mt-1 text-xs text-slate-500">
-              Soporte inmediato vía web
-            </p>
+            <h3 className="text-sm font-bold text-slate-900">Asistente vial</h3>
+            <p className="mt-1 text-xs text-slate-500">Chat con peajes y cuenta</p>
             <span className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-blue-600">
-              Iniciar chat <ArrowRight className="h-4 w-4" />
+              Ir al asistente <ArrowRight className="h-4 w-4" />
             </span>
-          </div>
+          </Link>
 
           {/* Teléfono */}
-          <div className="group flex cursor-pointer flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all hover:border-emerald-200 hover:shadow-md focus-within:ring-2 focus-within:ring-emerald-500/20">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-100 transition-colors group-hover:bg-emerald-100/60">
+          <a
+            href="tel:8092000000"
+            className="group flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all hover:border-emerald-200 hover:shadow-md focus-within:ring-2 focus-within:ring-emerald-500/20"
+          >
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 transition-colors group-hover:bg-emerald-100/60">
               <Headphones
                 className="h-6 w-6 text-emerald-600"
                 strokeWidth={1.75}
               />
             </div>
             <h3 className="text-sm font-bold text-slate-900">Línea Nacional</h3>
-            <p className="mt-1 text-xs text-slate-500">
-              Lunes a Viernes (8AM - 6PM)
-            </p>
+            <p className="mt-1 text-xs text-slate-500">Lunes a Viernes (8AM - 6PM)</p>
             <span className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600">
               809-200-0000 <ArrowRight className="h-4 w-4" />
             </span>
-          </div>
+          </a>
 
           {/* Guías */}
-          <div className="group flex cursor-pointer flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all hover:border-violet-200 hover:shadow-md focus-within:ring-2 focus-within:ring-emerald-500/20">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 border border-violet-100 transition-colors group-hover:bg-violet-100/60">
+          <div className="group flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all hover:border-violet-200 hover:shadow-md focus-within:ring-2 focus-within:ring-emerald-500/20">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-violet-100 bg-violet-50 transition-colors group-hover:bg-violet-100/60">
               <HelpCircle
                 className="h-6 w-6 text-violet-600"
                 strokeWidth={1.75}
               />
             </div>
-            <h3 className="text-sm font-bold text-slate-900">
-              Manuales de Uso
-            </h3>
-            <p className="mt-1 text-xs text-slate-500">
-              Paso a paso del sistema
-            </p>
+            <h3 className="text-sm font-bold text-slate-900">Manuales de Uso</h3>
+            <p className="mt-1 text-xs text-slate-500">Paso a paso del sistema</p>
             <span className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-violet-600">
               Ver guías <ArrowRight className="h-4 w-4" />
             </span>
@@ -145,8 +149,8 @@ export default function AyudaPage() {
 
             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <ul className="divide-y divide-slate-100">
-                {FAQ.map((item, index) => (
-                  <li key={index}>
+                {filteredFAQ.map((item) => (
+                  <li key={item.q}>
                     <details className="group">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-sm font-bold text-slate-900 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500/20 [&::-webkit-details-marker]:hidden">
                         {item.q}
