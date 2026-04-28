@@ -38,6 +38,7 @@ function CameraCapture({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const needGestureRef = useRef(false);
   const [started, setStarted] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [camError, setCamError] = useState<string | null>(null);
@@ -84,6 +85,11 @@ function CameraCapture({
   const capture = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
+    if (video.readyState < 2) {
+      setCamError("La cámara no está lista. Intenta de nuevo.");
+      needGestureRef.current = true;
+      return;
+    }
     const canvas = canvasRef.current;
     const dpr = window.devicePixelRatio || 1;
     const vw = video.videoWidth || video.clientWidth;
@@ -110,12 +116,6 @@ function CameraCapture({
       0.95,
     );
   }, [onCapture]);
-
-  const retry = useCallback(() => {
-    setPreview(null);
-    startCamera();
-  }, [startCamera]);
-  const needGestureRef = useRef(false);
 
   const retry = useCallback(() => {
     setPreview(null);
@@ -349,10 +349,10 @@ function KycCapturaInner() {
           />
           {frontFile && (
             <button
-              onClick={() => setSubStep("back")}
+              onClick={submitIdVerification}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3.5 text-sm font-bold text-white shadow-md shadow-emerald-500/30 active:scale-95"
             >
-              Continuar <ChevronRight className="h-4 w-4" />
+              Verificar documento <ChevronRight className="h-4 w-4" />
             </button>
           )}
         </div>
