@@ -30,7 +30,7 @@ import {
 
 const USER = {
   name: "Carlos Martínez",
-  plan: "Cuenta Personal",
+  plan: "Mi cuenta",
   tag: "TAG-4892",
   tagActive: true,
   avatar: "CM",
@@ -48,16 +48,13 @@ const STATS = [
     id: "s1",
     label: "Pases este mes",
     value: "14",
-    sub: "vs 11 mes anterior",
-    trend: "up",
     Icon: Tag,
     color: "emerald",
   },
   {
     id: "s2",
     label: "Gasto en peajes",
-    value: "RD$ 1,400",
-    sub: "promedio RD$ 100/pase",
+    value: "RD$ 500",
     trend: "neutral",
     Icon: CircleDollarSign,
     color: "blue",
@@ -66,16 +63,14 @@ const STATS = [
     id: "s3",
     label: "Vehículos activos",
     value: "2",
-    sub: "TAG vinculados",
     trend: "neutral",
     Icon: CarFront,
     color: "violet",
   },
   {
     id: "s4",
-    label: "Próxima recarga",
+    label: "Pases restantes",
     value: "~5 pases",
-    sub: "con saldo actual",
     trend: "down",
     Icon: Wallet,
     color: "amber",
@@ -156,7 +151,6 @@ const QUICK_ACTIONS = [
 const TOLLS_NEARBY = [
   { id: "t1", name: "Peaje Las Américas", corridor: "Autopista Las Américas", fare: "RD$ 100", status: "open" },
   { id: "t2", name: "Peaje La Victoria", corridor: "Autopista Duarte", fare: "RD$ 100", status: "open" },
-  { id: "t3", name: "Peaje Duarte Km 9", corridor: "Autopista Duarte", fare: "RD$ 100", status: "open" },
   { id: "t4", name: "Peaje Hatillo", corridor: "Autopista del Noreste", fare: "RD$ 150", status: "maintenance" },
 ];
 
@@ -261,7 +255,6 @@ const NEWS_ACCENT: Record<string, { text: string; bg: string }> = {
 function SectionHeader({
   title,
   href,
-  hrefLabel = "Ver todo",
 }: {
   title: string;
   href?: string;
@@ -275,8 +268,6 @@ function SectionHeader({
           href={href}
           className="flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline"
         >
-          {hrefLabel}
-          <ArrowRight className="h-3 w-3" />
         </Link>
       )}
     </div>
@@ -286,35 +277,29 @@ function SectionHeader({
 function StatCard({
   label,
   value,
-  sub,
   trend,
   Icon,
   color,
 }: (typeof STATS)[0]) {
   const c = STAT_COLORS[color];
   return (
-    <div
-      className={`flex flex-col gap-3 rounded-2xl border ${c.border} ${c.bg} p-4`}
-    >
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white/60 p-4 backdrop-blur-sm">
       <div className="flex items-center justify-between">
-        <span
-          className={`flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm`}
-        >
+        <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${c.bg}`}>
           <Icon className={`h-4 w-4 ${c.icon}`} strokeWidth={1.75} />
         </span>
         {trend === "up" && (
-          <TrendingUp className="h-4 w-4 text-emerald-500" strokeWidth={2} />
+          <TrendingUp className="h-3.5 w-3.5 text-emerald-500" strokeWidth={2} />
         )}
         {trend === "down" && (
-          <TrendingDown className="h-4 w-4 text-amber-500" strokeWidth={2} />
+          <TrendingDown className="h-3.5 w-3.5 text-gray-400" strokeWidth={2} />
         )}
       </div>
       <div>
         <p className="text-xl font-extrabold tracking-tight text-gray-900">
           {value}
         </p>
-        <p className="text-xs font-semibold text-gray-500">{label}</p>
-        <p className="mt-0.5 text-[11px] text-gray-400">{sub}</p>
+        <p className="text-xs text-gray-400">{label}</p>
       </div>
     </div>
   );
@@ -429,13 +414,7 @@ export default function DashboardPage() {
               <p className="text-sm font-bold text-amber-900">{al.title}</p>
               <p className="text-xs text-amber-700">{al.body}</p>
             </div>
-            <Link
-              href={al.cta.href}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-amber-700"
-            >
-              {al.cta.label}
-              <ArrowRight className="h-3 w-3" />
-            </Link>
+       
           </div>
         ))}
 
@@ -674,7 +653,7 @@ export default function DashboardPage() {
                 <div className="z-10 flex flex-col items-center gap-1">
                   <MapPinned className="h-7 w-7 text-emerald-600" strokeWidth={1.5} />
                   <span className="text-xs font-semibold text-gray-500">
-                    Mapa de corredores
+                    Peajes en vigencia
                   </span>
                 </div>
                 <Link
@@ -688,6 +667,7 @@ export default function DashboardPage() {
               {TOLLS_NEARBY.map((t, i) => (
                 <TollRow
                   key={t.id}
+                  
                   toll={t}
                   last={i === TOLLS_NEARBY.length - 1}
                 />
@@ -697,104 +677,97 @@ export default function DashboardPage() {
         </div>
 
     
-        {/* ── News ── */}
-        <section aria-labelledby="news-heading">
-          <div className="mb-4">
-            <SectionHeader title="Novedades" href="/dashboard/noticias" />
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {NEWS.map((n) => {
-              const c = NEWS_ACCENT[n.accent];
-              return (
-                <Link
-                  key={n.id}
-                  href="/dashboard/noticias"
-                  className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-gray-200 hover:shadow-md"
-                >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${c.bg}`}
-                    >
-                      <n.Icon className={`h-5 w-5 ${c.text}`} strokeWidth={1.75} />
+        {/* ── News + Help two-column ── */}
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
+
+          {/* Novedades */}
+          <section aria-labelledby="news-heading">
+            <div className="mb-3">
+              <SectionHeader title="Novedades" href="/dashboard/noticias" />
+            </div>
+            <div className="flex flex-col gap-2">
+              {NEWS.map((n) => {
+                const c = NEWS_ACCENT[n.accent];
+                return (
+                  <Link
+                    key={n.id}
+                    href="/dashboard/noticias"
+                    className="group flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-3 py-2.5 shadow-sm transition hover:border-gray-200 hover:shadow-md"
+                  >
+                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${c.bg}`}>
+                      <n.Icon className={`h-3.5 w-3.5 ${c.text}`} strokeWidth={2} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-[10px] font-extrabold uppercase tracking-wide ${c.text}`}>
+                      <p className={`text-[9px] font-extrabold uppercase tracking-wide ${c.text}`}>
                         {n.kicker}
                       </p>
-                      <p className="mt-0.5 text-sm font-semibold leading-snug text-gray-900">
+                      <p className="text-xs font-semibold leading-snug text-gray-900 line-clamp-1">
                         {n.title}
                       </p>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-[10px] text-gray-400">
-                      <Clock className="h-3 w-3" />
-                      {n.date}
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <span className="text-[10px] text-gray-400">{n.date}</span>
+                      <ChevronRight className="h-3.5 w-3.5 text-gray-300 group-hover:text-gray-500 transition-colors" />
                     </div>
-                    <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100">
-                      Leer
-                      <ArrowRight className="h-3 w-3" />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* ── Help & Support strip ── */}
-        <section aria-labelledby="support-heading">
-          <div className="mb-4">
-            <h2 id="support-heading" className="text-base font-bold text-gray-900">
-              ¿Necesitas ayuda?
-            </h2>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              {
-                href: "/dashboard/ayuda",
-                label: "Centro de ayuda",
-                desc: "Preguntas frecuentes y guías.",
-                Icon: Star,
-                bg: "bg-blue-50",
-                text: "text-blue-600",
-              },
-              {
-                href: "/dashboard/asistente-vial",
-                label: "Asistencia vial",
-                desc: "Incidentes y rutas alternativas.",
-                Icon: MapPin,
-                bg: "bg-violet-50",
-                text: "text-violet-600",
-              },
-              {
-                href: "/dashboard/reclamaciones",
-                label: "Reclamaciones",
-                desc: "Reporta cobros incorrectos.",
-                Icon: ShieldAlert,
-                bg: "bg-red-50",
-                text: "text-red-600",
-              },
-            ].map((s) => (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-gray-200 hover:shadow-md"
-              >
-                <span
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${s.bg}`}
+          {/* ¿Necesitas ayuda? */}
+          <section aria-labelledby="support-heading">
+            <div className="mb-3">
+              <h2 id="support-heading" className="text-base font-bold text-gray-900">
+                ¿Necesitas ayuda?
+              </h2>
+            </div>
+            <div className="flex flex-col gap-2">
+              {[
+                {
+                  href: "/dashboard/ayuda",
+                  label: "Centro de ayuda",
+                  desc: "Preguntas frecuentes y guías.",
+                  Icon: Star,
+                  bg: "bg-blue-50",
+                  text: "text-blue-600",
+                },
+                {
+                  href: "/dashboard/asistente-vial",
+                  label: "Asistencia vial",
+                  desc: "Incidentes y rutas alternativas.",
+                  Icon: MapPin,
+                  bg: "bg-violet-50",
+                  text: "text-violet-600",
+                },
+                {
+                  href: "/dashboard/reclamaciones",
+                  label: "Reclamaciones",
+                  desc: "Reporta cobros incorrectos.",
+                  Icon: ShieldAlert,
+                  bg: "bg-red-50",
+                  text: "text-red-600",
+                },
+              ].map((s) => (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-3 py-2.5 shadow-sm transition hover:border-gray-200 hover:shadow-md"
                 >
-                  <s.Icon className={`h-5 w-5 ${s.text}`} strokeWidth={1.75} />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-gray-900">{s.label}</p>
-                  <p className="text-xs text-gray-400">{s.desc}</p>
-                </div>
-                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-gray-300" />
-              </Link>
-            ))}
-          </div>
-        </section>
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${s.bg}`}>
+                    <s.Icon className={`h-3.5 w-3.5 ${s.text}`} strokeWidth={2} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-gray-900">{s.label}</p>
+                    <p className="text-[11px] text-gray-400">{s.desc}</p>
+                  </div>
+                  <ChevronRight className="ml-auto h-3.5 w-3.5 shrink-0 text-gray-300" />
+                </Link>
+              ))}
+            </div>
+          </section>
+
+        </div>
 
       </div>
     </div>

@@ -61,6 +61,5 @@ export const APP_NAV: NavItem[] = [
 ];
 
 export const HEADER_QUICK: { href: string; label: string }[] = [
-  { href: "/dashboard/cuenta", label: "Mi cuenta" },
   { href: "/dashboard/recargar", label: "Recargar" },
 ];
