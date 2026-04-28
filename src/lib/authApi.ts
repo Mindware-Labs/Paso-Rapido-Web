@@ -243,4 +243,18 @@ export const authApi = {
       form,
     );
   },
+
+  sendEmailOtp: (correo: string) =>
+    request<void>(
+      "/kyc/email/send",
+      { method: "POST", body: JSON.stringify({ email: correo }) },
+      10_000,
+    ),
+
+  checkEmailOtp: (correo: string, code: string) =>
+    request<{ valid: boolean }>(
+      "/kyc/email/check",
+      { method: "POST", body: JSON.stringify({ email: correo, code }) },
+      10_000,
+    ),
 };

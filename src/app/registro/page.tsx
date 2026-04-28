@@ -556,10 +556,148 @@ function Step2({
 type KycState =
   | { phase: "creating" }
   | { phase: "qr"; sessionId: string; qrUrl: string }
-  | { phase: "waiting"; sessionId: string; qrUrl: string }
+  | { phase: "otp_sending"; correo: string; password: string }
+  | { phase: "otp"; correo: string; password: string }
   | { phase: "logging_in"; correo: string; password: string }
   | { phase: "done" }
   | { phase: "error"; message: string };
+
+// OTP verification form shown after KYC completes
+function OtpForm({
+  correo,
+  onVerified,
+  onError,
+}: {
+  correo: string;
+  onVerified: () => void;
+  onError: (msg: string) => void;
+}) {
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [resendIn, setResendIn] = useState(60);
+
+  // Resend countdown
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
+
+  const handleSubmit = async () => {
+    if (code.length !== 6) {
+      setError("Ingresa el código de 6 dígitos");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await authApi.checkEmailOtp(correo, code.trim());
+      if (res.valid) {
+        onVerified();
+      } else {
+        setError("Código incorrecto. Verifica e intenta de nuevo.");
+      }
+    } catch (e) {
+      setError((e as Error).message ?? "No se pudo verificar el código.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setError(null);
+    setResendIn(60);
+    try {
+      await authApi.sendEmailOtp(correo);
+    } catch {
+      /* silent */
+    }
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
+          <Mail className="h-9 w-9 text-emerald-600" />
+        </div>
+        <div>
+          <h2 className="text-lg font-extrabold text-slate-900">
+            Confirma tu correo
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Enviamos un código de 6 dígitos a{" "}
+            <span className="font-semibold text-slate-700">{correo}</span>.
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <label
+          htmlFor="otp-code"
+          className="block text-sm font-semibold text-slate-700"
+        >
+          Código de verificación
+        </label>
+        <input
+          id="otp-code"
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={6}
+          value={code}
+          onChange={(e) => {
+            setCode(e.target.value.replace(/\D/g, "").slice(0, 6));
+            setError(null);
+          }}
+          placeholder="000000"
+          className={cn(
+            "w-full rounded-xl border py-3 text-center text-2xl font-bold tracking-[0.5em] outline-none transition focus:ring-2",
+            error
+              ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"
+              : "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20",
+          )}
+        />
+        {error && <p className="text-xs text-red-600">{error}</p>}
+      </div>
+
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={loading || code.length !== 6}
+        className={cn(
+          "w-full rounded-xl py-2.5 text-sm font-bold text-white transition active:scale-[0.98]",
+          !loading && code.length === 6
+            ? "bg-emerald-600 hover:bg-emerald-700"
+            : "cursor-not-allowed bg-slate-300",
+        )}
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Verificando…
+          </span>
+        ) : (
+          "Confirmar código"
+        )}
+      </button>
+
+      <p className="text-center text-xs text-slate-400">
+        {resendIn > 0 ? (
+          <>¿No recibiste el código? Reenviar en {resendIn}s</>
+        ) : (
+          <button
+            type="button"
+            onClick={handleResend}
+            className="font-semibold text-emerald-600 hover:underline"
+          >
+            Reenviar código
+          </button>
+        )}
+      </p>
+    </div>
+  );
+}
 
 function Step3({
   step1Data,
@@ -591,6 +729,7 @@ function Step3({
 
         if (!cancelled) {
           const qrUrl = `${window.location.origin}/kyc-captura?session=${sessionId}`;
+          // Start polling immediately — no manual button needed
           setState({ phase: "qr", sessionId, qrUrl });
         }
       } catch (e) {
@@ -607,17 +746,18 @@ function Step3({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Poll for verification completion
+  // Poll for verification completion (starts automatically on "qr" phase)
   useEffect(() => {
-    if (state.phase !== "waiting") return;
+    if (state.phase !== "qr") return;
     const { sessionId } = state;
 
     async function poll() {
       try {
         const res = await authApi.getPendingKycStatus(sessionId);
         if (res.status === "complete") {
+          // KYC confirmed — send OTP to email automatically
           setState({
-            phase: "logging_in",
+            phase: "otp_sending",
             correo: step2Data.correo,
             password: step2Data.password,
           });
@@ -643,7 +783,31 @@ function Step3({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.phase]);
 
-  // Auto-login once verification is complete
+  // Send OTP email once KYC is verified
+  useEffect(() => {
+    if (state.phase !== "otp_sending") return;
+    let cancelled = false;
+    const { correo, password } = state as {
+      phase: "otp_sending";
+      correo: string;
+      password: string;
+    };
+
+    authApi
+      .sendEmailOtp(correo)
+      .catch(() => {
+        /* try to show OTP anyway */
+      })
+      .finally(() => {
+        if (!cancelled) setState({ phase: "otp", correo, password });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state.phase]);
+
+  // Auto-login once OTP is verified
   useEffect(() => {
     if (state.phase !== "logging_in") return;
     let cancelled = false;
@@ -680,6 +844,41 @@ function Step3({
           Preparando verificación…
         </p>
       </div>
+    );
+  }
+
+  if (state.phase === "otp_sending") {
+    return (
+      <div className="flex flex-col items-center gap-4 py-8 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
+          <Mail className="h-9 w-9 text-emerald-600" />
+        </div>
+        <div>
+          <p className="text-lg font-extrabold text-slate-900">
+            ¡Identidad verificada!
+          </p>
+          <p className="mt-1 text-sm text-slate-500">
+            Enviando código de confirmación a tu correo…
+          </p>
+        </div>
+        <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+      </div>
+    );
+  }
+
+  if (state.phase === "otp") {
+    return (
+      <OtpForm
+        correo={state.correo}
+        onVerified={() =>
+          setState({
+            phase: "logging_in",
+            correo: state.correo,
+            password: state.password,
+          })
+        }
+        onError={(msg) => setState({ phase: "error", message: msg })}
+      />
     );
   }
 
@@ -729,12 +928,9 @@ function Step3({
     );
   }
 
-  // QR phase
-  const sessionId =
-    state.phase === "qr" || state.phase === "waiting" ? state.sessionId : "";
-  const qrUrl =
-    state.phase === "qr" || state.phase === "waiting" ? state.qrUrl : "";
-  const isWaiting = state.phase === "waiting";
+  // QR phase — polling already running automatically
+  const sessionId = state.phase === "qr" ? state.sessionId : "";
+  const qrUrl = state.phase === "qr" ? state.qrUrl : "";
 
   return (
     <div className="space-y-5">
@@ -765,38 +961,19 @@ function Step3({
         </div>
       </div>
 
-      {/* Status */}
-      <div
-        className={cn(
-          "flex items-center gap-2 rounded-xl border px-4 py-3 text-sm",
-          isWaiting
-            ? "border-amber-200 bg-amber-50 text-amber-700"
-            : "border-blue-100 bg-blue-50 text-blue-700",
-        )}
-      >
+      {/* Status — always shows spinner since polling is automatic */}
+      <div className="flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
         <QrCode className="h-4 w-4 shrink-0" />
         <span>
-          {isWaiting
-            ? "Esperando que completes la verificación en tu teléfono…"
-            : "Escanea el QR para abrir la app en tu teléfono y completar la verificación."}
+          Escanea el QR para abrir la app en tu teléfono y completar la
+          verificación.
         </span>
-        {isWaiting && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
+        <Loader2 className="ml-auto h-4 w-4 animate-spin" />
       </div>
 
       <p className="text-center text-xs text-slate-400">
         La sesión es segura y expira en 30 minutos.
       </p>
-
-      {/* Start waiting */}
-      {state.phase === "qr" && (
-        <button
-          type="button"
-          onClick={() => setState({ phase: "waiting", sessionId, qrUrl })}
-          className="w-full rounded-xl border border-emerald-300 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
-        >
-          Ya escaneé el código — esperar resultado
-        </button>
-      )}
     </div>
   );
 }
