@@ -721,6 +721,44 @@ export default function DashboardPage() {
                   last={i === TOLLS_NEARBY.length - 1}
                 />
               ))}
+              <div className="relative overflow-hidden border-t border-emerald-200/60 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50 px-3 py-3 sm:px-4">
+                <div
+                  className="pointer-events-none absolute -right-6 bottom-0 h-20 w-20 rounded-full bg-emerald-400/15 blur-2xl"
+                  aria-hidden
+                />
+                <div
+                  className="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-teal-300/20 blur-xl"
+                  aria-hidden
+                />
+                <div className="relative flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200/80 bg-white/90 px-2 py-0.5 text-[10px] font-bold text-emerald-900 shadow-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
+                      16 estaciones
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-emerald-800/80">
+                      RD Vial
+                    </span>
+                  </div>
+                  <Link
+                    href="/dashboard/peajes"
+                    className="group inline-flex items-center justify-center gap-1.5 self-start rounded-lg border border-emerald-600/20 bg-emerald-600 px-3 py-1.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:self-auto"
+                  >
+                    Ver red completa
+                    <ArrowUpRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </Link>
+                </div>
+                <div
+                  className="relative mt-2.5 flex h-1 w-full justify-center gap-0.5 overflow-hidden rounded-full opacity-60"
+                  aria-hidden
+                >
+                  <span className="h-full w-[18%] rounded-full bg-emerald-500" />
+                  <span className="h-full w-[18%] rounded-full bg-teal-500" />
+                  <span className="h-full w-[18%] rounded-full bg-cyan-500" />
+                  <span className="h-full w-[18%] rounded-full bg-amber-400" />
+                  <span className="h-full w-[18%] rounded-full bg-emerald-600" />
+                </div>
+              </div>
             </div>
           </section>
         </div>

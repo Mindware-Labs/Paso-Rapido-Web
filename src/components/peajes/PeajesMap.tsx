@@ -48,7 +48,7 @@ export default function PeajesMap({ sites, selectedId, onSelect }: Props) {
   }
 
   return (
-    <div className="relative isolate z-0 h-[min(55vh,520px)] w-full min-h-[320px] overflow-hidden rounded-2xl border border-pr-border bg-pr-secondary/20 shadow-inner">
+    <div className="relative isolate z-0 h-[min(55vh,520px)] w-full min-h-[320px] overflow-hidden rounded-2xl border border-pr-hero/20 bg-pr-secondary/35 shadow-inner ring-1 ring-pr-hero/10 shadow-md shadow-pr-hero/10">
       <Map
         className="h-full w-full"
         center={[
