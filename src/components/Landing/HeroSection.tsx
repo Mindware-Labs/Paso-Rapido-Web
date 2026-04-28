@@ -132,7 +132,7 @@ export default function HeroSection() {
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </Link>
               <Link
-                href="#tipos-cuenta"
+                href="/#tipos-cuenta"
                 className="pr-btn-ghost inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-semibold tracking-tight text-neutral-800"
               >
                 Ver cuentas

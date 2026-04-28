@@ -118,7 +118,7 @@ export default function KitPasoRapido() {
 
               <div className="pt-3">
                 <Link
-                  href="#tipos-cuenta"
+                  href="/#tipos-cuenta"
                   className="pr-btn group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold tracking-tight"
                 >
                   Comprar Ahora
