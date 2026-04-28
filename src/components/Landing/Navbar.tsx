@@ -6,10 +6,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Zap } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "#inicio", label: "Inicio" },
-  { href: "#tipos-cuenta", label: "Solicitar Cuenta" },
-  { href: "#estaciones", label: "Estaciones" },
-  { href: "#contacto", label: "Contacto" },
+  { href: "/#inicio", label: "Inicio" },
+  { href: "/#tipos-cuenta", label: "Solicitar Cuenta" },
+  { href: "/#estaciones", label: "Estaciones" },
+  { href: "/#contacto", label: "Contacto" },
 ];
 
 export default function Navbar() {

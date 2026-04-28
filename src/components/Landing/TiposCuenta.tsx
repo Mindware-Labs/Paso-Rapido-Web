@@ -1,28 +1,33 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 import { User, Users, Briefcase, Building2, ArrowRight, type LucideIcon } from "lucide-react";
 
-const TIPOS: { Icon: LucideIcon; title: string; desc: string }[] = [
+const TIPOS: { Icon: LucideIcon; title: string; desc: string; slug: string }[] = [
   {
     Icon: User,
     title: "Personal",
     desc: "Para el uso de un único vehículo.",
+    slug: "personal",
   },
   {
     Icon: Users,
     title: "Familiar",
     desc: "Múltiples vehículos en una sola cuenta asociada.",
+    slug: "familiar",
   },
   {
     Icon: Briefcase,
     title: "Pymes",
     desc: "Para pequeñas y medianas empresas con flotas.",
+    slug: "pymes",
   },
   {
     Icon: Building2,
     title: "Corporativa",
     desc: "Gestión de flotas para grandes empresas o corporaciones.",
+    slug: "corporativa",
   },
 ];
 
@@ -80,10 +85,14 @@ export default function TiposCuenta() {
               </div>
 
               <div className="pr-rule mt-auto" />
-              <span className="relative inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#0f9d58] transition-transform duration-300 group-hover:translate-x-0.5">
+              <Link
+                href={`/cuentas/${t.slug}`}
+                className="relative inline-flex w-fit items-center gap-1.5 rounded-sm text-[12.5px] font-semibold text-[#0f9d58] transition-transform duration-300 group-hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f9d58] focus-visible:ring-offset-2"
+                aria-label={`Saber más: cuenta ${t.title}`}
+              >
                 Saber más
-                <ArrowRight className="h-3.5 w-3.5" />
-              </span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              </Link>
             </motion.div>
           ))}
         </div>
