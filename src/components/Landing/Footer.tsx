@@ -5,11 +5,11 @@ import { Apple, Play, Zap } from "lucide-react";
 import { SiX, SiFacebook, SiInstagram } from "@icons-pack/react-simple-icons";
 
 const NAV_LINKS = [
-  { href: "#inicio", label: "Inicio" },
-  { href: "#tipos-cuenta", label: "Solicitar Cuenta" },
-  { href: "#estaciones", label: "Estaciones" },
-  { href: "#contacto", label: "Contacto" },
-  { href: "#faq", label: "Privacidad" },
+  { href: "/#inicio", label: "Inicio" },
+  { href: "/#tipos-cuenta", label: "Solicitar Cuenta" },
+  { href: "/#estaciones", label: "Estaciones" },
+  { href: "/#contacto", label: "Contacto" },
+  { href: "/#faq", label: "Privacidad" },
 ];
 
 export default function Footer() {
