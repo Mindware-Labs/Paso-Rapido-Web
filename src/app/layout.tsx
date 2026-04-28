@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-const sans = Plus_Jakarta_Sans({
+const sans = Inter({
   variable: "--font-pr",
   subsets: ["latin"],
   display: "swap",

@@ -1,25 +1,42 @@
-// Partners.tsx
 "use client";
+
+import { motion } from "motion/react";
 
 const PARTNERS = ["Carol", "CardNet", "Hidalgos", "Axgen", "BmCargo"];
 
 export default function Partners() {
   return (
-    <section id="contacto" className="bg-white py-10">
+    <section id="contacto" className="relative pb-12 pt-4">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <p className="mb-6 text-center text-sm font-semibold text-gray-500">
-          Adquiere tu kit en:
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          {PARTNERS.map((p) => (
-            <div
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-7 text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-neutral-500"
+        >
+          Adquiere tu kit en
+        </motion.p>
+
+        <div className="grid grid-cols-2 items-center justify-items-center gap-x-6 gap-y-4 sm:grid-cols-3 md:grid-cols-5">
+          {PARTNERS.map((p, i) => (
+            <motion.div
               key={p}
-              className="flex h-10 min-w-[80px] items-center justify-center rounded-lg bg-gray-100 px-4"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.06 }}
+              whileHover={{ y: -2 }}
+              className="group relative flex h-12 w-full items-center justify-center transition-opacity"
             >
-              <span className="text-xs font-bold text-gray-500">{p}</span>
-            </div>
+              <span className="text-[15px] font-semibold tracking-tight text-neutral-400 transition-colors duration-300 group-hover:text-[#0a0a0a]">
+                {p}
+              </span>
+            </motion.div>
           ))}
         </div>
+
+        <div className="pr-rule mx-auto mt-12 max-w-3xl" />
       </div>
     </section>
   );
