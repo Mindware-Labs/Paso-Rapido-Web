@@ -2,28 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, PanelLeftClose, PanelLeft, Zap, Bell } from "lucide-react";
+import { Menu, Zap, Bell, PanelLeft } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { useSidebar } from "@/components/sidebar/SidebarContext";
+import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const pathname = usePathname() || "/";
-  const { openMenu, isOpen, toggle } = useSidebar();
+  // Extraemos toggle e isOpen del SidebarContext
+  const { openMenu, toggle, isOpen } = useSidebar();
+  const { userData } = useAuth();
+  const initials = userData
+    ? [userData.primerNombre?.[0] ?? "", userData.segundoNombre?.[0] ?? ""]
+        .filter(Boolean)
+        .join("")
+        .toUpperCase() || userData.primerNombre.slice(0, 2).toUpperCase()
+    : "?";
 
   const isRecargarActive =
     pathname === "/dashboard/recargar" ||
     pathname.startsWith("/dashboard/recargar/");
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 h-14 shrink-0 border-b border-border/40 bg-background/95",
-        "supports-[backdrop-filter]:bg-background/80 supports-[backdrop-filter]:backdrop-blur-md",
-      )}
-    >
+    <header className="sticky top-0 z-50 h-14 shrink-0 border-b border-border/50 bg-white">
       <div className="flex h-full items-center gap-3 px-4">
-
         {/* Mobile: hamburger */}
         <button
           type="button"
@@ -39,25 +42,6 @@ export function SiteHeader() {
           <Menu className="size-4" />
         </button>
 
-        {/* Desktop: sidebar collapse toggle */}
-        <button
-          type="button"
-          onClick={toggle}
-          className={cn(
-            "hidden size-8 shrink-0 items-center justify-center rounded-lg",
-            "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
-            "lg:inline-flex",
-          )}
-          aria-label={isOpen ? "Colapsar sidebar" : "Expandir sidebar"}
-        >
-          {isOpen ? (
-            <PanelLeftClose className="size-4" />
-          ) : (
-            <PanelLeft className="size-4" />
-          )}
-        </button>
-
         {/* Brand */}
         <Link
           href="/"
@@ -71,16 +55,35 @@ export function SiteHeader() {
           </span>
         </Link>
 
+        {/* Separador vertical sutil para replicar la estructura visual */}
+        <div className="hidden lg:block h-6 w-px bg-border/50 mx-2" />
+
+        {/* Desktop: Toggle Sidebar (Movido después de la marca) */}
+        <button
+          type="button"
+          onClick={toggle}
+          className={cn(
+            "hidden lg:inline-flex size-8 shrink-0 items-center justify-center rounded-lg",
+            "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30",
+          )}
+          aria-label={isOpen ? "Colapsar menú" : "Expandir menú"}
+        >
+          <PanelLeft className="size-4.5" />
+        </button>
+
         <div className="flex-1" />
 
         {/* Right side */}
         <div className="flex items-center gap-1.5">
-
           {/* Recargar CTA */}
           <Link
             href="/dashboard/recargar"
             className={cn(
-              buttonVariants({ variant: isRecargarActive ? "secondary" : "default", size: "sm" }),
+              buttonVariants({
+                variant: isRecargarActive ? "secondary" : "default",
+                size: "sm",
+              }),
               "hidden h-8 px-4 text-xs font-semibold shadow-sm md:inline-flex",
             )}
           >
@@ -117,9 +120,8 @@ export function SiteHeader() {
             )}
             aria-label="Mi perfil"
           >
-            CM
+            {initials}
           </Link>
-
         </div>
       </div>
     </header>

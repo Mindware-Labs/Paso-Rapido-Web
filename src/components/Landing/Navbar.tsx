@@ -40,8 +40,12 @@ export default function Navbar() {
             <Zap className="h-3.5 w-3.5 fill-white text-white" aria-hidden />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-[13px] font-bold tracking-tight text-[#0a0a0a]">Paso</span>
-            <span className="text-[13px] font-bold tracking-tight text-[#0f9d58]">Rápido</span>
+            <span className="text-[13px] font-bold tracking-tight text-[#0a0a0a]">
+              Paso
+            </span>
+            <span className="text-[13px] font-bold tracking-tight text-[#0f9d58]">
+              Rápido
+            </span>
           </div>
         </Link>
 
@@ -57,7 +61,13 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-2">
+          <Link
+            href="/login"
+            className="pr-btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2 text-[13px] font-semibold tracking-tight text-neutral-800"
+          >
+            Iniciar sesión
+          </Link>
           <Link
             href="/registro"
             className="pr-btn inline-flex items-center justify-center rounded-full px-5 py-2 text-[13px] font-semibold tracking-tight"
@@ -96,8 +106,15 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
+                href="/login"
+                className="pr-btn-ghost mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-neutral-800"
+                onClick={() => setMenuOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
+              <Link
                 href="/registro"
-                className="pr-btn mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold"
+                className="pr-btn mt-1 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold"
                 onClick={() => setMenuOpen(false)}
               >
                 Registrarse

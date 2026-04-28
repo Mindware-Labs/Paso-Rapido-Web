@@ -16,7 +16,7 @@ function formatCountdown(s: number) {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoggedIn } = useAuth();
+  const { login, isLoggedIn, isInitialized } = useAuth();
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
@@ -28,10 +28,10 @@ export default function LoginPage() {
 
   const correoRef = useRef<HTMLInputElement>(null);
 
-  // Redirect if already authenticated
+  // Redirect only after auth state is fully initialized
   useEffect(() => {
-    if (isLoggedIn) router.replace("/dashboard");
-  }, [isLoggedIn, router]);
+    if (isInitialized && isLoggedIn) router.replace("/dashboard");
+  }, [isInitialized, isLoggedIn, router]);
 
   // Countdown timer for rate-limit lock
   useEffect(() => {

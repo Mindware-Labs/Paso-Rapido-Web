@@ -21,6 +21,7 @@ type AuthContextValue = {
   token: string | null;
   userData: UserInfo | null;
   isLoggedIn: boolean;
+  isInitialized: boolean;
   login: (correo: string, password: string) => Promise<LoginResult>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -55,11 +56,15 @@ function removeToken() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserInfo | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Restore token on mount (client-only)
   useEffect(() => {
     const t = loadToken();
-    if (!t) return;
+    if (!t) {
+      setIsInitialized(true);
+      return;
+    }
     setToken(t);
     authApi
       .getCurrentUser(t)
@@ -67,7 +72,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .catch(() => {
         removeToken();
         setToken(null);
-      });
+      })
+      .finally(() => setIsInitialized(true));
   }, []);
 
   const refreshUser = useCallback(async () => {
@@ -115,11 +121,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       userData,
       isLoggedIn: !!token,
+      isInitialized,
       login,
       logout,
       refreshUser,
     }),
-    [token, userData, login, logout, refreshUser],
+    [token, userData, isInitialized, login, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

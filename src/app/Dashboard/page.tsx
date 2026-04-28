@@ -26,20 +26,24 @@ import {
   Star,
 } from "lucide-react";
 
+import { useAuth } from "@/context/AuthContext";
+
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const USER = {
-  name: "Carlos Martínez",
   plan: "Mi cuenta",
   tag: "TAG-4892",
   tagActive: true,
-  avatar: "CM",
 };
 
 const BALANCE = {
   available: "RD$ 500.00",
   reserved: "RD$ 100.00",
-  lastRecharge: { amount: "RD$ 500.00", date: "Ayer, 16:10", method: "CardNet" },
+  lastRecharge: {
+    amount: "RD$ 500.00",
+    date: "Ayer, 16:10",
+    method: "CardNet",
+  },
   lastPass: { amount: "RD$ -100.00", date: "Hoy, 08:42", toll: "Las Américas" },
 };
 
@@ -149,9 +153,27 @@ const QUICK_ACTIONS = [
 ];
 
 const TOLLS_NEARBY = [
-  { id: "t1", name: "Peaje Las Américas", corridor: "Autopista Las Américas", fare: "RD$ 100", status: "open" },
-  { id: "t2", name: "Peaje La Victoria", corridor: "Autopista Duarte", fare: "RD$ 100", status: "open" },
-  { id: "t4", name: "Peaje Hatillo", corridor: "Autopista del Noreste", fare: "RD$ 150", status: "maintenance" },
+  {
+    id: "t1",
+    name: "Peaje Las Américas",
+    corridor: "Autopista Las Américas",
+    fare: "RD$ 100",
+    status: "open",
+  },
+  {
+    id: "t2",
+    name: "Peaje La Victoria",
+    corridor: "Autopista Duarte",
+    fare: "RD$ 100",
+    status: "open",
+  },
+  {
+    id: "t4",
+    name: "Peaje Hatillo",
+    corridor: "Autopista del Noreste",
+    fare: "RD$ 150",
+    status: "maintenance",
+  },
 ];
 
 const ALERTS = [
@@ -185,7 +207,8 @@ const NEWS = [
   {
     id: "n3",
     kicker: "Promoción",
-    title: "Recarga con tarjeta este mes y obtén 5% de bono hasta el 30 de mayo",
+    title:
+      "Recarga con tarjeta este mes y obtén 5% de bono hasta el 30 de mayo",
     date: "20 abr 2026",
     Icon: Megaphone,
     accent: "blue",
@@ -194,7 +217,10 @@ const NEWS = [
 
 // ─── Color map helpers ─────────────────────────────────────────────────────────
 
-const STAT_COLORS: Record<string, { bg: string; icon: string; border: string }> = {
+const STAT_COLORS: Record<
+  string,
+  { bg: string; icon: string; border: string }
+> = {
   emerald: {
     bg: "bg-emerald-50",
     icon: "text-emerald-600",
@@ -217,7 +243,10 @@ const STAT_COLORS: Record<string, { bg: string; icon: string; border: string }> 
   },
 };
 
-const ACTION_COLORS: Record<string, { bg: string; icon: string; hover: string; ring: string }> = {
+const ACTION_COLORS: Record<
+  string,
+  { bg: string; icon: string; hover: string; ring: string }
+> = {
   emerald: {
     bg: "bg-emerald-600",
     icon: "text-white",
@@ -267,29 +296,27 @@ function SectionHeader({
         <Link
           href={href}
           className="flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline"
-        >
-        </Link>
+        ></Link>
       )}
     </div>
   );
 }
 
-function StatCard({
-  label,
-  value,
-  trend,
-  Icon,
-  color,
-}: (typeof STATS)[0]) {
+function StatCard({ label, value, trend, Icon, color }: (typeof STATS)[0]) {
   const c = STAT_COLORS[color];
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white/60 p-4 backdrop-blur-sm">
       <div className="flex items-center justify-between">
-        <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${c.bg}`}>
+        <span
+          className={`flex h-8 w-8 items-center justify-center rounded-lg ${c.bg}`}
+        >
           <Icon className={`h-4 w-4 ${c.icon}`} strokeWidth={1.75} />
         </span>
         {trend === "up" && (
-          <TrendingUp className="h-3.5 w-3.5 text-emerald-500" strokeWidth={2} />
+          <TrendingUp
+            className="h-3.5 w-3.5 text-emerald-500"
+            strokeWidth={2}
+          />
         )}
         {trend === "down" && (
           <TrendingDown className="h-3.5 w-3.5 text-gray-400" strokeWidth={2} />
@@ -323,7 +350,10 @@ function ActivityRow({
           {item.out ? (
             <TrendingDown className="h-4 w-4 text-red-500" strokeWidth={2.5} />
           ) : (
-            <TrendingUp className="h-4 w-4 text-emerald-600" strokeWidth={2.5} />
+            <TrendingUp
+              className="h-4 w-4 text-emerald-600"
+              strokeWidth={2.5}
+            />
           )}
         </span>
         <div className="min-w-0 flex-1">
@@ -386,10 +416,14 @@ function TollRow({
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
+  const { userData } = useAuth();
+  const fullName = userData
+    ? [userData.primerNombre, userData.segundoNombre].filter(Boolean).join(" ")
+    : "";
+
   return (
     <div className="min-h-full bg-gray-50/60">
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
-
         {/* ── Greeting row ── */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -397,10 +431,9 @@ export default function DashboardPage() {
               Bienvenido de nuevo
             </p>
             <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-              {USER.name}
+              {fullName || "Bienvenido"}
             </h1>
           </div>
-
         </div>
 
         {/* ── Alert banners ── */}
@@ -409,12 +442,14 @@ export default function DashboardPage() {
             key={al.id}
             className="flex flex-wrap items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5 sm:items-center"
           >
-            <al.Icon className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 sm:mt-0" strokeWidth={2} />
+            <al.Icon
+              className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 sm:mt-0"
+              strokeWidth={2}
+            />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-amber-900">{al.title}</p>
               <p className="text-xs text-amber-700">{al.body}</p>
             </div>
-       
           </div>
         ))}
 
@@ -481,26 +516,40 @@ export default function DashboardPage() {
               <div className="flex flex-wrap gap-4 sm:gap-6">
                 <div className="flex items-center gap-2">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
-                    <TrendingUp className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+                    <TrendingUp
+                      className="h-3.5 w-3.5 text-white"
+                      strokeWidth={2.5}
+                    />
                   </span>
                   <div>
                     <p className="text-[9px] font-semibold uppercase tracking-wider text-white/60">
                       Última recarga
                     </p>
-                    <p className="text-sm font-bold">{BALANCE.lastRecharge.amount}</p>
-                    <p className="text-[10px] text-white/50">{BALANCE.lastRecharge.date}</p>
+                    <p className="text-sm font-bold">
+                      {BALANCE.lastRecharge.amount}
+                    </p>
+                    <p className="text-[10px] text-white/50">
+                      {BALANCE.lastRecharge.date}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
-                    <TrendingDown className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+                    <TrendingDown
+                      className="h-3.5 w-3.5 text-white"
+                      strokeWidth={2.5}
+                    />
                   </span>
                   <div>
                     <p className="text-[9px] font-semibold uppercase tracking-wider text-white/60">
                       Último pase
                     </p>
-                    <p className="text-sm font-bold">{BALANCE.lastPass.amount}</p>
-                    <p className="text-[10px] text-white/50">{BALANCE.lastPass.toll}</p>
+                    <p className="text-sm font-bold">
+                      {BALANCE.lastPass.amount}
+                    </p>
+                    <p className="text-[10px] text-white/50">
+                      {BALANCE.lastPass.toll}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -525,7 +574,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </section>
-        
+
         {/* ── Quick actions ── */}
         <section aria-labelledby="quick-heading">
           <div className="mb-4">
@@ -583,7 +632,7 @@ export default function DashboardPage() {
 
         {/* ── Stats row ── */}
         <section aria-labelledby="stats-heading">
-        <div className="mb-4">
+          <div className="mb-4">
             <SectionHeader title="Resumen del mes" />
           </div>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -593,10 +642,8 @@ export default function DashboardPage() {
           </div>
         </section>
 
-
         {/* ── Two-column row: Activity + Tolls ── */}
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-start">
-
           {/* Activity */}
           <section aria-labelledby="activity-heading" className="min-w-0">
             <div className="mb-4">
@@ -651,7 +698,10 @@ export default function DashboardPage() {
                   ))}
                 </div>
                 <div className="z-10 flex flex-col items-center gap-1">
-                  <MapPinned className="h-7 w-7 text-emerald-600" strokeWidth={1.5} />
+                  <MapPinned
+                    className="h-7 w-7 text-emerald-600"
+                    strokeWidth={1.5}
+                  />
                   <span className="text-xs font-semibold text-gray-500">
                     Peajes en vigencia
                   </span>
@@ -667,7 +717,6 @@ export default function DashboardPage() {
               {TOLLS_NEARBY.map((t, i) => (
                 <TollRow
                   key={t.id}
-                  
                   toll={t}
                   last={i === TOLLS_NEARBY.length - 1}
                 />
@@ -676,10 +725,8 @@ export default function DashboardPage() {
           </section>
         </div>
 
-    
         {/* ── News + Help two-column ── */}
         <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
-
           {/* Novedades */}
           <section aria-labelledby="news-heading">
             <div className="mb-3">
@@ -694,11 +741,18 @@ export default function DashboardPage() {
                     href="/dashboard/noticias"
                     className="group flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-3 py-2.5 shadow-sm transition hover:border-gray-200 hover:shadow-md"
                   >
-                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${c.bg}`}>
-                      <n.Icon className={`h-3.5 w-3.5 ${c.text}`} strokeWidth={2} />
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${c.bg}`}
+                    >
+                      <n.Icon
+                        className={`h-3.5 w-3.5 ${c.text}`}
+                        strokeWidth={2}
+                      />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-[9px] font-extrabold uppercase tracking-wide ${c.text}`}>
+                      <p
+                        className={`text-[9px] font-extrabold uppercase tracking-wide ${c.text}`}
+                      >
                         {n.kicker}
                       </p>
                       <p className="text-xs font-semibold leading-snug text-gray-900 line-clamp-1">
@@ -706,7 +760,9 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-1.5">
-                      <span className="text-[10px] text-gray-400">{n.date}</span>
+                      <span className="text-[10px] text-gray-400">
+                        {n.date}
+                      </span>
                       <ChevronRight className="h-3.5 w-3.5 text-gray-300 group-hover:text-gray-500 transition-colors" />
                     </div>
                   </Link>
@@ -718,7 +774,10 @@ export default function DashboardPage() {
           {/* ¿Necesitas ayuda? */}
           <section aria-labelledby="support-heading">
             <div className="mb-3">
-              <h2 id="support-heading" className="text-base font-bold text-gray-900">
+              <h2
+                id="support-heading"
+                className="text-base font-bold text-gray-900"
+              >
                 ¿Necesitas ayuda?
               </h2>
             </div>
@@ -754,8 +813,13 @@ export default function DashboardPage() {
                   href={s.href}
                   className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-3 py-2.5 shadow-sm transition hover:border-gray-200 hover:shadow-md"
                 >
-                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${s.bg}`}>
-                    <s.Icon className={`h-3.5 w-3.5 ${s.text}`} strokeWidth={2} />
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${s.bg}`}
+                  >
+                    <s.Icon
+                      className={`h-3.5 w-3.5 ${s.text}`}
+                      strokeWidth={2}
+                    />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-bold text-gray-900">{s.label}</p>
@@ -766,9 +830,7 @@ export default function DashboardPage() {
               ))}
             </div>
           </section>
-
         </div>
-
       </div>
     </div>
   );

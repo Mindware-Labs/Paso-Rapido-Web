@@ -3,12 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import {
   ArrowRight,
   Zap,
@@ -53,10 +48,22 @@ export default function HeroSection() {
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rX = useSpring(useTransform(my, [-50, 50], [4, -4]), { stiffness: 120, damping: 18 });
-  const rY = useSpring(useTransform(mx, [-50, 50], [-6, 6]), { stiffness: 120, damping: 18 });
-  const tX = useSpring(useTransform(mx, [-50, 50], [-10, 10]), { stiffness: 80, damping: 22 });
-  const tY = useSpring(useTransform(my, [-50, 50], [-6, 6]), { stiffness: 80, damping: 22 });
+  const rX = useSpring(useTransform(my, [-50, 50], [4, -4]), {
+    stiffness: 120,
+    damping: 18,
+  });
+  const rY = useSpring(useTransform(mx, [-50, 50], [-6, 6]), {
+    stiffness: 120,
+    damping: 18,
+  });
+  const tX = useSpring(useTransform(mx, [-50, 50], [-10, 10]), {
+    stiffness: 80,
+    damping: 22,
+  });
+  const tY = useSpring(useTransform(my, [-50, 50], [-6, 6]), {
+    stiffness: 80,
+    damping: 22,
+  });
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = ref.current?.getBoundingClientRect();
@@ -122,7 +129,7 @@ export default function HeroSection() {
               className="mt-1 flex flex-wrap items-center gap-3"
             >
               <Link
-                href="/Dashboard"
+                href="/dashboard"
                 className="pr-btn group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold tracking-tight"
               >
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
@@ -154,7 +161,9 @@ export default function HeroSection() {
                     <Icon className="h-4 w-4" strokeWidth={2.4} />
                   </span>
                   <div className="leading-tight">
-                    <p className="text-[12px] font-semibold text-[#0a0a0a]">{title}</p>
+                    <p className="text-[12px] font-semibold text-[#0a0a0a]">
+                      {title}
+                    </p>
                     <p className="text-[11px] text-neutral-500">{subtitle}</p>
                   </div>
                 </div>
@@ -193,7 +202,10 @@ export default function HeroSection() {
 
             {/* Floating SALDO badge (top-left of phone) */}
             <motion.div
-              style={{ x: useTransform(tX, (v) => v * -0.6), y: useTransform(tY, (v) => v * -0.6) }}
+              style={{
+                x: useTransform(tX, (v) => v * -0.6),
+                y: useTransform(tY, (v) => v * -0.6),
+              }}
               className="pr-float pointer-events-none absolute left-[2%] top-[14%] z-30 sm:left-[6%]"
             >
               <div className="flex items-center gap-3 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/4">
@@ -204,22 +216,32 @@ export default function HeroSection() {
                   <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
                     Saldo
                   </p>
-                  <p className="text-[14px] font-bold text-[#0a0a0a]">RD$ 1,500</p>
+                  <p className="text-[14px] font-bold text-[#0a0a0a]">
+                    RD$ 1,500
+                  </p>
                 </div>
               </div>
             </motion.div>
 
             {/* Floating APROBADO badge (right side, below middle) */}
             <motion.div
-              style={{ x: useTransform(tX, (v) => v * -0.4), y: useTransform(tY, (v) => v * -0.4) }}
+              style={{
+                x: useTransform(tX, (v) => v * -0.4),
+                y: useTransform(tY, (v) => v * -0.4),
+              }}
               className="pr-float pointer-events-none absolute right-[2%] top-[42%] z-30 sm:right-[4%]"
             >
               <div className="flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/4">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e7f7ee]">
-                  <ShieldCheck className="h-4 w-4 text-[#0f9d58]" strokeWidth={2.4} />
+                  <ShieldCheck
+                    className="h-4 w-4 text-[#0f9d58]"
+                    strokeWidth={2.4}
+                  />
                 </span>
                 <div className="leading-tight">
-                  <p className="text-[12px] font-semibold text-[#0f9d58]">Aprobado</p>
+                  <p className="text-[12px] font-semibold text-[#0f9d58]">
+                    Aprobado
+                  </p>
                   <p className="text-[11px] text-neutral-500">+ RD$ 500</p>
                 </div>
               </div>
@@ -282,7 +304,11 @@ export default function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
+          transition={{
+            duration: 0.8,
+            delay: 0.45,
+            ease: [0.22, 0.61, 0.36, 1],
+          }}
           className="relative z-30 -mt-4 rounded-[28px] border border-black/6 bg-white px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.04),0_30px_60px_-30px_rgba(10,10,10,0.10)] sm:px-7 sm:py-7 md:-mt-32 md:px-9 md:py-8 lg:-mt-40"
         >
           <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-4 md:gap-6 lg:gap-8">
