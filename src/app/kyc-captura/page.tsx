@@ -2,197 +2,197 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useRef, useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { authApi } from "@/lib/authApi";
+import {
+  CheckCircle2,
+  RotateCcw,
+  Scan,
+  Smile,
+  XCircle,
+  Zap,
+  Loader2,
+  ChevronRight,
+} from "lucide-react";
+
+type SubStep =
+  | "front"
+  | "back"
+  | "id_sending"
+  | "selfie"
+  | "face_sending"
+  | "done"
+  | "error";
 
 function CameraCapture({
-    label,
-    hint,
-    facingMode,
-    onCapture,
-  }: {
-    label: string;
-    hint: string;
-    facingMode: "environment" | "user";
-    onCapture: (file: File) => void;
-  }) {
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const streamRef = useRef<MediaStream | null>(null);
-    const [started, setStarted] = useState(false);
-    const [preview, setPreview] = useState<string | null>(null);
-    const [camError, setCamError] = useState<string | null>(null);
+  label,
+  hint,
+  facingMode,
+  onCapture,
+}: {
+  label: string;
+  hint: string;
+  facingMode: "environment" | "user";
+  onCapture: (file: File) => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [started, setStarted] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [camError, setCamError] = useState<string | null>(null);
 
-    const startCamera = useCallback(async () => {
-      setCamError(null);
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode,
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          },
-          audio: false,
-        });
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          // playsInline + muted + user gesture allow autoplay
-          videoRef.current.muted = true;
-          await videoRef.current.play();
-          await new Promise((res) => {
-            const v = videoRef.current!;
-            if (v.readyState >= 2) return res(true);
-            v.onloadedmetadata = () => res(true);
-          });
-        }
-        setStarted(true);
-      } catch (err) {
-        console.error(err);
-        setCamError(
-          "No se pudo acceder a la cámara. Verifica los permisos del navegador.",
-        );
-      }
-    }, [facingMode]);
-
-    const capture = useCallback(() => {
-      if (!videoRef.current || !canvasRef.current) return;
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const dpr = window.devicePixelRatio || 1;
-      const vw = video.videoWidth || video.clientWidth;
-      const vh = video.videoHeight || video.clientHeight;
-      canvas.width = Math.max(1, Math.floor(vw * dpr));
-      canvas.height = Math.max(1, Math.floor(vh * dpr));
-      const ctx = canvas.getContext("2d")!;
-      ctx.save();
-      ctx.scale(dpr, dpr);
-      ctx.drawImage(video, 0, 0, vw, vh);
-      ctx.restore();
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) return;
-          const url = canvas.toDataURL("image/jpeg", 0.95);
-          setPreview(url);
-          // Stop stream
-          streamRef.current?.getTracks().forEach((t) => t.stop());
-          setStarted(false);
-          const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
-          onCapture(file);
+  const startCamera = useCallback(async () => {
+    setCamError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
         },
-        "image/jpeg",
-        0.95,
-      );
-    }, [onCapture]);
-
-    const retry = useCallback(() => {
-      setPreview(null);
-      startCamera();
-    }, [startCamera]);
-
-    useEffect(() => {
-      if (!preview) {
-        // attempt to start camera automatically when the component mounts
-        startCamera().catch(() => {});
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        // playsInline + muted + user gesture allow autoplay
+        videoRef.current.muted = true;
+        await videoRef.current.play();
+        await new Promise((res) => {
+          const v = videoRef.current!;
+          if (v.readyState >= 2) return res(true);
+          v.onloadedmetadata = () => res(true);
+        });
       }
-      return () => {
-        // cleanup tracks on unmount
+      setStarted(true);
+    } catch (err) {
+      console.error(err);
+      setCamError(
+        "No se pudo acceder a la cámara. Verifica los permisos del navegador.",
+      );
+    }
+  }, [facingMode]);
+
+  const capture = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const dpr = window.devicePixelRatio || 1;
+    const vw = video.videoWidth || video.clientWidth;
+    const vh = video.videoHeight || video.clientHeight;
+    canvas.width = Math.max(1, Math.floor(vw * dpr));
+    canvas.height = Math.max(1, Math.floor(vh * dpr));
+    const ctx = canvas.getContext("2d")!;
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.drawImage(video, 0, 0, vw, vh);
+    ctx.restore();
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const url = canvas.toDataURL("image/jpeg", 0.95);
+        setPreview(url);
+        // Stop stream
         streamRef.current?.getTracks().forEach((t) => t.stop());
-      };
-    }, [startCamera, preview]);
+        setStarted(false);
+        const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+        onCapture(file);
+      },
+      "image/jpeg",
+      0.95,
+    );
+  }, [onCapture]);
 
-    return (
-      <div className="flex flex-col gap-4">
-        <div>
-          <p className="text-base font-bold text-slate-900">{label}</p>
-          <p className="text-sm text-slate-500">{hint}</p>
+  const retry = useCallback(() => {
+    setPreview(null);
+    startCamera();
+  }, [startCamera]);
+
+  useEffect(() => {
+    if (!preview) {
+      // attempt to start camera automatically when the component mounts
+      startCamera().catch(() => {});
+    }
+    return () => {
+      // cleanup tracks on unmount
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, [startCamera, preview]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div>
+        <p className="text-base font-bold text-slate-900">{label}</p>
+        <p className="text-sm text-slate-500">{hint}</p>
+      </div>
+
+      {camError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {camError}
         </div>
+      )}
 
-        {camError && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {camError}
-          </div>
-        )}
+      {/* Outer card to mimic mobile design */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-md">
+        {/* Camera area */}
+        <div className="relative mx-auto max-w-[480px]">
+          {/* Inner black frame */}
+          <div className="relative overflow-hidden rounded-[28px] bg-black">
+            {/* white inner guide */}
+            <div className="absolute inset-4 rounded-[20px] border-2 border-white/20 pointer-events-none" />
 
-        {/* Outer card to mimic mobile design */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-md">
-          {/* Camera area */}
-          <div className="relative mx-auto max-w-[480px]">
-            {/* Inner black frame */}
-            <div className="relative overflow-hidden rounded-[28px] bg-black">
-              {/* white inner guide */}
-              <div className="absolute inset-4 rounded-[20px] border-2 border-white/20 pointer-events-none" />
+            {/* Video when started */}
+            {started && !preview && (
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-[68vw] max-h-[560px] object-cover"
+              />
+            )}
 
-              {/* Video when started */}
-              {started && !preview && (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-[68vw] max-h-[560px] object-cover"
-                />
-              )}
+            {/* Placeholder before start or when preview */}
+            {!started && !preview && (
+              <div className="flex h-[68vw] max-h-[560px] items-center justify-center bg-black">
+                <div className="rounded-[18px] border border-white/20 w-[86%] h-[86%]" />
+              </div>
+            )}
 
-              {/* Placeholder before start or when preview */}
-              {!started && !preview && (
-                <div className="flex h-[68vw] max-h-[560px] items-center justify-center bg-black">
-                  <div className="rounded-[18px] border border-white/20 w-[86%] h-[86%]" />
+            {preview && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={preview}
+                alt="Captura"
+                className="w-full h-[68vw] max-h-[560px] object-cover"
+              />
+            )}
+
+            {/* shutter button */}
+            <div className="absolute left-1/2 bottom-6 -translate-x-1/2">
+              {!preview ? (
+                <button
+                  onClick={started ? capture : startCamera}
+                  className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg active:scale-95"
+                  aria-label="Tomar foto"
+                >
+                  <span className="block h-12 w-12 rounded-full bg-emerald-500 border-4 border-white" />
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={retry}
+                    className="rounded-full bg-white px-4 py-2 text-sm font-semibold"
+                  >
+                    Repetir
+                  </button>
                 </div>
               )}
-
-              {preview && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={preview} alt="Captura" className="w-full h-[68vw] max-h-[560px] object-cover" />
-              )}
-
-              {/* shutter button */}
-              <div className="absolute left-1/2 bottom-6 -translate-x-1/2">
-                {!preview ? (
-                  <button
-                    onClick={started ? capture : startCamera}
-                    className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg active:scale-95"
-                    aria-label="Tomar foto"
-                  >
-                    <span className="block h-12 w-12 rounded-full bg-emerald-500 border-4 border-white" />
-                  </button>
-                ) : (
-                  <div className="flex gap-2">
-                    <button onClick={retry} className="rounded-full bg-white px-4 py-2 text-sm font-semibold">Repetir</button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>
-
-        {/* Hidden canvas for frame grab */}
-        <canvas ref={canvasRef} className="hidden" />
       </div>
-    );
-  }
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg active:scale-95"
-          >
-            <div className="h-10 w-10 rounded-full bg-emerald-500" />
-          </button>
-        </div>
-      )}
-
-      {preview && (
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={preview}
-            alt="Captura"
-            className="w-full h-[420px] object-cover"
-          />
-          <button
-            onClick={retry}
-            className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            Repetir
-          </button>
-        </div>
-      )}
 
       {/* Hidden canvas for frame grab */}
       <canvas ref={canvasRef} className="hidden" />
