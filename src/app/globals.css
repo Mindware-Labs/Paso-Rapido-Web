@@ -69,7 +69,7 @@
   --color-pr-secondary-fg: var(--pr-secondary-fg);
   --color-pr-destructive: var(--pr-destructive);
   --color-pr-ink: var(--pr-ink);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-pr);
   --font-display: var(--font-display);
   --font-heading: var(--font-pr);
   --color-sidebar-ring: var(--sidebar-ring);

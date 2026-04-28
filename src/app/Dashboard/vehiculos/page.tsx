@@ -85,9 +85,9 @@ export default function VehiculosPage() {
                 Documentos y pólizas
               </h2>
               <p className="mt-1 text-sm text-pr-foreground/80">
-                Zona de contenido fijo: en móvil suele ir bajo &quot;Detalle&quot;;
-                aquí puedes añadir PDF, enlaces a DIGESETT o términos, sin
-                afectar el layout de la app.
+                Zona de contenido fijo: en móvil suele ir bajo
+                &quot;Detalle&quot;; aquí puedes añadir PDF, enlaces a DIGESETT
+                o términos, sin afectar el layout de la app.
               </p>
             </div>
           </div>
