@@ -283,6 +283,16 @@ export default function LoginPage() {
           </div>
         </div>
 
+        {/* Link a landing page */}
+        <div className="mt-6 text-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            ← Volver a inicio
+          </Link>
+        </div>
+
         {/* Footer Institucional Exterior */}
         <div className="mt-8 flex items-center justify-center gap-2 text-xs text-slate-500">
           <ShieldCheck className="h-4 w-4" />

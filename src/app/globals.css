@@ -227,6 +227,8 @@ body {
 
 /* Primary CTA — soft, lifted, premium */
 .pr-btn {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(180deg, #15a972 0%, #0c8a55 100%);
   color: #ffffff;
   box-shadow:
@@ -237,13 +239,28 @@ body {
               box-shadow 0.35s cubic-bezier(.22,.61,.36,1),
               filter 0.25s ease;
 }
+.pr-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 45%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.18) 55%,
+    transparent 100%
+  );
+  animation: pr-shimmer-scan 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
 .pr-btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.04);
+  transform: translateY(-1.5px) scale(1.01);
+  filter: brightness(1.05);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.3) inset,
     0 2px 4px rgba(12, 138, 85, 0.22),
-    0 16px 36px -10px rgba(12, 138, 85, 0.55);
+    0 18px 40px -10px rgba(12, 138, 85, 0.6);
 }
 
 /* Subtle ghost/outline button */
@@ -338,10 +355,13 @@ body {
 
 /* Floating animation */
 @keyframes pr-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  30% { transform: translateY(-9px) rotate(-0.5deg); }
+  70% { transform: translateY(-5px) rotate(0.5deg); }
 }
-.pr-float { animation: pr-float 7s ease-in-out infinite; }
+.pr-float { animation: pr-float 6.5s ease-in-out infinite; }
+.pr-float-alt { animation: pr-float 8s ease-in-out infinite reverse; }
+.pr-float-slow { animation: pr-float 10s ease-in-out infinite; }
 
 @keyframes pr-pulse-soft {
   0%, 100% { opacity: 0.55; transform: scale(1); }
@@ -355,12 +375,90 @@ body {
   to { transform: translateX(-50%); }
 }
 .pr-marquee { animation: pr-marquee 32s linear infinite; }
+.pr-marquee-group:hover .pr-marquee { animation-play-state: paused; }
 
 /* Progress sweep for HowItWorks */
 @keyframes pr-sweep {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+/* Shimmer scan — premium CTA highlight */
+@keyframes pr-shimmer-scan {
+  0% { transform: translateX(-120%) skewX(-15deg); }
+  100% { transform: translateX(240%) skewX(-15deg); }
+}
+.pr-shimmer {
+  overflow: hidden;
+  position: relative;
+}
+.pr-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.22) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.22) 55%,
+    transparent 100%
+  );
+  animation: pr-shimmer-scan 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Breathe glow — icon containers */
+@keyframes pr-breathe {
+  0%, 100% { box-shadow: 0 4px 12px -4px rgba(15, 157, 88, 0.28); }
+  50% { box-shadow: 0 8px 28px -4px rgba(15, 157, 88, 0.55); }
+}
+.pr-breathe { animation: pr-breathe 3s ease-in-out infinite; }
+
+/* Step number flash animation */
+@keyframes pr-step-ping {
+  0% { transform: scale(1); opacity: 1; }
+  70% { transform: scale(2); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+.pr-step-ping::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba(15, 157, 88, 0.45);
+  animation: pr-step-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+/* Hero badge drift — offset from pr-float */
+@keyframes pr-badge-drift {
+  0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  25% { transform: translateY(-7px) translateX(2px) rotate(0.4deg); }
+  75% { transform: translateY(-4px) translateX(-2px) rotate(-0.4deg); }
+}
+.pr-badge-float { animation: pr-badge-drift 5.5s ease-in-out infinite; }
+.pr-badge-float-alt { animation: pr-badge-drift 7s ease-in-out infinite reverse; }
+
+/* Soft gradient shift — section label pills */
+@keyframes pr-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Spotlight sweep — card hover effect */
+@keyframes pr-spotlight {
+  0% { opacity: 0; transform: translateX(-60%) translateY(-40%) rotate(-15deg); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(60%) translateY(40%) rotate(-15deg); }
+}
+
+/* Underline draw — nav active indicator */
+@keyframes pr-underline-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.pr-underline-draw { animation: pr-underline-draw 0.3s ease-out both; transform-origin: left; }
 
 .dark {
   --background: oklch(0.145 0 0);

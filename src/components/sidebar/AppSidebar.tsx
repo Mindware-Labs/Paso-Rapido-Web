@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { X, Zap, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { X, Zap, PanelLeftClose, PanelLeftOpen, LogOut } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
+import { useAuth } from "@/context/AuthContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -110,6 +111,14 @@ function SidebarNav({
 
 export function AppSidebar() {
   const { open, isOpen, toggle, closeMenu } = useSidebar();
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    // Usar replace en lugar de push para que no se pueda volver atrás
+    router.replace("/login");
+  };
 
   return (
     <>
@@ -129,13 +138,27 @@ export function AppSidebar() {
           <SidebarNav isCollapsed={!isOpen} />
         </ScrollArea>
 
-        {/* Toggle colapsar en la base */}
-        <div
-          className={cn(
-            "shrink-0 border-t border-border/50 p-2",
-            !isOpen && "flex justify-center",
-          )}
-        >
+        {/* Cerrar sesión + Toggle colapsar en la base */}
+        <div className="shrink-0 border-t border-border/50 space-y-1 p-2">
+          <button
+            type="button"
+            onClick={handleLogout}
+            aria-label="Cerrar sesión"
+            className={cn(
+              "flex items-center rounded-lg transition-colors duration-150 text-red-600 hover:bg-red-50 hover:text-red-700",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60",
+              isOpen
+                ? "h-8 w-full gap-2 px-2 text-[11px] font-medium tracking-wide"
+                : "size-10 justify-center",
+            )}
+          >
+            <LogOut
+              className={cn("shrink-0", isOpen ? "size-3.75" : "size-4")}
+              strokeWidth={1.75}
+            />
+            {isOpen && <span>Cerrar sesión</span>}
+          </button>
+
           <button
             type="button"
             onClick={toggle}
@@ -204,6 +227,25 @@ export function AppSidebar() {
           <ScrollArea className="min-h-0 flex-1 pt-2">
             <SidebarNav onNavigate={closeMenu} />
           </ScrollArea>
+
+          {/* Cerrar sesión en mobile */}
+          <div className="shrink-0 border-t border-border/50 p-3">
+            <button
+              type="button"
+              onClick={() => {
+                handleLogout();
+                closeMenu();
+              }}
+              className={cn(
+                "flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium",
+                "text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60",
+              )}
+            >
+              <LogOut className="size-4" strokeWidth={1.75} />
+              <span>Cerrar sesión</span>
+            </button>
+          </div>
         </SheetContent>
       </Sheet>
     </>

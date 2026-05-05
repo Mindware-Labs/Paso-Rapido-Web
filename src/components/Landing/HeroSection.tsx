@@ -3,7 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useScroll,
+} from "motion/react";
 import {
   ArrowRight,
   Zap,
@@ -46,6 +52,17 @@ const FEATURES = [
 
 export default function HeroSection() {
   const ref = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Scroll-based parallax
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const phoneScrollY = useTransform(scrollYProgress, [0, 1], [0, -55]);
+  const badgeScrollY = useTransform(scrollYProgress, [0, 1], [0, -30]);
+  const copyScrollY = useTransform(scrollYProgress, [0, 1], [0, -20]);
+
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const rX = useSpring(useTransform(my, [-50, 50], [4, -4]), {
@@ -77,7 +94,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="inicio" className="relative overflow-hidden">
+    <section id="inicio" ref={sectionRef} className="relative overflow-hidden">
       {/* Wide hero radial glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[52rem] bg-[radial-gradient(58%_46%_at_72%_22%,rgba(15,157,88,0.12),transparent_70%)]" />
       {/* Faint right-side decorative arcs */}
@@ -87,7 +104,10 @@ export default function HeroSection() {
       <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-10 sm:px-8 md:pb-16 md:pt-14">
         <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-12 md:gap-6">
           {/* LEFT — copy (≈42%) */}
-          <div className="z-10 flex flex-col gap-7 md:col-span-5">
+          <motion.div
+            style={{ y: copyScrollY }}
+            className="z-10 flex flex-col gap-7 md:col-span-5"
+          >
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -109,7 +129,19 @@ export default function HeroSection() {
             >
               Conoce la nueva
               <br />
-              APP <span className="pr-accent">Paso Rápido</span>
+              APP{" "}
+              <motion.span
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.22,
+                  ease: [0.22, 0.61, 0.36, 1],
+                }}
+                className="pr-accent inline-block"
+              >
+                Paso Rápido
+              </motion.span>
             </motion.h1>
 
             <motion.p
@@ -152,10 +184,14 @@ export default function HeroSection() {
               transition={{ duration: 0.7, delay: 0.35 }}
               className="mt-3 grid grid-cols-3 gap-3 sm:gap-4"
             >
-              {TRUST.map(({ Icon, title, subtitle }) => (
-                <div
+              {TRUST.map(({ Icon, title, subtitle }, i) => (
+                <motion.div
                   key={title}
-                  className="flex items-center gap-2.5 rounded-2xl bg-white/70 px-3 py-2.5 ring-1 ring-black/5 backdrop-blur"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+                  whileHover={{ y: -2, scale: 1.03 }}
+                  className="flex items-center gap-2.5 rounded-2xl bg-white/70 px-3 py-2.5 ring-1 ring-black/5 backdrop-blur transition-shadow duration-300 hover:shadow-[0_4px_14px_-6px_rgba(15,157,88,0.2)]"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e7f7ee] text-[#0f9d58]">
                     <Icon className="h-4 w-4" strokeWidth={2.4} />
@@ -166,21 +202,21 @@ export default function HeroSection() {
                     </p>
                     <p className="text-[11px] text-neutral-500">{subtitle}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* RIGHT — Hand + Phone (≈58%) — dominant visual */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.95, ease: [0.22, 0.61, 0.36, 1] }}
+            style={{ perspective: 1600, y: phoneScrollY }}
             ref={ref}
             onMouseMove={onMove}
             onMouseLeave={onLeave}
             className="relative z-10 mr-[-6%] flex h-150 items-end justify-end md:col-span-7 md:mr-[-10%] md:h-210 lg:mr-[-14%] lg:h-220"
-            style={{ perspective: 1600 }}
           >
             {/* Wide soft green aura */}
             <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
@@ -202,14 +238,21 @@ export default function HeroSection() {
 
             {/* Floating SALDO badge (top-left of phone) */}
             <motion.div
+              initial={{ opacity: 0, x: -14, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.55,
+                ease: [0.22, 0.61, 0.36, 1],
+              }}
               style={{
                 x: useTransform(tX, (v) => v * -0.6),
                 y: useTransform(tY, (v) => v * -0.6),
               }}
-              className="pr-float pointer-events-none absolute left-[2%] top-[14%] z-30 sm:left-[6%]"
+              className="pr-badge-float pointer-events-none absolute left-[2%] top-[14%] z-30 sm:left-[6%]"
             >
               <div className="flex items-center gap-3 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/4">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0f9d58] shadow-[0_4px_10px_-2px_rgba(12,138,85,0.45)]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0f9d58] shadow-[0_4px_10px_-2px_rgba(12,138,85,0.45)] pr-breathe">
                   <Zap className="h-4 w-4 fill-white text-white" />
                 </span>
                 <div className="leading-tight">
@@ -225,11 +268,18 @@ export default function HeroSection() {
 
             {/* Floating APROBADO badge (right side, below middle) */}
             <motion.div
+              initial={{ opacity: 0, x: 14, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.75,
+                ease: [0.22, 0.61, 0.36, 1],
+              }}
               style={{
                 x: useTransform(tX, (v) => v * -0.4),
                 y: useTransform(tY, (v) => v * -0.4),
               }}
-              className="pr-float pointer-events-none absolute right-[2%] top-[42%] z-30 sm:right-[4%]"
+              className="pr-badge-float-alt pointer-events-none absolute right-[2%] top-[42%] z-30 sm:right-[4%]"
             >
               <div className="flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/4">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e7f7ee]">
@@ -312,11 +362,27 @@ export default function HeroSection() {
           className="relative z-30 -mt-4 rounded-[28px] border border-black/6 bg-white px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.04),0_30px_60px_-30px_rgba(10,10,10,0.10)] sm:px-7 sm:py-7 md:-mt-32 md:px-9 md:py-8 lg:-mt-40"
         >
           <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-4 md:gap-6 lg:gap-8">
-            {FEATURES.map(({ Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e7f7ee] text-[#0f9d58]">
+            {FEATURES.map(({ Icon, title, desc }, i) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{
+                  duration: 0.5,
+                  delay: i * 0.09,
+                  ease: [0.22, 0.61, 0.36, 1],
+                }}
+                whileHover={{ y: -3 }}
+                className="flex items-start gap-4"
+              >
+                <motion.span
+                  whileHover={{ scale: 1.12, rotate: 6 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 16 }}
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e7f7ee] text-[#0f9d58]"
+                >
                   <Icon className="h-5 w-5" strokeWidth={2.2} />
-                </span>
+                </motion.span>
                 <div className="min-w-0">
                   <p className="text-[15px] font-semibold leading-tight text-[#0a0a0a]">
                     {title}
@@ -325,7 +391,7 @@ export default function HeroSection() {
                     {desc}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>

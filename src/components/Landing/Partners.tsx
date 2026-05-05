@@ -75,8 +75,8 @@ export default function Partners() {
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-linear-to-l from-[#f4f6f5] via-[#f4f6f5]/80 to-transparent sm:w-28" />
 
           {/* Marquee track */}
-          <div className="relative overflow-hidden">
-            <div className="pr-marquee flex w-max items-center gap-3 px-4 sm:gap-5 sm:px-6 group-hover:paused">
+          <div className="pr-marquee-group relative overflow-hidden">
+            <div className="pr-marquee flex w-max items-center gap-3 px-4 sm:gap-5 sm:px-6">
               {LOOP.map((p, i) => (
                 <div
                   key={`${p.name}-${i}`}

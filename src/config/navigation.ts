@@ -104,13 +104,6 @@ export const APP_NAV: NavItem[] = [
     Icon: Users,
     group: "account",
   },
-  {
-    href: "/dashboard/contrasena",
-    label: "Seguridad",
-    description: "Contraseña y sesión",
-    Icon: KeyRound,
-    group: "account",
-  },
   // Soporte — ayuda y gestión de incidencias
   {
     href: "/dashboard/asistente-vial",

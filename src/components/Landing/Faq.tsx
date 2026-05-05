@@ -68,7 +68,8 @@ export default function FAQ() {
             Resolvemos tus <span className="pr-accent">dudas</span>.
           </h2>
           <p className="mt-5 text-[16px] leading-[1.55] text-neutral-600">
-            Lo más consultado por nuestros usuarios. Si necesitas más, contáctanos.
+            Lo más consultado por nuestros usuarios. Si necesitas más,
+            contáctanos.
           </p>
         </motion.div>
 
@@ -85,7 +86,7 @@ export default function FAQ() {
                 className={`overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${
                   isOpen
                     ? "border-[#0f9d58]/25 shadow-[0_1px_2px_rgba(10,10,10,0.03),0_24px_48px_-28px_rgba(15,157,88,0.25)]"
-                    : "border-black/[0.06] shadow-[0_1px_2px_rgba(10,10,10,0.03)] hover:border-black/15 hover:shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_40px_-28px_rgba(10,10,10,0.10)]"
+                    : "border-black/6 shadow-[0_1px_2px_rgba(10,10,10,0.03)] hover:border-black/15 hover:shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_40px_-28px_rgba(10,10,10,0.10)]"
                 }`}
               >
                 <button
@@ -119,7 +120,10 @@ export default function FAQ() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.32, ease: [0.22, 0.61, 0.36, 1] }}
+                      transition={{
+                        duration: 0.32,
+                        ease: [0.22, 0.61, 0.36, 1],
+                      }}
                       className="overflow-hidden"
                     >
                       <div className="px-6 pb-5">
