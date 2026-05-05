@@ -55,10 +55,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Separador vertical sutil para replicar la estructura visual */}
-        <div className="hidden lg:block h-6 w-px bg-border/50 mx-2" />
-
-        {/* Desktop: Toggle Sidebar (Movido después de la marca) */}
+        {/* Desktop: Toggle Sidebar */}
         <button
           type="button"
           onClick={toggle}
@@ -69,7 +66,7 @@ export function SiteHeader() {
           )}
           aria-label={isOpen ? "Colapsar menú" : "Expandir menú"}
         >
-          <PanelLeft className="size-4.5" />
+          <PanelLeft className="size-4" />
         </button>
 
         <div className="flex-1" />

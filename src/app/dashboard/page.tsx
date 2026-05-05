@@ -4,20 +4,27 @@ import Link from "next/link";
 import {
   AlertTriangle,
   ArrowUpRight,
+  Bell,
   CarFront,
+  CheckCircle2,
   ChevronRight,
   CircleDollarSign,
   History,
-  LifeBuoy,
+  Info,
+  MapPinned,
   RefreshCw,
+  ShieldCheck,
   Tag,
   TrendingUp,
   Wallet,
   Zap,
+  MessageSquareWarning,
+  CircleHelp,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { cn } from "@/lib/utils";
 
-// ─── Mock data simplificada ───────────────────────────────────────────────────
+// ─── Mock data ────────────────────────────────────────────────────────────────
 
 const USER = {
   plan: "Cuenta Personal",
@@ -29,54 +36,30 @@ const BALANCE = {
   available: "RD$ 500.00",
   reserved: "RD$ 100.00",
   lastRecharge: { amount: "RD$ 500.00", date: "Ayer, 16:10" },
-  lastPass: { amount: "RD$ -100.00", toll: "Las Américas", date: "Hoy, 08:42" },
+  lastPass: { amount: "RD$ 100.00", toll: "Las Américas", date: "Hoy, 08:42" },
 };
 
-// ─── Mapa de colores semánticos ──────────────────────────────────────────────
-const colorMap = {
-  emerald: {
-    light: "bg-emerald-50 border-emerald-100 text-emerald-600",
-    hover: "group-hover:bg-emerald-100/60",
-  },
-  amber: {
-    light: "bg-amber-50 border-amber-100 text-amber-600",
-    hover: "group-hover:bg-amber-100/60",
-  },
-  slate: {
-    light: "bg-slate-100 border-slate-200 text-slate-600",
-    hover: "group-hover:bg-slate-200/60",
-  },
-};
-
-type ColorKey = keyof typeof colorMap;
-
-const STATS: {
-  id: string;
-  label: string;
-  value: string;
-  Icon: any;
-  color: ColorKey;
-}[] = [
+const STATS = [
   {
     id: "s1",
     label: "Pases este mes",
     value: "14",
     Icon: Tag,
-    color: "emerald",
+    accent: "text-primary bg-secondary border-secondary",
   },
   {
     id: "s2",
     label: "Gasto acumulado",
     value: "RD$ 1,400",
     Icon: CircleDollarSign,
-    color: "slate",
+    accent: "text-slate-600 bg-slate-100 border-slate-200",
   },
   {
     id: "s3",
-    label: "Pases restantes",
-    value: "~5 pases",
+    label: "Saldo reservado",
+    value: "RD$ 100.00",
     Icon: Wallet,
-    color: "amber",
+    accent: "text-amber-600 bg-amber-50 border-amber-100",
   },
 ];
 
@@ -91,7 +74,7 @@ const ACTIVITY = [
   },
   {
     id: "a2",
-    title: "Recarga",
+    title: "Recarga de saldo",
     sub: "Ayer · 16:10",
     amount: "RD$ +500.00",
     out: false,
@@ -115,33 +98,110 @@ const ACTIVITY = [
   },
 ];
 
-// ─── Componentes auxiliares ───────────────────────────────────────────────────
+const QUICK_LINKS = [
+  { href: "/dashboard/peajes", label: "Red de peajes", Icon: MapPinned },
+  {
+    href: "/dashboard/reclamaciones",
+    label: "Reclamaciones",
+    Icon: MessageSquareWarning,
+  },
+  { href: "/dashboard/ayuda", label: "Centro de ayuda", Icon: CircleHelp },
+];
 
-function StatCard({
-  label,
-  value,
-  Icon,
-  color,
+const VEHICLE = {
+  brand: "Toyota",
+  model: "Corolla",
+  year: "2019",
+  plate: "A123456",
+  type: "Sedan",
+  color: "Gris",
+};
+
+const NOTICES = [
+  {
+    id: "n1",
+    type: "warning" as const,
+    title: "Mantenimiento programado",
+    body: "El sistema estará en mantenimiento el 6 de mayo de 12:00 a.m. a 2:00 a.m. Los cobros no se verán afectados.",
+    date: "Hoy",
+  },
+  {
+    id: "n2",
+    type: "info" as const,
+    title: "Nuevo peaje habilitado",
+    body: "Se habilitó el cobro electrónico en la Autopista del Nordeste, tramo San Francisco de Macorís.",
+    date: "Hace 2 días",
+  },
+  {
+    id: "n3",
+    type: "success" as const,
+    title: "Actualización de tarifas",
+    body: "Las tarifas de la Autopista 6 de Noviembre se actualizaron a partir del 1 de mayo de 2026.",
+    date: "Hace 3 días",
+  },
+];
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function SectionHeader({
+  title,
+  linkHref,
+  linkLabel,
 }: {
-  label: string;
-  value: string;
-  Icon: any;
-  color: ColorKey;
+  title: string;
+  linkHref?: string;
+  linkLabel?: string;
 }) {
-  const palette = colorMap[color];
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="flex items-center justify-between border-b border-border/60 pb-3">
+      <h2 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+        {title}
+      </h2>
+      {linkHref && (
+        <Link
+          href={linkHref}
+          className="flex items-center gap-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+        >
+          {linkLabel}
+          <ChevronRight className="h-3.5 w-3.5" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+const NOTICE_STYLES = {
+  info: { bg: "bg-blue-50 border-blue-100 text-blue-600", Icon: Info },
+  success: {
+    bg: "bg-secondary border-secondary text-primary",
+    Icon: CheckCircle2,
+  },
+  warning: { bg: "bg-amber-50 border-amber-100 text-amber-600", Icon: Bell },
+};
+
+function NoticeRow({ item }: { item: (typeof NOTICES)[0] }) {
+  const style = NOTICE_STYLES[item.type];
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/20 px-4 py-3">
       <div
-        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${palette.light}`}
+        className={cn(
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border mt-0.5",
+          style.bg,
+        )}
       >
-        <Icon className="h-5 w-5" strokeWidth={1.75} />
+        <style.Icon className="h-3.5 w-3.5" strokeWidth={2} />
       </div>
-      <div>
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-          {label}
-        </p>
-        <p className="text-xl font-bold font-mono tabular-nums text-slate-900 mt-0.5">
-          {value}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-[12px] font-bold text-foreground leading-tight">
+            {item.title}
+          </p>
+          <span className="shrink-0 text-[10px] text-muted-foreground whitespace-nowrap">
+            {item.date}
+          </span>
+        </div>
+        <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground line-clamp-2">
+          {item.body}
         </p>
       </div>
     </div>
@@ -150,14 +210,15 @@ function StatCard({
 
 function ActivityRow({ item }: { item: (typeof ACTIVITY)[0] }) {
   return (
-    <div className="flex items-center justify-between border-b border-slate-100 py-4 last:border-0 transition-colors hover:bg-slate-50/50 px-2 rounded-lg">
-      <div className="flex items-center gap-3.5">
+    <div className="flex items-center justify-between py-3 last:pb-0 border-b border-border/40 last:border-0">
+      <div className="flex items-center gap-3 min-w-0">
         <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
             item.out
-              ? "bg-slate-100 border-slate-200 text-slate-600"
-              : "bg-emerald-50 border-emerald-100 text-emerald-600"
-          }`}
+              ? "bg-muted border-border/60 text-muted-foreground"
+              : "bg-secondary border-secondary text-primary",
+          )}
         >
           {item.out ? (
             <CarFront className="h-4 w-4" strokeWidth={1.75} />
@@ -166,21 +227,22 @@ function ActivityRow({ item }: { item: (typeof ACTIVITY)[0] }) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-bold text-slate-900 truncate">
+          <p className="text-[13px] font-semibold text-foreground truncate">
             {item.title}
           </p>
-          <p className="text-xs text-slate-500 mt-0.5">{item.sub}</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{item.sub}</p>
         </div>
       </div>
-      <div className="text-right shrink-0 pl-4">
+      <div className="shrink-0 pl-4 text-right">
         <p
-          className={`text-sm font-bold font-mono tabular-nums ${
-            item.out ? "text-slate-900" : "text-emerald-600"
-          }`}
+          className={cn(
+            "text-[13px] font-bold font-mono tabular-nums",
+            item.out ? "text-foreground" : "text-primary",
+          )}
         >
           {item.amount}
         </p>
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-0.5">
           {item.status}
         </p>
       </div>
@@ -188,7 +250,7 @@ function ActivityRow({ item }: { item: (typeof ACTIVITY)[0] }) {
   );
 }
 
-// ─── Página Principal ─────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const { userData } = useAuth();
@@ -197,175 +259,226 @@ export default function DashboardPage() {
     : "Usuario";
 
   return (
-    <div className="min-h-full bg-slate-50/50 pb-12">
-      {/* Contenedor fluido sin límite artificial */}
-      <div className="w-full space-y-8 px-4 py-8 sm:px-6 lg:px-8">
-        {/* ── Encabezado y Alertas ── */}
-        <header className="flex flex-col gap-5 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
+    <div className="min-h-full bg-muted/30 pb-12">
+      <div className="w-full space-y-6 px-4 py-7 sm:px-6 lg:px-8">
+        {/* ── Encabezado ── */}
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              Panel de Control
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+              Panel de control
             </p>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              Resumen de Cuenta
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              Bienvenido, <span className="text-primary">{fullName}</span>
             </h1>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500 max-w-2xl">
-              Bienvenido,{" "}
-              <span className="font-semibold text-slate-700">{fullName}</span>.
-              Consulte su saldo, actividad reciente y estado de su dispositivo
-              Paso Rápido.
-            </p>
           </div>
 
-          {/* Alerta de saldo bajo (condicional) */}
-          <div className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-2.5 shadow-sm sm:w-auto shrink-0">
+          {/* Alerta saldo bajo */}
+          <div className="flex shrink-0 items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2.5 sm:w-auto">
             <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
             <div>
-              <p className="text-sm font-bold text-amber-800">
+              <p className="text-[12px] font-semibold text-amber-800 leading-tight">
                 Saldo próximo a agotarse
               </p>
-              <p className="text-xs text-amber-600 mt-0.5">
-                Le quedan aproximadamente 5 pases.
+              <p className="text-[11px] text-amber-600">
+                Quedan aprox. 5 pases.
               </p>
             </div>
+            <Link
+              href="/dashboard/recargar"
+              className="ml-1 shrink-0 rounded-md bg-amber-600 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white hover:bg-amber-700 transition-colors"
+            >
+              Recargar
+            </Link>
           </div>
         </header>
 
-        {/* ── Grid Principal ── */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
-          {/* Columna Izquierda (Balance y Acciones) */}
-          <div className="flex flex-col gap-6 lg:col-span-1">
-            {/* Tarjeta de Balance Institucional */}
+        {/* ── Grid principal ── */}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-6">
+          {/* ── Columna izquierda ── */}
+          <div className="flex flex-col gap-5 lg:col-span-1">
+            {/* Tarjeta de saldo */}
             <section
               aria-labelledby="balance-heading"
-              className="relative overflow-hidden rounded-2xl border border-emerald-700 bg-emerald-700 p-6 text-white shadow-sm"
+              className="relative overflow-hidden rounded-xl bg-primary p-5 text-primary-foreground shadow-md shadow-primary/20"
             >
-              {/* Decoraciones sutiles */}
-              <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/5" />
-              <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full bg-white/5" />
+              {/* Fondo decorativo */}
+              <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/5" />
+              <div className="pointer-events-none absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-white/5" />
 
-              <div className="relative">
-                <div className="flex items-center justify-between mb-6">
+              <div className="relative space-y-5">
+                {/* TAG e identificador */}
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Zap
-                      className="h-4 w-4 text-emerald-300"
-                      fill="currentColor"
-                    />
-                    <span className="text-sm font-bold tracking-wide text-emerald-50">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/15">
+                      <Zap className="h-3.5 w-3.5 fill-white text-white" />
+                    </span>
+                    <span className="text-[13px] font-bold tracking-wide text-white/90">
                       {USER.tag}
                     </span>
                   </div>
                   {USER.tagActive && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white ring-1 ring-inset ring-white/20">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-white ring-1 ring-inset ring-white/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-green-300" />
                       Activo
                     </span>
                   )}
                 </div>
 
-                <div className="mb-8">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-200/70 mb-1">
-                    Saldo Disponible
+                {/* Saldo */}
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-1">
+                    Saldo disponible
                   </p>
                   <p
                     id="balance-heading"
-                    className="text-4xl font-extrabold font-mono tabular-nums tracking-tight sm:text-5xl"
+                    className="text-4xl font-extrabold font-mono tabular-nums tracking-tight"
                   >
                     {BALANCE.available}
                   </p>
-                  <p className="mt-2 text-xs text-emerald-200/70">
-                    Incluye {BALANCE.reserved} de fondo de reserva
+                  <p className="mt-1.5 text-[11px] text-white/50">
+                    Reservado: {BALANCE.reserved}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-white/20 pt-4">
+                {/* Últimos movimientos */}
+                <div className="grid grid-cols-2 gap-3 border-t border-white/15 pt-4">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-200/70">
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-white/40">
                       Última recarga
                     </p>
-                    <p className="text-sm font-bold mt-0.5 font-mono tabular-nums">
+                    <p className="text-sm font-bold font-mono tabular-nums mt-0.5">
                       {BALANCE.lastRecharge.amount}
+                    </p>
+                    <p className="text-[10px] text-white/40">
+                      {BALANCE.lastRecharge.date}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-200/70">
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-white/40">
                       Último pase
                     </p>
-                    <p className="text-sm font-bold mt-0.5 font-mono tabular-nums">
-                      {BALANCE.lastPass.amount}
+                    <p className="text-sm font-bold font-mono tabular-nums mt-0.5">
+                      RD$ -{BALANCE.lastPass.amount}
+                    </p>
+                    <p className="text-[10px] text-white/40">
+                      {BALANCE.lastPass.toll}
                     </p>
                   </div>
                 </div>
+
+                {/* CTA */}
+                <Link
+                  href="/dashboard/recargar"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-white/15 px-4 py-2.5 text-sm font-bold text-white ring-1 ring-inset ring-white/20 transition-colors hover:bg-white/25 active:scale-[0.98]"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Recargar ahora
+                </Link>
               </div>
             </section>
 
-            {/* Acciones Rápidas */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
-              <Link
-                href="/dashboard/recargar"
-                className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:ring-offset-2 active:scale-[0.98]"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Recargar Saldo
-              </Link>
-              <Link
-                href="/dashboard/peajes"
-                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:ring-offset-2 active:scale-[0.98]"
-              >
-                <CarFront className="h-4 w-4 text-slate-400" />
-                Red de Peajes
-              </Link>
+            {/* Accesos rápidos */}
+            <div className="rounded-xl border border-border/60 bg-white overflow-hidden">
+              <div className="border-b border-border/50 px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Accesos rápidos
+                </p>
+              </div>
+              <div className="divide-y divide-border/40">
+                {QUICK_LINKS.map(({ href, label, Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex items-center justify-between px-4 py-3 text-[13px] font-medium text-foreground hover:bg-muted/40 transition-colors group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon
+                        className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors"
+                        strokeWidth={1.75}
+                      />
+                      {label}
+                    </div>
+                    <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* Soporte Rápido */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
-                  <LifeBuoy className="h-5 w-5" />
+            {/* Mi vehículo */}
+            <div className="rounded-xl border border-border/60 bg-white overflow-hidden">
+              <div className="flex items-center justify-between border-b border-border/50 px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Mi vehículo
+                </p>
+                <Link
+                  href="/dashboard/vehiculos"
+                  className="flex items-center gap-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+                >
+                  Gestionar <ChevronRight className="h-3 w-3" />
+                </Link>
+              </div>
+              <div className="flex items-center gap-3.5 px-4 py-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-muted">
+                  <CarFront
+                    className="h-5 w-5 text-muted-foreground"
+                    strokeWidth={1.5}
+                  />
                 </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900">
-                    ¿Necesitas asistencia?
-                  </h3>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                    Reporta problemas con tu TAG o revisa cobros no reconocidos.
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-bold text-foreground">
+                    {VEHICLE.brand} {VEHICLE.model} {VEHICLE.year}
                   </p>
-                  <Link
-                    href="/dashboard/ayuda"
-                    className="mt-3 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500/20 rounded-sm"
-                  >
-                    Centro de ayuda <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Link>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    {VEHICLE.plate} · {VEHICLE.type} · {VEHICLE.color}
+                  </p>
                 </div>
+                <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-primary">
+                  <ShieldCheck className="h-3 w-3" />
+                  Vinculado
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Columna Derecha (Estadísticas e Historial) */}
-          <div className="flex flex-col gap-6 lg:col-span-2">
-            {/* Estadísticas Rápidas */}
+          {/* ── Columna derecha ── */}
+          <div className="flex flex-col gap-5 lg:col-span-2">
+            {/* Estadísticas */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {STATS.map((s) => (
-                <StatCard key={s.id} {...s} />
+              {STATS.map(({ id, label, value, Icon, accent }) => (
+                <div
+                  key={id}
+                  className="flex items-center gap-3.5 rounded-xl border border-border/60 bg-white px-4 py-4 shadow-sm"
+                >
+                  <div
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border",
+                      accent,
+                    )}
+                  >
+                    <Icon className="h-4.5 w-4.5" strokeWidth={1.75} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-tight">
+                      {label}
+                    </p>
+                    <p className="text-lg font-extrabold font-mono tabular-nums text-foreground mt-0.5">
+                      {value}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
 
-            <section
-              className="flex-1 flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-            >
-              <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">
-                  Movimientos recientes
-                </h2>
-                <Link
-                  href="/dashboard/historico"
-                  className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 rounded-sm"
-                >
-                  Ver todo
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
+            {/* Actividad reciente */}
+            <section className="flex flex-col rounded-xl border border-border/60 bg-white shadow-sm overflow-hidden">
+              <div className="px-5 pt-5 pb-4">
+                <SectionHeader
+                  title="Movimientos recientes"
+                  linkHref="/dashboard/historico"
+                  linkLabel="Ver todo"
+                />
               </div>
-              <div className="flex-1 p-4 sm:p-6">
+              <div className="px-5 pb-5">
                 {ACTIVITY.length > 0 ? (
                   <div className="flex flex-col">
                     {ACTIVITY.map((item) => (
@@ -373,15 +486,31 @@ export default function DashboardPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="flex h-full flex-col items-center justify-center py-12 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-300 ring-8 ring-slate-50">
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground/40">
                       <History className="h-6 w-6" />
                     </div>
-                    <p className="mt-4 text-sm font-bold text-slate-500">
-                      No hay movimientos recientes
+                    <p className="mt-4 text-sm font-semibold text-muted-foreground">
+                      Sin movimientos recientes
                     </p>
                   </div>
                 )}
+              </div>
+            </section>
+
+            {/* Novedades y avisos */}
+            <section className="flex flex-col rounded-xl border border-border/60 bg-white shadow-sm overflow-hidden">
+              <div className="px-5 pt-5 pb-4">
+                <SectionHeader
+                  title="Novedades y avisos"
+                  linkHref="/dashboard/noticias"
+                  linkLabel="Ver más"
+                />
+              </div>
+              <div className="px-5 pb-5 flex flex-col gap-2.5">
+                {NOTICES.map((n) => (
+                  <NoticeRow key={n.id} item={n} />
+                ))}
               </div>
             </section>
           </div>

@@ -106,7 +106,11 @@ function TollDetail({ site }: { site: TollSite }) {
           onClick={handleCopy}
           className="inline-flex h-7 items-center gap-1 rounded border border-slate-200/80 bg-white px-2 text-[10px] font-medium text-slate-700 hover:border-pr-hero/35 hover:bg-pr-secondary/40 hover:text-pr-secondary-fg"
         >
-          {copied ? <Check className="h-3 w-3 text-pr-hero" /> : <Copy className="h-3 w-3 text-pr-hero/80" />}
+          {copied ? (
+            <Check className="h-3 w-3 text-pr-hero" />
+          ) : (
+            <Copy className="h-3 w-3 text-pr-hero/80" />
+          )}
           {copied ? "Listo" : "Copiar"}
         </button>
         <button
@@ -114,7 +118,11 @@ function TollDetail({ site }: { site: TollSite }) {
           onClick={handleShare}
           className="inline-flex h-7 items-center gap-1 rounded border border-slate-200/80 bg-white px-2 text-[10px] font-medium text-slate-700 hover:border-pr-hero/35 hover:bg-pr-secondary/40 hover:text-pr-secondary-fg"
         >
-          {shared ? <Check className="h-3 w-3 text-pr-hero" /> : <Share2 className="h-3 w-3 text-pr-hero/80" />}
+          {shared ? (
+            <Check className="h-3 w-3 text-pr-hero" />
+          ) : (
+            <Share2 className="h-3 w-3 text-pr-hero/80" />
+          )}
           {shared ? "Listo" : "Compartir"}
         </button>
         <a
@@ -136,19 +144,27 @@ function TollDetail({ site }: { site: TollSite }) {
       </div>
 
       <div className="px-4 py-3.5 sm:px-5">
-        <p id={descId} className="line-clamp-2 text-sm text-slate-600" title={site.description}>
+        <p
+          id={descId}
+          className="line-clamp-2 text-sm text-slate-600"
+          title={site.description}
+        >
           {site.description}
         </p>
         <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
           {site.highway && (
             <div>
-              <dt className="text-[9px] font-medium uppercase text-pr-hero/80">Vía</dt>
+              <dt className="text-[9px] font-medium uppercase text-pr-hero/80">
+                Vía
+              </dt>
               <dd className="mt-0.5 text-slate-800">{site.highway}</dd>
             </div>
           )}
           {site.hours && (
             <div>
-              <dt className="text-[9px] font-medium uppercase text-pr-hero/80">Horario</dt>
+              <dt className="text-[9px] font-medium uppercase text-pr-hero/80">
+                Horario
+              </dt>
               <dd className="mt-0.5 text-slate-800">{site.hours}</dd>
             </div>
           )}
@@ -228,7 +244,11 @@ export function PeajesView() {
 
   useEffect(() => {
     const el = document.getElementById(`toll-card-${selectedId}`);
-    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    el?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
   }, [selectedId]);
 
   const stationIndex = useMemo(
@@ -268,12 +288,11 @@ export function PeajesView() {
   }, []);
 
   const hasPrev = stationIndex > 0;
-  const hasNext =
-    stationIndex >= 0 && stationIndex < filteredSites.length - 1;
+  const hasNext = stationIndex >= 0 && stationIndex < filteredSites.length - 1;
 
   return (
-    <div className="pr-grain">
-      <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6 sm:py-10">
+    <div className="min-h-full pr-grain">
+      <div className="w-full space-y-8 px-4 py-8 sm:px-6 lg:px-8">
         <header>
           <div className="flex items-center gap-3">
             <span
@@ -340,53 +359,53 @@ export function PeajesView() {
               Sin coincidencias. Prueba otro término o vacía el filtro.
             </p>
           ) : (
-          <div
-            className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pl-0.5 pr-3"
-            style={{ scrollPaddingLeft: 8, scrollPaddingRight: 8 }}
-            role="list"
-          >
-            {filteredSites.map((s) => {
-              const on = s.id === selectedId;
-              return (
-                <button
-                  type="button"
-                  key={s.id}
-                  id={`toll-card-${s.id}`}
-                  onClick={() => setSelectedId(s.id)}
-                  className={cn(
-                    "w-[min(100vw-2.5rem,260px)] max-w-[260px] flex-none snap-center overflow-hidden rounded-lg border text-left transition",
-                    "border-l-4",
-                    on
-                      ? "border-l-pr-hero border-pr-hero/20 bg-pr-secondary/35 shadow-sm shadow-pr-hero/10"
-                      : "border-l-slate-200 border-slate-200 bg-white hover:border-l-pr-hero/50 hover:shadow-sm hover:shadow-pr-hero/5",
-                  )}
-                >
-                  <div className="p-3">
-                    <p
-                      className="text-[9px] font-medium uppercase text-slate-500"
-                      style={on ? { color: "var(--pr-hero)" } : undefined}
-                    >
-                      {s.regionLabel}
-                    </p>
-                    <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-slate-900">
-                      {s.name}
-                    </p>
-                    <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-500">
-                      {s.subtitle}
-                    </p>
-                    <p
-                      className={cn(
-                        "mt-2 text-xs font-semibold tabular-nums",
-                        on ? "text-pr-hero" : "text-slate-800",
-                      )}
-                    >
-                      {s.car}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+            <div
+              className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pl-0.5 pr-3"
+              style={{ scrollPaddingLeft: 8, scrollPaddingRight: 8 }}
+              role="list"
+            >
+              {filteredSites.map((s) => {
+                const on = s.id === selectedId;
+                return (
+                  <button
+                    type="button"
+                    key={s.id}
+                    id={`toll-card-${s.id}`}
+                    onClick={() => setSelectedId(s.id)}
+                    className={cn(
+                      "w-[min(100vw-2.5rem,260px)] max-w-[260px] flex-none snap-center overflow-hidden rounded-lg border text-left transition",
+                      "border-l-4",
+                      on
+                        ? "border-l-pr-hero border-pr-hero/20 bg-pr-secondary/35 shadow-sm shadow-pr-hero/10"
+                        : "border-l-slate-200 border-slate-200 bg-white hover:border-l-pr-hero/50 hover:shadow-sm hover:shadow-pr-hero/5",
+                    )}
+                  >
+                    <div className="p-3">
+                      <p
+                        className="text-[9px] font-medium uppercase text-slate-500"
+                        style={on ? { color: "var(--pr-hero)" } : undefined}
+                      >
+                        {s.regionLabel}
+                      </p>
+                      <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-slate-900">
+                        {s.name}
+                      </p>
+                      <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-500">
+                        {s.subtitle}
+                      </p>
+                      <p
+                        className={cn(
+                          "mt-2 text-xs font-semibold tabular-nums",
+                          on ? "text-pr-hero" : "text-slate-800",
+                        )}
+                      >
+                        {s.car}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           )}
         </section>
 
@@ -403,8 +422,8 @@ export function PeajesView() {
                 className="text-[10px] font-medium tabular-nums text-pr-secondary-fg/80"
                 title="Posición en la lista actual (respeta el filtro)"
               >
-                {stationIndex >= 0 ? stationIndex + 1 : "—"}{" "}
-                / {Math.max(0, filteredSites.length)}
+                {stationIndex >= 0 ? stationIndex + 1 : "—"} /{" "}
+                {Math.max(0, filteredSites.length)}
               </span>
               {searchQ.trim() ? null : (
                 <span
