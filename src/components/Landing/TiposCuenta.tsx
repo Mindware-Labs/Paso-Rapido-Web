@@ -50,12 +50,12 @@ export default function TiposCuenta() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-16 max-w-2xl text-center"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-white/80 px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-neutral-700 shadow-[0_1px_2px_rgba(10,10,10,0.04)] backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#0f9d58]" />
-            Para cada usuario
+          <span className="inline-flex items-center gap-2 rounded-md border border-[#0f9d58]/20 bg-white/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f7a45] shadow-[0_1px_2px_rgba(10,10,10,0.04)] backdrop-blur">
+            <span className="h-1 w-1 rounded-full bg-[#0f9d58]" />
+            Modalidades de cuenta
           </span>
-          <h2 className="mt-6 text-[40px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[52px]">
-            Tipos de <span className="pr-accent">cuenta</span>
+          <h2 className="mt-6 text-[38px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[50px]">
+            Categorías de <span className="pr-accent">cuenta</span>
           </h2>
           <p className="mt-5 text-[16px] leading-[1.55] text-neutral-600">
             Elige el plan que mejor se adapte a ti, a tu familia o a tu flota.
@@ -70,8 +70,8 @@ export default function TiposCuenta() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.55, delay: i * 0.08 }}
-              whileHover={{ y: -8, scale: 1.025 }}
-              className="group relative flex flex-col gap-6 overflow-hidden rounded-3xl border border-black/6 bg-white p-7 shadow-[0_1px_2px_rgba(10,10,10,0.03),0_18px_40px_-24px_rgba(10,10,10,0.10)] transition-[box-shadow,border-color] duration-500 hover:border-[#0f9d58]/25 hover:shadow-[0_1px_2px_rgba(10,10,10,0.04),0_30px_60px_-24px_rgba(15,157,88,0.22)]"
+              whileHover={{ y: -4 }}
+              className="group relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-black/8 bg-white p-7 shadow-[0_1px_2px_rgba(10,10,10,0.03),0_18px_40px_-24px_rgba(10,10,10,0.10)] transition-[box-shadow,border-color] duration-500 hover:border-[#0f9d58]/30 hover:shadow-[0_1px_2px_rgba(10,10,10,0.04),0_24px_50px_-24px_rgba(15,157,88,0.18)]"
             >
               {/* Hover gradient overlay */}
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgba(15,157,88,0.08),transparent_60%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -80,9 +80,9 @@ export default function TiposCuenta() {
               <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(15,157,88,0.20),transparent_70%)] opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
 
               <motion.div
-                whileHover={{ scale: 1.15, rotate: 8 }}
+                whileHover={{ scale: 1.08 }}
                 transition={{ type: "spring", stiffness: 280, damping: 16 }}
-                className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e7f7ee] ring-1 ring-[#0f9d58]/15 transition-[background,ring] duration-500 group-hover:bg-[#d6f0e0] group-hover:ring-[#0f9d58]/30"
+                className="relative flex h-11 w-11 items-center justify-center rounded-lg bg-[#f3faf6] ring-1 ring-[#0f9d58]/15 transition-[background,ring] duration-500 group-hover:bg-[#e7f7ee] group-hover:ring-[#0f9d58]/30"
               >
                 <t.Icon className="h-5 w-5 text-[#0f9d58]" strokeWidth={2} />
               </motion.div>

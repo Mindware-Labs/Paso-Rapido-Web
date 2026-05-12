@@ -31,18 +31,19 @@ export default function Partners() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
-            className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#0f9d58]"
+            className="inline-flex items-center gap-2 rounded-md border border-[#0f9d58]/20 bg-white/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f7a45]"
           >
-            Adquiere tu kit en
+            <span className="h-1 w-1 rounded-full bg-[#0f9d58]" />
+            Red autorizada
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className="mt-3 text-[28px] font-bold not-italic leading-[1.1] tracking-tight text-[#0a0a0a] sm:text-[40px]"
+            className="mt-4 text-[28px] font-bold not-italic leading-[1.1] tracking-[-0.025em] text-[#0a0a0a] sm:text-[40px]"
           >
-            Nuestros aliados comerciales
+            Aliados comerciales oficiales
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -65,7 +66,7 @@ export default function Partners() {
             delay: 0.15,
             ease: [0.22, 0.61, 0.36, 1],
           }}
-          className="group relative overflow-hidden rounded-[28px] border border-black/6 bg-[linear-gradient(180deg,#fafbfa_0%,#f4f6f5_100%)] py-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.03),0_28px_60px_-36px_rgba(15,157,88,0.18)] sm:py-9"
+          className="group relative overflow-hidden rounded-2xl border border-black/6 bg-[linear-gradient(180deg,#fafbfa_0%,#f4f6f5_100%)] py-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.03),0_28px_60px_-36px_rgba(15,157,88,0.14)] sm:py-9"
         >
           {/* Soft top highlight */}
           <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[60%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(15,157,88,0.07),transparent_70%)]" />
@@ -80,7 +81,7 @@ export default function Partners() {
               {LOOP.map((p, i) => (
                 <div
                   key={`${p.name}-${i}`}
-                  className="group/logo flex h-22 w-50 shrink-0 items-center justify-center rounded-2xl border border-black/4 bg-white px-6 py-4 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_1px_2px_rgba(10,10,10,0.03),0_10px_24px_-16px_rgba(10,10,10,0.10)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:scale-[1.05] hover:border-black/8 hover:shadow-[0_1px_0_rgba(255,255,255,1)_inset,0_2px_4px_rgba(10,10,10,0.05),0_22px_44px_-18px_rgba(15,157,88,0.20)] sm:h-25 sm:w-56"
+                  className="group/logo flex h-22 w-50 shrink-0 items-center justify-center rounded-lg border border-black/6 bg-white px-6 py-4 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_1px_2px_rgba(10,10,10,0.03)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:border-[#0f9d58]/25 hover:shadow-[0_1px_0_rgba(255,255,255,1)_inset,0_2px_4px_rgba(10,10,10,0.05),0_18px_36px_-18px_rgba(15,157,88,0.16)] sm:h-25 sm:w-56"
                 >
                   <Image
                     src={p.src}

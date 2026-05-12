@@ -13,7 +13,7 @@ export default function ManualSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7 }}
-          className="relative grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[32px] border border-black/5 bg-gradient-to-br from-white via-white to-[#f3fbf6] p-8 shadow-[0_30px_70px_-30px_rgba(15,157,88,0.18),0_1px_2px_rgba(10,10,10,0.04)] md:grid-cols-2 md:p-14"
+          className="relative grid grid-cols-1 items-center gap-10 overflow-hidden rounded-2xl border border-black/6 bg-gradient-to-br from-white via-white to-[#f3fbf6] p-8 shadow-[0_30px_70px_-30px_rgba(15,157,88,0.14),0_1px_2px_rgba(10,10,10,0.04)] md:grid-cols-2 md:p-14"
         >
           {/* Soft accents */}
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(15,157,88,0.16),transparent_60%)] blur-3xl" />
@@ -63,7 +63,7 @@ export default function ManualSection() {
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -top-2 right-6 z-20"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#15a972] to-[#0c8a55] shadow-[0_10px_24px_-8px_rgba(15,157,88,0.5)]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-[#15a972] to-[#0c8a55] shadow-[0_10px_24px_-8px_rgba(15,157,88,0.45)]">
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
             </motion.div>
@@ -71,15 +71,15 @@ export default function ManualSection() {
 
           {/* Copy */}
           <div className="relative flex flex-col gap-5">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-black/5 bg-white/70 px-3 py-1 text-[11px] font-medium tracking-wide text-neutral-700 backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0f9d58]" />
-              Manual de usuario
+            <span className="inline-flex w-fit items-center gap-2 rounded-md border border-[#0f9d58]/20 bg-white/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f7a45] backdrop-blur">
+              <span className="h-1 w-1 rounded-full bg-[#0f9d58]" />
+              Documentación oficial
             </span>
 
-            <h2 className="text-[34px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[44px]">
-              ¿Quieres saber más
+            <h2 className="text-[32px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[42px]">
+              Manual de usuario
               <br />
-              <span className="pr-accent">sobre nosotros?</span>
+              <span className="pr-accent">Paso Rápido</span>
             </h2>
 
             <p className="text-[15.5px] leading-[1.55] text-neutral-600">
@@ -91,9 +91,9 @@ export default function ManualSection() {
             <div className="pt-2">
               <Link
                 href="/manual"
-                className="pr-btn group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-tight"
+                className="pr-btn group inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold tracking-tight"
               >
-                Ver Manual
+                Ver manual
                 <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>

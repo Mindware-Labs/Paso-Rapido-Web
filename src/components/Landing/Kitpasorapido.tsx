@@ -21,7 +21,7 @@ export default function KitPasoRapido() {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.8, ease: [0.22, 0.61, 0.36, 1] }}
           whileHover={{ y: -4 }}
-          className="pr-feature-card group relative overflow-hidden rounded-[36px] p-8 sm:p-12 md:p-16"
+          className="pr-feature-card group relative overflow-hidden rounded-2xl p-8 sm:p-12 md:p-16"
         >
           {/* Inner radial glow */}
           <div className="pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,rgba(15,157,88,0.12),transparent_60%)] blur-3xl" />
@@ -76,12 +76,12 @@ export default function KitPasoRapido() {
 
             {/* Right — copy */}
             <div className="flex flex-col gap-7">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-black/5 bg-white/80 px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-neutral-700 shadow-[0_1px_2px_rgba(10,10,10,0.04)] backdrop-blur">
+              <span className="inline-flex w-fit items-center gap-2 rounded-md border border-[#0f9d58]/20 bg-white/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f7a45] shadow-[0_1px_2px_rgba(10,10,10,0.04)] backdrop-blur">
                 <Sparkles className="h-3 w-3 text-[#0f9d58]" />
-                Kit prepago
+                Kit prepago oficial
               </span>
 
-              <h2 className="text-[40px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[52px]">
+              <h2 className="text-[38px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[50px]">
                 Todo lo que necesitas,
                 <br />
                 <span className="pr-accent">en un solo kit.</span>
@@ -105,7 +105,7 @@ export default function KitPasoRapido() {
                     transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
                     className="flex items-start gap-3"
                   >
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#e7f7ee] ring-1 ring-[#0f9d58]/20">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#f3faf6] ring-1 ring-[#0f9d58]/20">
                       <Check className="h-3.5 w-3.5 text-[#0f9d58]" strokeWidth={3} />
                     </span>
                     <div className="leading-tight">
@@ -119,9 +119,9 @@ export default function KitPasoRapido() {
               <div className="pt-3">
                 <Link
                   href="/#tipos-cuenta"
-                  className="pr-btn group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold tracking-tight"
+                  className="pr-btn group inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-[14px] font-semibold tracking-tight"
                 >
-                  Comprar Ahora
+                  Solicitar kit
                   <ShoppingCart className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </Link>
               </div>

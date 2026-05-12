@@ -43,12 +43,12 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="mx-auto mb-20 max-w-2xl text-center"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-white/70 px-3 py-1 text-[11px] font-medium tracking-wide text-neutral-700 backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#0f9d58]" />
-            Cuatro pasos
+          <span className="inline-flex items-center gap-2 rounded-md border border-[#0f9d58]/20 bg-white/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f7a45] backdrop-blur">
+            <span className="h-1 w-1 rounded-full bg-[#0f9d58]" />
+            Proceso en 4 pasos
           </span>
-          <h2 className="mt-5 text-[40px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[52px]">
-            Así de fácil es <span className="pr-accent">empezar</span>.
+          <h2 className="mt-6 text-[38px] font-bold leading-[1.05] tracking-[-0.03em] text-[#0a0a0a] sm:text-[50px]">
+            Activación en <span className="pr-accent">cuatro pasos</span>.
           </h2>
         </motion.div>
 
@@ -92,16 +92,15 @@ export default function HowItWorks() {
                   <motion.div
                     variants={{
                       hovered: {
-                        scale: 1.12,
-                        rotate: [0, -6, 6, -3, 0],
-                        transition: { duration: 0.4, ease: "easeInOut" },
+                        scale: 1.06,
+                        transition: { duration: 0.3, ease: "easeOut" },
                       },
                     }}
-                    className="relative flex h-17 w-17 items-center justify-center rounded-2xl border border-black/5 bg-white shadow-[0_10px_30px_-12px_rgba(10,10,10,0.15)] transition-shadow duration-500 hover:shadow-[0_10px_30px_-8px_rgba(15,157,88,0.25)]"
+                    className="relative flex h-16 w-16 items-center justify-center rounded-xl border border-black/8 bg-white shadow-[0_10px_30px_-12px_rgba(10,10,10,0.12)] transition-shadow duration-500 hover:border-[#0f9d58]/25 hover:shadow-[0_10px_30px_-8px_rgba(15,157,88,0.2)]"
                   >
                     <s.Icon
                       className="h-5 w-5 text-[#0f9d58]"
-                      strokeWidth={1.8}
+                      strokeWidth={2}
                     />
                   </motion.div>
 
@@ -116,7 +115,7 @@ export default function HowItWorks() {
                       damping: 18,
                       delay: 0.3 + i * 0.14,
                     }}
-                    className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#0a0a0a] text-[10px] font-bold text-white shadow-md"
+                    className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-md bg-[#0a0a0a] text-[10px] font-bold text-white shadow-md"
                   >
                     {i + 1}
                   </motion.span>

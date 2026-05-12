@@ -38,9 +38,9 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
           <motion.div
-            whileHover={{ scale: 1.08, rotate: 5 }}
+            whileHover={{ scale: 1.06 }}
             transition={{ type: "spring", stiffness: 300, damping: 18 }}
-            className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-[#15a972] to-[#0c8a55] shadow-[0_4px_14px_-4px_rgba(15,157,88,0.5)]"
+            className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-[#15a972] to-[#0c8a55] shadow-[0_4px_14px_-4px_rgba(15,157,88,0.45)]"
           >
             <Zap className="h-3.5 w-3.5 fill-white text-white" aria-hidden />
           </motion.div>
@@ -83,13 +83,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-2">
           <Link
             href="/login"
-            className="pr-btn-ghost inline-flex items-center justify-center rounded-full px-5 py-2 text-[13px] font-semibold tracking-tight text-neutral-800"
+            className="pr-btn-ghost inline-flex items-center justify-center rounded-lg px-5 py-2 text-[13px] font-semibold tracking-tight text-neutral-800"
           >
             Iniciar sesión
           </Link>
           <Link
             href="/registro"
-            className="pr-btn inline-flex items-center justify-center rounded-full px-5 py-2 text-[13px] font-semibold tracking-tight"
+            className="pr-btn inline-flex items-center justify-center rounded-lg px-5 py-2 text-[13px] font-semibold tracking-tight"
           >
             Registrarse
           </Link>
@@ -161,7 +161,7 @@ export default function Navbar() {
               >
                 <Link
                   href="/login"
-                  className="pr-btn-ghost mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-neutral-800"
+                  className="pr-btn-ghost mt-2 inline-flex w-full items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-neutral-800"
                   onClick={() => setMenuOpen(false)}
                 >
                   Iniciar sesión
@@ -177,7 +177,7 @@ export default function Navbar() {
               >
                 <Link
                   href="/registro"
-                  className="pr-btn mt-1 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold"
+                  className="pr-btn mt-1 inline-flex w-full items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold"
                   onClick={() => setMenuOpen(false)}
                 >
                   Registrarse

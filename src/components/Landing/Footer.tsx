@@ -19,7 +19,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="flex flex-col gap-6 md:col-span-5">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#15a972] to-[#0c8a55] shadow-[0_4px_14px_-4px_rgba(15,157,88,0.5)]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#15a972] to-[#0c8a55] shadow-[0_4px_14px_-4px_rgba(15,157,88,0.45)]">
                 <Zap className="h-4 w-4 fill-white text-white" />
               </div>
               <div className="flex flex-col leading-none">
@@ -43,7 +43,7 @@ export default function Footer() {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-white text-neutral-500 shadow-[0_1px_2px_rgba(10,10,10,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#0f9d58]/30 hover:text-[#0f9d58]"
+                  className="flex h-9 w-9 items-center justify-center rounded-md border border-black/8 bg-white text-neutral-500 shadow-[0_1px_2px_rgba(10,10,10,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#0f9d58]/30 hover:text-[#0f9d58]"
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </Link>
@@ -75,7 +75,7 @@ export default function Footer() {
             <div className="flex flex-col gap-2.5">
               <Link
                 href="#"
-                className="group flex h-12 w-48 items-center gap-3 rounded-xl border border-black/5 bg-white px-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-all hover:-translate-y-0.5 hover:border-[#0f9d58]/30 hover:shadow-[0_8px_24px_-8px_rgba(15,157,88,0.18)]"
+                className="group flex h-12 w-48 items-center gap-3 rounded-lg border border-black/8 bg-white px-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-all hover:-translate-y-0.5 hover:border-[#0f9d58]/30 hover:shadow-[0_8px_24px_-8px_rgba(15,157,88,0.16)]"
               >
                 <Apple className="h-6 w-6 text-[#0a0a0a]" />
                 <div className="flex flex-col leading-tight">
@@ -85,7 +85,7 @@ export default function Footer() {
               </Link>
               <Link
                 href="#"
-                className="group flex h-12 w-48 items-center gap-3 rounded-xl border border-black/5 bg-white px-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-all hover:-translate-y-0.5 hover:border-[#0f9d58]/30 hover:shadow-[0_8px_24px_-8px_rgba(15,157,88,0.18)]"
+                className="group flex h-12 w-48 items-center gap-3 rounded-lg border border-black/8 bg-white px-4 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-all hover:-translate-y-0.5 hover:border-[#0f9d58]/30 hover:shadow-[0_8px_24px_-8px_rgba(15,157,88,0.16)]"
               >
                 <Play className="h-5 w-5 fill-[#0f9d58] text-[#0f9d58]" />
                 <div className="flex flex-col leading-tight">
