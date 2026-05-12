@@ -14,7 +14,8 @@ import {
   ArrowRight,
   Zap,
   ShieldCheck,
-  CheckCircle2,
+  BadgeCheck,
+  Lock,
   Wallet,
   Car,
   PieChart,
@@ -22,9 +23,9 @@ import {
 } from "lucide-react";
 
 const TRUST = [
-  { Icon: Zap, title: "Recargas", subtitle: "en segundos" },
-  { Icon: ShieldCheck, title: "Transacciones", subtitle: "protegidas" },
-  { Icon: CheckCircle2, title: "Siempre", subtitle: "disponible" },
+  { Icon: BadgeCheck, title: "Plataforma", subtitle: "oficial" },
+  { Icon: Lock, title: "Conexión", subtitle: "cifrada" },
+  { Icon: ShieldCheck, title: "Operación", subtitle: "24/7" },
 ];
 
 const FEATURES = [
@@ -95,11 +96,25 @@ export default function HeroSection() {
 
   return (
     <section id="inicio" ref={sectionRef} className="relative overflow-hidden">
-      {/* Wide hero radial glow */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[52rem] bg-[radial-gradient(58%_46%_at_72%_22%,rgba(15,157,88,0.12),transparent_70%)]" />
+      {/* Wide hero radial glow — sutil y sobrio */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[52rem] bg-[radial-gradient(58%_46%_at_72%_22%,rgba(15,157,88,0.08),transparent_70%)]" />
+      {/* Grid institucional muy tenue */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden opacity-[0.35] md:block"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(10,10,10,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,10,0.04) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+          maskImage:
+            "radial-gradient(ellipse 70% 60% at 70% 25%, #000 30%, transparent 75%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 70% 60% at 70% 25%, #000 30%, transparent 75%)",
+        }}
+      />
       {/* Faint right-side decorative arcs */}
-      <div className="pointer-events-none absolute right-0 top-32 hidden h-[36rem] w-[36rem] rounded-full border border-[#0f9d58]/8 md:block" />
-      <div className="pointer-events-none absolute -right-16 top-44 hidden h-[24rem] w-[24rem] rounded-full border border-[#0f9d58]/10 md:block" />
+      <div className="pointer-events-none absolute right-0 top-32 hidden h-[36rem] w-[36rem] rounded-full border border-[#0f9d58]/6 md:block" />
+      <div className="pointer-events-none absolute -right-16 top-44 hidden h-[24rem] w-[24rem] rounded-full border border-[#0f9d58]/8 md:block" />
 
       <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-10 sm:px-8 md:pb-16 md:pt-14">
         <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-12 md:gap-6">
@@ -112,24 +127,20 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-[#0f9d58]/15 bg-[#e7f7ee]/70 px-3.5 py-1.5 text-[12px] font-medium tracking-tight text-[#0f7a45] shadow-[0_1px_2px_rgba(15,157,88,0.06)] backdrop-blur"
+              className="inline-flex w-fit items-center gap-2 rounded-md border border-[#0f9d58]/20 bg-white/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f7a45] shadow-[0_1px_2px_rgba(10,10,10,0.04)] backdrop-blur"
             >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0f9d58] opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#0f9d58]" />
-              </span>
-              Nueva versión disponible
+              <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.4} />
+              Plataforma oficial
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.05 }}
-              className="text-[44px] font-bold not-italic leading-[1.02] tracking-[-0.035em] text-[#0a0a0a] sm:text-[58px] md:text-[64px]"
+              className="text-[42px] font-bold not-italic leading-[1.04] tracking-[-0.03em] text-[#0a0a0a] sm:text-[54px] md:text-[60px]"
             >
-              Conoce la nueva
+              Portal oficial
               <br />
-              APP{" "}
               <motion.span
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -148,10 +159,11 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
-              className="max-w-md text-[16px] font-normal not-italic leading-[1.6] text-neutral-500"
+              className="max-w-md text-[15.5px] font-normal not-italic leading-[1.65] text-neutral-600"
             >
-              Haz de tu vida en la carretera más sencilla y eficiente. Recarga,
-              paga y cruza los peajes sin detenerte.
+              Sistema oficial de gestión de peajes electrónicos. Administra tu
+              balance, vehículos y movimientos desde una plataforma segura y
+              certificada.
             </motion.p>
 
             <motion.div
@@ -161,20 +173,17 @@ export default function HeroSection() {
               className="mt-1 flex flex-wrap items-center gap-3"
             >
               <Link
-                href="/dashboard"
-                className="pr-btn group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[14px] font-semibold tracking-tight"
+                href="/login"
+                className="pr-btn group inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-[14px] font-semibold tracking-tight"
               >
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
-                  <Zap className="h-3 w-3 fill-white text-white" />
-                </span>
-                Recargar Balance
+                Acceder al portal
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </Link>
               <Link
-                href="/#tipos-cuenta"
-                className="pr-btn-ghost inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-semibold tracking-tight text-neutral-800"
+                href="/registro"
+                className="pr-btn-ghost inline-flex items-center gap-2 rounded-lg px-6 py-3.5 text-[14px] font-semibold tracking-tight text-neutral-800"
               >
-                Ver cuentas
+                Solicitar cuenta
               </Link>
             </motion.div>
 
@@ -182,7 +191,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.35 }}
-              className="mt-3 grid grid-cols-3 gap-3 sm:gap-4"
+              className="mt-3 grid grid-cols-3 gap-2.5 sm:gap-3"
             >
               {TRUST.map(({ Icon, title, subtitle }, i) => (
                 <motion.div
@@ -190,17 +199,19 @@ export default function HeroSection() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                  whileHover={{ y: -2, scale: 1.03 }}
-                  className="flex items-center gap-2.5 rounded-2xl bg-white/70 px-3 py-2.5 ring-1 ring-black/5 backdrop-blur transition-shadow duration-300 hover:shadow-[0_4px_14px_-6px_rgba(15,157,88,0.2)]"
+                  whileHover={{ y: -1 }}
+                  className="flex items-center gap-2.5 rounded-lg border border-black/8 bg-white/80 px-3 py-2.5 backdrop-blur transition-colors duration-300 hover:border-[#0f9d58]/30"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e7f7ee] text-[#0f9d58]">
-                    <Icon className="h-4 w-4" strokeWidth={2.4} />
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#f3faf6] text-[#0f9d58] ring-1 ring-[#0f9d58]/15">
+                    <Icon className="h-3.5 w-3.5" strokeWidth={2.4} />
                   </span>
                   <div className="leading-tight">
                     <p className="text-[12px] font-semibold text-[#0a0a0a]">
                       {title}
                     </p>
-                    <p className="text-[11px] text-neutral-500">{subtitle}</p>
+                    <p className="text-[10.5px] uppercase tracking-[0.08em] text-neutral-500">
+                      {subtitle}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -251,16 +262,16 @@ export default function HeroSection() {
               }}
               className="pr-badge-float pointer-events-none absolute left-[2%] top-[14%] z-30 sm:left-[6%]"
             >
-              <div className="flex items-center gap-3 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/4">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0f9d58] shadow-[0_4px_10px_-2px_rgba(12,138,85,0.45)] pr-breathe">
+              <div className="flex items-center gap-3 rounded-xl border border-black/6 bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0f9d58] shadow-[0_4px_10px_-2px_rgba(12,138,85,0.4)]">
                   <Zap className="h-4 w-4 fill-white text-white" />
                 </span>
                 <div className="leading-tight">
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-neutral-400">
                     Saldo
                   </p>
-                  <p className="text-[14px] font-bold text-[#0a0a0a]">
-                    RD$ 1,500
+                  <p className="text-[14px] font-bold tracking-tight text-[#0a0a0a]">
+                    RD$ 1,500.00
                   </p>
                 </div>
               </div>
@@ -281,18 +292,20 @@ export default function HeroSection() {
               }}
               className="pr-badge-float-alt pointer-events-none absolute right-[2%] top-[42%] z-30 sm:right-[4%]"
             >
-              <div className="flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)] ring-1 ring-black/4">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e7f7ee]">
+              <div className="flex items-center gap-2.5 rounded-xl border border-black/6 bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_18px_44px_-18px_rgba(10,10,10,0.18)]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#f3faf6] ring-1 ring-[#0f9d58]/20">
                   <ShieldCheck
                     className="h-4 w-4 text-[#0f9d58]"
                     strokeWidth={2.4}
                   />
                 </span>
                 <div className="leading-tight">
-                  <p className="text-[12px] font-semibold text-[#0f9d58]">
+                  <p className="text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[#0f7a45]">
                     Aprobado
                   </p>
-                  <p className="text-[11px] text-neutral-500">+ RD$ 500</p>
+                  <p className="text-[11px] text-neutral-500">
+                    Recarga + RD$ 500
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -359,9 +372,9 @@ export default function HeroSection() {
             delay: 0.45,
             ease: [0.22, 0.61, 0.36, 1],
           }}
-          className="relative z-30 -mt-4 rounded-[28px] border border-black/6 bg-white px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.04),0_30px_60px_-30px_rgba(10,10,10,0.10)] sm:px-7 sm:py-7 md:-mt-32 md:px-9 md:py-8 lg:-mt-40"
+          className="relative z-30 -mt-4 rounded-2xl border border-black/6 bg-white px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(10,10,10,0.04),0_30px_60px_-30px_rgba(10,10,10,0.10)] sm:px-7 sm:py-7 md:-mt-32 md:px-9 md:py-8 lg:-mt-40"
         >
-          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-4 md:gap-6 lg:gap-8 md:divide-x md:divide-black/5">
             {FEATURES.map(({ Icon, title, desc }, i) => (
               <motion.div
                 key={title}
@@ -373,21 +386,21 @@ export default function HeroSection() {
                   delay: i * 0.09,
                   ease: [0.22, 0.61, 0.36, 1],
                 }}
-                whileHover={{ y: -3 }}
-                className="flex items-start gap-4"
+                whileHover={{ y: -2 }}
+                className="flex items-start gap-4 md:px-5 md:first:pl-0 md:last:pr-0"
               >
                 <motion.span
-                  whileHover={{ scale: 1.12, rotate: 6 }}
+                  whileHover={{ scale: 1.08 }}
                   transition={{ type: "spring", stiffness: 260, damping: 16 }}
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e7f7ee] text-[#0f9d58]"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#f3faf6] text-[#0f9d58] ring-1 ring-[#0f9d58]/15"
                 >
                   <Icon className="h-5 w-5" strokeWidth={2.2} />
                 </motion.span>
                 <div className="min-w-0">
-                  <p className="text-[15px] font-semibold leading-tight text-[#0a0a0a]">
+                  <p className="text-[14.5px] font-semibold leading-tight tracking-tight text-[#0a0a0a]">
                     {title}
                   </p>
-                  <p className="mt-1.5 text-[13px] leading-relaxed text-neutral-500">
+                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-neutral-500">
                     {desc}
                   </p>
                 </div>
