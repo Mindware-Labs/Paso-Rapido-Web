@@ -38,6 +38,24 @@ export type LoginResponse = {
   access_token: string;
 };
 
+export type ForgotPasswordMethod = "email" | "phone";
+
+export type ForgotPasswordRequestPayload = {
+  method: ForgotPasswordMethod;
+  destination: string;
+};
+
+export type ForgotPasswordVerifyPayload = {
+  method: ForgotPasswordMethod;
+  destination: string;
+  code: string;
+};
+
+export type ForgotPasswordResetPayload = {
+  resetToken: string;
+  newPassword: string;
+};
+
 export type UserInfo = {
   id: string;
   primerNombre: string;
@@ -195,6 +213,27 @@ export const authApi = {
   login: (payload: LoginPayload) =>
     request<LoginResponse>(
       "/auth/login",
+      { method: "POST", body: JSON.stringify(payload) },
+      12_000,
+    ),
+
+  forgotPasswordRequest: (payload: ForgotPasswordRequestPayload) =>
+    request<{ sent: boolean; message: string }>(
+      "/auth/forgot-password/request",
+      { method: "POST", body: JSON.stringify(payload) },
+      12_000,
+    ),
+
+  forgotPasswordVerify: (payload: ForgotPasswordVerifyPayload) =>
+    request<{ verified: boolean; resetToken: string }>(
+      "/auth/forgot-password/verify",
+      { method: "POST", body: JSON.stringify(payload) },
+      12_000,
+    ),
+
+  forgotPasswordReset: (payload: ForgotPasswordResetPayload) =>
+    request<{ success: boolean }>(
+      "/auth/forgot-password/reset",
       { method: "POST", body: JSON.stringify(payload) },
       12_000,
     ),
