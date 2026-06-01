@@ -29,6 +29,21 @@ export function formatCedula(raw: string): string {
   return `${digits.slice(0, 3)}-${digits.slice(3, 10)}-${digits.slice(10)}`;
 }
 
+// ── Teléfono ──────────────────────────────────────────────────────────────────
+
+/** Formatea teléfono en XXX-XXX-XXXX (10 dígitos) mientras el usuario escribe. */
+export function formatTelefono(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+// ── Nombres ─────────────────────────────────────────────────────────────────
+
+/** Solo letras (incluye acentos/ñ), espacios, guiones y apóstrofes. */
+const personNameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]+$/;
+
 // ── Zod Schemas ───────────────────────────────────────────────────────────────
 
 export const loginSchema = z.object({
@@ -42,14 +57,22 @@ export const loginSchema = z.object({
 export const registerStep1Schema = z.object({
   nombre: z
     .string()
+    .trim()
     .min(2, "El nombre debe tener al menos 2 caracteres")
-    .max(60, "Nombre demasiado largo"),
+    .max(60, "Nombre demasiado largo")
+    .regex(personNameRegex, "Usa solo letras para el nombre"),
   apellido: z
     .string()
+    .trim()
     .min(2, "El apellido debe tener al menos 2 caracteres")
-    .max(60, "Apellido demasiado largo"),
+    .max(60, "Apellido demasiado largo")
+    .regex(personNameRegex, "Usa solo letras para el apellido"),
   cedula: z
     .string()
+    .refine(
+      (v) => v.replace(/\D/g, "").length === 11,
+      "La cédula debe tener 11 dígitos",
+    )
     .refine(
       (v) => isValidCedula(v),
       "La cédula no pasa la validación oficial (módulo 10)",
@@ -65,8 +88,8 @@ export const registerStep2Schema = z
     telefono: z
       .string()
       .refine(
-        (v) => v.replace(/\D/g, "").length >= 10,
-        "Ingresa un teléfono válido (mín. 10 dígitos)",
+        (v) => v.replace(/\D/g, "").length === 10,
+        "Ingresa un teléfono válido de 10 dígitos",
       ),
     password: z
       .string()

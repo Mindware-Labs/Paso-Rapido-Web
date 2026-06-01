@@ -23,6 +23,7 @@ import {
 import { authApi, RateLimitError } from "@/lib/authApi";
 import {
   formatCedula,
+  formatTelefono,
   isValidCedula,
   registerStep1Schema,
   registerStep2Schema,
@@ -198,12 +199,7 @@ function Step1({ onNext }: { onNext: (data: Step1Data) => void }) {
     return parsed.error.flatten().fieldErrors[f]?.[0] ?? null;
   };
 
-  const canSubmit =
-    cedulaValid &&
-    nombre.trim().length >= 2 &&
-    apellido.trim().length >= 2 &&
-    !loading &&
-    !isLocked;
+  const canSubmit = parsed.success && !loading && !isLocked;
 
   const handleContinue = async () => {
     setTouched({ nombre: true, apellido: true, cedula: true });
@@ -453,7 +449,7 @@ function Step2({
           label="Número de teléfono móvil"
           type="tel"
           value={telefono}
-          onChange={setTelefono}
+          onChange={(v) => setTelefono(formatTelefono(v))}
           onBlur={() => setTouched((t) => ({ ...t, telefono: true }))}
           placeholder="809-000-0000"
           leftIcon={<Phone className="h-4.5 w-4.5" />}
