@@ -4,46 +4,46 @@ import Link from "next/link";
 import { useMemo } from "react";
 import {
   Wallet,
-  Truck,
-  Activity,
-  CircleDollarSign,
   AlertTriangle,
   Snowflake,
   ArrowRight,
   Plus,
   Download,
-  TrendingUp,
 } from "lucide-react";
 import { useEmpresaData } from "@/context/EmpresaDataContext";
-import {
-  fleetSummary,
-  spendByPeriod,
-  topVehiclesBySpend,
-} from "@/data/empresa/derived";
-import { formatCurrency, formatCurrencyCompact, formatPeriodo } from "@/lib/format";
-import { KpiCard } from "@/components/empresa/KpiCard";
-import { BarChart, LineChart } from "@/components/empresa/charts";
+import { fleetSummary } from "@/data/empresa/derived";
+import { formatCurrency } from "@/lib/format";
 import { PageHeader, DemoBadge } from "@/components/empresa/shared";
 import { cn } from "@/lib/utils";
 
 export default function EmpresaPanelPage() {
-  const { empresa, fleet, invoices } = useEmpresaData();
+  const { empresa, fleet } = useEmpresaData();
 
   const summary = useMemo(() => fleetSummary(fleet), [fleet]);
-  const periodSeries = useMemo(
-    () =>
-      spendByPeriod(invoices).map((p) => ({
-        label: formatPeriodo(p.label).split(" ")[0].slice(0, 3),
-        value: p.value,
-      })),
-    [invoices],
-  );
-  const topVehicles = useMemo(() => topVehiclesBySpend(fleet, 5), [fleet]);
 
   const lowBalanceVehicles = fleet.filter(
     (v) => v.tagStatus === "bajo_balance",
   );
   const frozenVehicles = fleet.filter((v) => v.tagStatus === "congelado");
+
+  const resumen: { label: string; value: string }[] = [
+    { label: "Saldo de flota", value: formatCurrency(summary.saldoTotal) },
+    {
+      label: "Saldo de billetera central",
+      value: formatCurrency(empresa.saldoCentral),
+    },
+    {
+      label: "Vehículos activos",
+      value: `${summary.activos} de ${summary.total}`,
+    },
+    { label: "Vehículos congelados", value: String(summary.congelados) },
+    { label: "Pases del mes", value: String(summary.pasesMes) },
+    { label: "Gasto del mes", value: formatCurrency(summary.gastoMes) },
+    {
+      label: "Vehículos con saldo bajo",
+      value: String(summary.bajoBalance),
+    },
+  ];
 
   return (
     <div className="min-h-full bg-slate-50/50 pb-12">
@@ -51,73 +51,35 @@ export default function EmpresaPanelPage() {
         <PageHeader
           eyebrow={empresa.razonSocial}
           title="Panel de flota"
-          description="Visión consolidada del saldo, consumo y estado de todos los vehículos de la empresa."
+          description="Resumen del saldo, consumo y estado de los vehículos de la empresa."
           actions={<DemoBadge />}
         />
 
-        {/* ── KPIs ── */}
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          <KpiCard
-            label="Saldo de flota"
-            value={formatCurrency(summary.saldoTotal)}
-            Icon={Wallet}
-            tone="emerald"
-            hint={`+ central ${formatCurrencyCompact(empresa.saldoCentral)}`}
-          />
-          <KpiCard
-            label="Vehículos activos"
-            value={`${summary.activos} de ${summary.total}`}
-            Icon={Truck}
-            tone="blue"
-            hint={`${summary.congelados} congelados`}
-          />
-          <KpiCard
-            label="Pases del mes"
-            value={String(summary.pasesMes)}
-            Icon={Activity}
-            tone="violet"
-            delta={8.2}
-          />
-          <KpiCard
-            label="Gasto del mes"
-            value={formatCurrency(summary.gastoMes)}
-            Icon={CircleDollarSign}
-            tone="amber"
-            delta={-3.1}
-          />
-          <KpiCard
-            label="Saldo bajo"
-            value={String(summary.bajoBalance)}
-            Icon={AlertTriangle}
-            tone="rose"
-            hint="requieren recarga"
-          />
-        </section>
-
-        {/* ── Gráficas ── */}
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
-            <div className="mb-4 flex items-center gap-2">
-              <TrendingUp className="size-4 text-emerald-600" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-                Gasto últimos meses
-              </h2>
-            </div>
-            <LineChart
-              data={periodSeries}
-              formatValue={(v) => formatCurrencyCompact(v)}
-            />
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-900">
-              Top 5 vehículos por gasto
-            </h2>
-            <BarChart
-              data={topVehicles}
-              formatValue={(v) => formatCurrency(v)}
-            />
-          </div>
+        {/* ── Resumen (lista, no dashboard) ── */}
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-sm font-bold uppercase tracking-wider text-slate-900">
+            Resumen de la flota
+          </h2>
+          <p className="mb-4 text-sm text-slate-500">
+            {summary.bajoBalance > 0 || summary.congelados > 0
+              ? `${summary.activos} de ${summary.total} vehículos operan con normalidad; ${
+                  summary.bajoBalance
+                } con saldo bajo y ${summary.congelados} congelados requieren atención.`
+              : `Los ${summary.total} vehículos de la flota operan con normalidad.`}
+          </p>
+          <dl className="divide-y divide-slate-100">
+            {resumen.map((row) => (
+              <div
+                key={row.label}
+                className="flex items-center justify-between py-2.5"
+              >
+                <dt className="text-sm text-slate-600">{row.label}</dt>
+                <dd className="text-sm font-semibold tabular-nums text-slate-900">
+                  {row.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </section>
 
         {/* ── Alertas + accesos rápidos ── */}

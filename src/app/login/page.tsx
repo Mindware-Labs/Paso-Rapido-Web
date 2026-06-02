@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Lock, Mail, Zap, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useAccount } from "@/context/AccountContext";
 import { loginSchema } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,11 @@ function formatCountdown(s: number) {
 export default function LoginPage() {
   const router = useRouter();
   const { login, isLoggedIn, isInitialized } = useAuth();
+  const { isEnterprise, isInitialized: accountInitialized } = useAccount();
+
+  // Destino tras autenticarse: las cuentas de flota aterrizan en la vista
+  // empresarial; el resto en el dashboard personal. Ver `vista-empresarial-plan.md`.
+  const postAuthDest = isEnterprise ? "/empresa" : "/dashboard";
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
@@ -28,10 +34,13 @@ export default function LoginPage() {
 
   const correoRef = useRef<HTMLInputElement>(null);
 
-  // Redirect only after auth state is fully initialized
+  // Redirect only after auth + account state is fully initialized, so las
+  // cuentas de flota no parpadean por el dashboard personal antes de /empresa.
   useEffect(() => {
-    if (isInitialized && isLoggedIn) router.replace("/dashboard");
-  }, [isInitialized, isLoggedIn, router]);
+    if (isInitialized && accountInitialized && isLoggedIn) {
+      router.replace(postAuthDest);
+    }
+  }, [isInitialized, accountInitialized, isLoggedIn, postAuthDest, router]);
 
   // Countdown timer for rate-limit lock
   useEffect(() => {
@@ -77,7 +86,7 @@ export default function LoginPage() {
       if (res.remainingSeconds) setLockSeconds(res.remainingSeconds);
       setError(res.message);
     } else {
-      router.replace("/dashboard");
+      router.replace(postAuthDest);
     }
   };
 
