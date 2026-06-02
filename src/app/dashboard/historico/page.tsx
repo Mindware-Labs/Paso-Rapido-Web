@@ -14,6 +14,7 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/format";
 
 // ─── Datos de prueba ──────────────────────────────────────────────────────────
 
@@ -73,16 +74,6 @@ const INITIAL_ROWS = [
     status: "Procesado",
   },
 ];
-
-// Helper para formatear moneda
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("es-DO", {
-    style: "currency",
-    currency: "DOP",
-  })
-    .format(amount)
-    .replace("DOP", "RD$");
-};
 
 export default function HistoricoPage() {
   const [searchTerm, setSearchTerm] = useState("");

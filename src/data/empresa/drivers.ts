@@ -1,0 +1,68 @@
+import type { Driver } from "@/types/empresa";
+
+export const DRIVERS: Driver[] = [
+  {
+    id: "d1",
+    nombre: "José Martínez",
+    cedula: "001-1234567-8",
+    costCenterId: "cc1",
+    activo: true,
+    ultimoUso: "2026-05-28T08:42:00",
+  },
+  {
+    id: "d2",
+    nombre: "María Santana",
+    cedula: "002-7654321-0",
+    costCenterId: "cc2",
+    activo: true,
+    ultimoUso: "2026-05-29T16:10:00",
+  },
+  {
+    id: "d3",
+    nombre: "Rafael Guzmán",
+    cedula: "001-9988776-5",
+    costCenterId: "cc1",
+    activo: true,
+    ultimoUso: "2026-05-30T07:15:00",
+  },
+  {
+    id: "d4",
+    nombre: "Carmen Disla",
+    cedula: "003-4455667-1",
+    costCenterId: "cc3",
+    activo: true,
+    ultimoUso: "2026-05-27T19:30:00",
+  },
+  {
+    id: "d5",
+    nombre: "Luis Peralta",
+    cedula: "001-2233445-9",
+    costCenterId: "cc2",
+    activo: false,
+    ultimoUso: "2026-04-12T10:00:00",
+  },
+  {
+    id: "d6",
+    nombre: "Sandra Núñez",
+    cedula: "002-5566778-2",
+    costCenterId: "cc3",
+    activo: true,
+    ultimoUso: "2026-05-31T09:05:00",
+  },
+  {
+    id: "d7",
+    nombre: "Andrés Polanco",
+    cedula: "001-6677889-3",
+    costCenterId: "cc1",
+    activo: true,
+    ultimoUso: "2026-05-26T14:20:00",
+  },
+  {
+    id: "d8",
+    nombre: "Patricia Then",
+    cedula: "004-1122334-4",
+    costCenterId: "cc4",
+    activo: true,
+    ultimoUso: "2026-05-25T11:48:00",
+  },
+];

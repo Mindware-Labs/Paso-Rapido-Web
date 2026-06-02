@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/format";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -157,17 +158,6 @@ const STAT_COLORS: Record<
     icon: "text-amber-600",
     border: "border-amber-100",
   },
-};
-
-// ─── Format Helpers ───────────────────────────────────────────────────────────
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("es-DO", {
-    style: "currency",
-    currency: "DOP",
-  })
-    .format(amount)
-    .replace("DOP", "RD$");
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────

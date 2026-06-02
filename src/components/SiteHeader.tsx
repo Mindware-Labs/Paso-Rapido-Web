@@ -6,6 +6,7 @@ import { Menu, Zap, Bell, PanelLeft } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { useSidebar } from "@/components/sidebar/SidebarContext";
 import { useAuth } from "@/context/AuthContext";
+import { AccountSwitcher } from "@/components/empresa/AccountSwitcher";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
@@ -73,6 +74,11 @@ export function SiteHeader() {
 
         {/* Right side */}
         <div className="flex items-center gap-1.5">
+          {/* Switcher de cuenta (demo) */}
+          <AccountSwitcher />
+
+          <div className="hidden h-5 w-px bg-border/50 md:block" />
+
           {/* Recargar CTA */}
           <Link
             href="/dashboard/recargar"
